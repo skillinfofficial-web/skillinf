@@ -7,5 +7,10 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "^16.3.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   }
 }
