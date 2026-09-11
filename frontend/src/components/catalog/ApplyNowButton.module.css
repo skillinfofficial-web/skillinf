@@ -1,0 +1,40 @@
+/* Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: var(--main-brand);
+  color: #fff;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--brand-dark);
+  transform: translateY(-1px);
+}
+
+/* default — used in finalCta section */
+.default {
+  padding: 13px 28px;
+  font-size: 0.95rem;
+}
+
+/* sidebar — used in PricingCard desktop sidebar */
+.sidebar {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+
+/* mobile — used in mobile sticky bar */
+.mobile {
+  padding: 13px 24px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}

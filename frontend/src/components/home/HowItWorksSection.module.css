@@ -1,0 +1,87 @@
+.howItWorksSection {
+  background-color: var(--background);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 2.25rem;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--card);
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--soft-accent);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.stepNum {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--soft-accent);
+}
+
+.arrowIcon {
+  color: var(--border);
+  display: none; /* Hidden on mobile */
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: var(--main-text);
+}
+
+.cardDesc {
+  font-size: 0.95rem;
+  color: var(--secondary-text);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 2.5rem;
+  }
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .arrowIcon {
+    display: block; /* Show arrow on desktop */
+  }
+}

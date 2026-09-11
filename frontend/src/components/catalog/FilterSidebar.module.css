@@ -1,0 +1,207 @@
+/* ─── Desktop sidebar ─────────────────────────────────────────── */
+.desktopSidebar {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 96px;
+  align-self: flex-start;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) { .desktopSidebar { display: none; } }
+
+.sidebarHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--highlight);
+}
+
+.sidebarTitle {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--secondary-text);
+}
+
+.clearAllBtn {
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--main-brand); background: none; border: none;
+  cursor: pointer; text-decoration: underline;
+}
+
+/* ─── Filter content ──────────────────────────────────────────── */
+.filterContent { padding: 2px 0; }
+
+/* ─── Accordion sections ─────────────────────────────────────── */
+.section { border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+.sectionBtn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; background: none; border: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.sectionBtn:hover { background: var(--highlight); }
+
+.sectionTitle { font-size: 0.8rem; font-weight: 600; color: var(--main-text); }
+
+.chevron { transition: transform 0.2s; color: var(--secondary-text); }
+.chevronOpen { transform: rotate(180deg); }
+
+.sectionBody { padding: 0 14px 12px; }
+
+/* ─── Search ──────────────────────────────────────────────────── */
+.searchInput {
+  width: 100%; padding: 8px 11px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--background); font-size: 0.82rem;
+  color: var(--main-text); outline: none;
+  transition: border-color 0.2s;
+}
+.searchInput:focus { border-color: var(--main-brand); }
+
+/* ─── Single range slider ─────────────────────────────────────── */
+.rangeLabel { margin-bottom: 8px; }
+.rangeCurrent { font-size: 0.78rem; color: var(--secondary-text); }
+.rangeCurrent strong { color: var(--main-brand); font-weight: 700; }
+
+.rangeInput {
+  width: 100%; -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 4px;
+  background: var(--soft-accent);
+  outline: none; cursor: pointer;
+  accent-color: var(--main-brand);
+}
+.rangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--main-brand);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+.rangeInput::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--main-brand); border: 2px solid #fff; cursor: pointer;
+}
+
+.rangeEnds {
+  display: flex; justify-content: space-between;
+  font-size: 0.7rem; color: var(--secondary-text); margin-top: 4px;
+}
+
+/* ─── Pill buttons ───────────────────────────────────────────── */
+.pillGroup { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.pill {
+  padding: 5px 10px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  font-size: 0.75rem; font-weight: 500; color: var(--secondary-text);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.pill:hover { border-color: var(--main-brand); color: var(--main-brand); }
+.pillActive { background: var(--main-brand); color: #fff; border-color: var(--main-brand); }
+
+/* ─── Dropdown ────────────────────────────────────────────────── */
+.select {
+  width: 100%; padding: 8px 11px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--background); font-size: 0.82rem;
+  color: var(--main-text); outline: none; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.select:focus { border-color: var(--main-brand); }
+
+/* ─── Mobile trigger ────────────────────────────────────────────*/
+.mobileTrigger {
+  display: none;
+  align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--card); color: var(--main-text);
+  font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.mobileTrigger:hover { border-color: var(--main-brand); background: var(--highlight); }
+
+@media (max-width: 900px) { .mobileTrigger { display: flex; } }
+
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--main-brand); color: #fff;
+  font-size: 0.65rem; font-weight: 700;
+}
+
+.triggerCount { margin-left: auto; font-size: 0.72rem; color: var(--secondary-text); }
+
+/* ─── Overlay ────────────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.38);
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── Mobile drawer ──────────────────────────────────────────── */
+.drawer {
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 101;
+  width: min(300px, 86vw);
+  background: var(--card);
+  box-shadow: 4px 0 32px rgba(0,0,0,0.14);
+  transform: translateX(-105%);
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column;
+  border-radius: 0 14px 14px 0;
+}
+.drawerOpen { transform: translateX(0); }
+
+.drawerHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--highlight); flex-shrink: 0;
+}
+
+.drawerTitle {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.95rem; font-weight: 700; color: var(--main-text);
+}
+
+.drawerClose {
+  width: 30px; height: 30px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--secondary-text);
+  transition: background 0.15s;
+}
+.drawerClose:hover { background: var(--border); }
+
+.drawerBody { flex: 1; overflow-y: auto; padding: 4px 0; }
+
+.drawerFooter {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px; flex-shrink: 0;
+}
+
+.clearBtn {
+  flex: 1; padding: 10px 12px; border-radius: 9px;
+  border: 1.5px solid var(--border); background: transparent;
+  font-size: 0.82rem; font-weight: 600; color: var(--secondary-text);
+  cursor: pointer; transition: background 0.15s;
+}
+.clearBtn:hover { background: var(--highlight); }
+
+.applyBtn {
+  flex: 2; padding: 10px 12px; border-radius: 9px;
+  border: none; background: var(--main-brand); color: #fff;
+  font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s;
+}
+.applyBtn:hover { background: var(--brand-dark); }

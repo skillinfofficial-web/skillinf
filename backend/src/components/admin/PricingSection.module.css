@@ -1,0 +1,51 @@
+.radioGroup { display: flex; gap: 12px; margin-bottom: 20px; }
+
+.radioCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+.radioCard input { accent-color: var(--primary); }
+.radioCardActive { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+.radioLabel { pointer-events: none; }
+
+.summaryCard {
+  margin-top: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.summaryTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--secondary-text);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--secondary-text);
+  padding: 4px 0;
+}
+
+.summaryDivider { height: 1px; background: var(--border); margin: 8px 0; }
+
+.summaryFinal {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}

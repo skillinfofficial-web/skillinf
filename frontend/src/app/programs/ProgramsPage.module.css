@@ -1,0 +1,35 @@
+.main { padding-top: var(--nav-height); min-height: 100vh; }
+
+.hero {
+  background: linear-gradient(135deg, #e8f0ea 0%, var(--background) 100%);
+  padding: 44px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 36px;
+}
+.heroTitle { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; color: var(--main-text); margin-bottom: 8px; }
+.heroSub { font-size: 0.95rem; color: var(--secondary-text); max-width: 520px; }
+
+.errorBanner { padding: 12px 16px; border-radius: 10px; background: #fdf3f3; border: 1px solid #f5c2c2; color: #c0392b; font-size: 0.85rem; font-weight: 500; margin-bottom: 20px; }
+
+.contentArea { display: flex; gap: 28px; align-items: flex-start; padding-bottom: 64px; }
+.grid { flex: 1; min-width: 0; }
+.gridHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
+.gridTitle { font-size: 1.05rem; font-weight: 700; color: var(--main-text); }
+.gridMeta { display: flex; align-items: center; gap: 10px; }
+.count { font-size: 0.78rem; color: var(--secondary-text); }
+
+.cardGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+@media (max-width: 1100px) { .cardGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .contentArea { flex-direction: column; gap: 16px; } .cardGrid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+@media (max-width: 560px) {
+  .cardGrid { grid-template-columns: 1fr; gap: 12px; max-width: 480px; margin: 0 auto; }
+  .hero { padding: 32px 0 28px; }
+}
+
+.state { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 48px 20px; text-align: center; grid-column: 1 / -1; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--main-brand); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.emptyMsg { color: var(--secondary-text); font-size: 0.875rem; }
+.clearBtn { padding: 8px 18px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--secondary-text); font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+.clearBtn:hover { background: var(--highlight); }

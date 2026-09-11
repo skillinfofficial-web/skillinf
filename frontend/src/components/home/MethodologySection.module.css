@@ -1,0 +1,123 @@
+.methodologySection {
+  background-color: var(--card);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 2.25rem;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  gap: 24px;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepNum {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--main-brand);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stepLine {
+  flex: 1;
+  width: 2px;
+  background-color: var(--soft-accent);
+  min-height: 40px;
+}
+
+.stepContent {
+  padding-bottom: 16px;
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: var(--main-text);
+}
+
+.stepDescription {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 64px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--brand-dark);
+  padding: 24px;
+  background-color: var(--highlight);
+  border-radius: 12px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1024px) {
+  .timeline {
+    flex-direction: row;
+    max-width: 100%;
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  .step {
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    position: relative;
+  }
+
+  .stepIndicator {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .stepLine {
+    height: 2px;
+    min-height: 2px;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .stepContent {
+    padding-bottom: 0;
+    padding-right: 24px;
+  }
+}

@@ -1,0 +1,156 @@
+.main {
+  padding-top: var(--nav-height);
+  padding-bottom: 80px; /* room for mobile sticky bar */
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; padding: 16px 0 20px;
+  flex-wrap: wrap;
+}
+.breadLink { color: var(--secondary-text); text-decoration: none; transition: color 0.15s; }
+.breadLink:hover { color: var(--main-brand); }
+.breadSep { color: var(--secondary-text); opacity: 0.5; }
+.breadCurrent { color: var(--main-text); font-weight: 500; }
+
+/* ── Image — full width on ALL devices ────────────────────────── */
+.imageWrap {
+  margin-bottom: 32px;
+  border-radius: 16px;
+  overflow: hidden;
+  /* max height so it doesn't dominate on large screens */
+  max-height: 480px;
+}
+
+/* On desktop, constrain image width to left column visually */
+@media (min-width: 960px) {
+  .imageWrap {
+    max-height: 420px;
+  }
+}
+
+/* ── Content layout: main + sticky sidebar ────────────────────── */
+.contentLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.desktopSidebar { display: none; }
+
+@media (min-width: 960px) {
+  .contentLayout {
+    grid-template-columns: 1fr 300px;
+  }
+  .desktopSidebar {
+    display: block;
+    position: sticky;
+    top: 96px;
+  }
+}
+
+/* ── Overview ─────────────────────────────────────────────────── */
+.overview { margin-bottom: 28px; }
+.title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800; color: var(--main-text); margin-bottom: 10px;
+}
+.description { font-size: 0.93rem; color: var(--secondary-text); line-height: 1.7; }
+
+/* ── Section headings ─────────────────────────────────────────── */
+.sectionTitle {
+  font-size: 1rem; font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Details grid ─────────────────────────────────────────────── */
+.detailsSection { margin-bottom: 28px; }
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+.detailCard {
+  background: var(--highlight); border: 1px solid var(--border);
+  border-radius: 11px; padding: 14px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.detailIcon { font-size: 1.1rem; }
+.detailLabel {
+  font-size: 0.68rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--secondary-text); font-weight: 600;
+}
+.detailValue { font-size: 0.9rem; font-weight: 700; color: var(--main-text); }
+
+/* ── Skills ───────────────────────────────────────────────────── */
+.skillsSection { margin-bottom: 28px; }
+.skillTags { display: flex; flex-wrap: wrap; gap: 7px; }
+.skillTag {
+  padding: 5px 12px; border-radius: 20px;
+  background: var(--soft-accent); border: 1px solid #c3d9ce;
+  font-size: 0.78rem; font-weight: 500; color: var(--brand-dark);
+}
+
+/* ── Projects list ────────────────────────────────────────────── */
+.projectsSection { margin-bottom: 28px; }
+.projectList { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.projectItem {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.projectNum {
+  font-size: 0.9rem; font-weight: 800; color: var(--main-brand);
+  min-width: 26px; flex-shrink: 0;
+}
+.projectName { font-size: 0.87rem; color: var(--main-text); line-height: 1.4; font-weight: 500; }
+
+/* ── Final CTA banner ─────────────────────────────────────────── */
+.finalCta {
+  background: linear-gradient(135deg, var(--main-brand), var(--brand-dark));
+  border-radius: 14px; padding: 28px; margin-top: 32px;
+}
+.ctaInner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.ctaTitle { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.ctaText { font-size: 0.85rem; color: rgba(255,255,255,0.82); }
+.ctaBtn {
+  padding: 12px 28px; border-radius: 10px;
+  background: #fff; color: var(--main-brand);
+  font-size: 0.92rem; font-weight: 700; border: none; cursor: pointer;
+  white-space: nowrap; transition: transform 0.15s;
+}
+.ctaBtn:hover { transform: translateY(-2px); }
+
+/* ── Mobile sticky bar ────────────────────────────────────────── */
+.mobileStickyBar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+.mobilePriceInfo { display: flex; flex-direction: column; }
+.mobileFree { font-size: 1rem; font-weight: 800; color: var(--success); }
+.mobilePrice { font-size: 1rem; font-weight: 800; color: var(--main-text); }
+.mobileCta {
+  flex-shrink: 0; padding: 11px 24px; border-radius: 10px;
+  background: var(--main-brand); color: #fff;
+  font-size: 0.875rem; font-weight: 700; border: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.mobileCta:hover { background: var(--brand-dark); }
+
+/* Hide mobile bar on large screens */
+@media (min-width: 960px) {
+  .mobileStickyBar { display: none; }
+  .main { padding-bottom: 0; }
+}

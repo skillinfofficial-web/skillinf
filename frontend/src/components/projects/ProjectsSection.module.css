@@ -1,0 +1,87 @@
+.projectsSection {
+  background-color: var(--background);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  font-size: 2.25rem;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+}
+
+.projectCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.projectCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(36, 49, 44, 0.05);
+  border-color: var(--soft-accent);
+}
+
+.imagePlaceholder {
+  height: 200px;
+  background-color: var(--highlight);
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.content {
+  padding: 24px;
+}
+
+.projectTitle {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: var(--main-text);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tag {
+  background-color: var(--highlight);
+  color: var(--brand-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.viewLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--main-brand);
+  transition: color 0.2s ease;
+}
+
+.viewLink:hover {
+  color: var(--brand-dark);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+  }
+}

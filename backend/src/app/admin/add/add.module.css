@@ -1,0 +1,19 @@
+.pageContainer { max-width: 820px; }
+
+.pageHeader {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}

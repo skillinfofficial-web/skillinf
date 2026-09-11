@@ -1,0 +1,29 @@
+/* Desktop: sidebar is 260px fixed */
+.adminContainer {
+  display: flex;
+  min-height: 100vh;
+}
+
+.adminContent {
+  flex: 1;
+  margin-left: 260px;
+  padding: 36px 40px;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Tablet: sidebar shrinks to 72px */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .adminContent {
+    margin-left: 72px;
+  }
+}
+
+/* Mobile: sidebar becomes drawer, content fills full width with top offset */
+@media (max-width: 768px) {
+  .adminContent {
+    margin-left: 0;
+    padding: 24px 20px;
+    padding-top: calc(60px + 24px);
+  }
+}

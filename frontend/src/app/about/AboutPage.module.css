@@ -1,0 +1,515 @@
+/* ===== Layout ===== */
+.main {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+/* ===== Hero ===== */
+.hero {
+  background: linear-gradient(135deg, #e8f0ea 0%, var(--background) 100%);
+  padding: 56px 0 48px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--highlight);
+  color: var(--brand-dark);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  border: 1px solid var(--soft-accent);
+}
+
+.heroDot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--main-brand);
+  border-radius: 50%;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  color: var(--main-text);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.heroHighlight {
+  color: var(--main-brand);
+}
+
+.heroSub {
+  font-size: 1.05rem;
+  color: var(--secondary-text);
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== Shared section structure ===== */
+.section {
+  padding: 72px 0;
+}
+
+.sectionAlt {
+  padding: 72px 0;
+  background-color: var(--highlight);
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--main-brand);
+  margin-bottom: 10px;
+}
+
+.sectionTitle {
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  font-weight: 800;
+  color: var(--main-text);
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.sectionSub {
+  font-size: 1rem;
+  color: var(--secondary-text);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ===== Mission / Vision two-col ===== */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .twoCol {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.mvCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 32px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.mvCard:hover {
+  box-shadow: 0 8px 20px rgba(36, 49, 44, 0.06);
+  border-color: var(--soft-accent);
+}
+
+.mvIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background-color: var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.mvIcon {
+  color: var(--main-brand);
+}
+
+.mvTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 10px;
+}
+
+.mvText {
+  font-size: 0.95rem;
+  color: var(--secondary-text);
+  line-height: 1.7;
+}
+
+/* ===== How We Help (5 steps) ===== */
+.stepsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 600px) {
+  .stepsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .stepsGrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.stepCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 22px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stepCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(36, 49, 44, 0.06);
+  border-color: var(--soft-accent);
+}
+
+.stepNumber {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--main-brand);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.stepIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background-color: var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.stepIcon {
+  color: var(--main-brand);
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 8px;
+}
+
+.stepText {
+  font-size: 0.875rem;
+  color: var(--secondary-text);
+  line-height: 1.6;
+}
+
+/* ===== What We Offer ===== */
+.offerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .offerGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.offerCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 28px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.offerCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(36, 49, 44, 0.06);
+  border-color: var(--soft-accent);
+}
+
+.offerIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background-color: var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.offerIcon {
+  color: var(--main-brand);
+}
+
+.offerTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 10px;
+}
+
+.offerText {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+.offerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--main-brand);
+  transition: gap 0.2s ease;
+}
+
+.offerLink:hover {
+  gap: 10px;
+}
+
+/* ===== What Makes Us Different ===== */
+.diffGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .diffGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .diffGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.diffCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.diffCard:hover {
+  box-shadow: 0 8px 16px rgba(36, 49, 44, 0.05);
+  border-color: var(--soft-accent);
+}
+
+.diffIconWrap {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: var(--highlight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diffIcon {
+  color: var(--main-brand);
+}
+
+.diffTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 6px;
+}
+
+.diffText {
+  font-size: 0.875rem;
+  color: var(--secondary-text);
+  line-height: 1.6;
+}
+
+/* ===== Who We Serve ===== */
+.audienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .audienceGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .audienceGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.audienceCard {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.audienceCard:hover {
+  box-shadow: 0 6px 14px rgba(36, 49, 44, 0.05);
+  border-color: var(--soft-accent);
+}
+
+.audienceEmoji {
+  font-size: 1.75rem;
+  margin-bottom: 10px;
+}
+
+.audienceTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--main-text);
+  line-height: 1.4;
+}
+
+/* ===== Commitment list ===== */
+.commitList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .commitList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .commitList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.commitItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.commitDot {
+  flex-shrink: 0;
+  margin-top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--main-brand);
+}
+
+.commitTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin-bottom: 4px;
+}
+
+.commitText {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  line-height: 1.55;
+}
+
+/* ===== CTA Banner ===== */
+.cta {
+  padding: 80px 0;
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--main-brand) 100%);
+  text-align: center;
+}
+
+.ctaTitle {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  color: white;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.ctaSub {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.ctaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+.ctaPrimary {
+  background-color: white;
+  color: var(--brand-dark);
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ctaPrimary:hover {
+  background-color: var(--soft-accent);
+}
+
+.ctaSecondary {
+  background-color: transparent;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.ctaSecondary:hover {
+  border-color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+}
