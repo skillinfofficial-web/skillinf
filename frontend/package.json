@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^22.20.2",
     "@types/react": "^19.3.0",
+    "parcel": "^2.16.4",
     "typescript": "^7.0.2"
   }
 }
