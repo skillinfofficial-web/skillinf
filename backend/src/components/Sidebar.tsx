@@ -20,6 +20,8 @@ import {
   Menu,
   X,
   Leaf,
+  Package,
+  CreditCard,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -47,6 +49,8 @@ const navSections = [
       { name: 'Certificates', path: '/admin/certificates', icon: Award },
       { name: 'Verification', path: '/admin/verification', icon: ShieldCheck },
       { name: 'LinkedIn Verify', path: '/admin/linkedin-verify', icon: Link2 },
+      { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
+      { name: 'Payments', path: '/admin/payments', icon: CreditCard },
     ],
   },
   {

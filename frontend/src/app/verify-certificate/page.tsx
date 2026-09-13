@@ -1,14 +1,19 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
+
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import styles from './VerifyPage.module.css';
 import VerifyCertificateSection from '@/components/home/VerifyCertificateSection';
+import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: 'Verify Certificate | SkillInf',
-  description: 'Verify the authenticity of any SkillInf internship certificate instantly using the Certificate ID.',
-};
+/* Inner component reads search params and passes prefill id */
+function VerifyContent() {
+  const searchParams = useSearchParams();
+  const prefillId = searchParams.get('id') || '';
+  return <VerifyCertificateSection embedded prefillId={prefillId} />;
+}
 
 export default function VerifyCertificatePage() {
   return (
@@ -27,10 +32,12 @@ export default function VerifyCertificatePage() {
           </div>
         </section>
 
-        {/* Verification form (reuses the section component without the trigger) */}
+        {/* Verification form with optional prefill from QR code */}
         <section className={styles.formSection}>
           <div className="container">
-            <VerifyCertificateSection embedded />
+            <Suspense fallback={<div>Loading…</div>}>
+              <VerifyContent />
+            </Suspense>
           </div>
         </section>
 

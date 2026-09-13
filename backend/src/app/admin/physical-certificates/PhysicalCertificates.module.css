@@ -1,0 +1,61 @@
+.page { padding: 32px 24px 60px; max-width: 1100px; margin: 0 auto; }
+
+/* Header */
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.title   { font-size: 1.35rem; font-weight: 700; color: var(--main-text); margin-bottom: 4px; }
+.description { font-size: 0.875rem; color: var(--secondary-text); }
+.countPill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; font-weight: 700;
+  background: var(--highlight); color: var(--brand-dark);
+  border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px;
+}
+
+/* State boxes */
+.stateBox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 60px 20px; text-align: center; color: var(--secondary-text); }
+.errorBox { color: var(--error); }
+.spinner  { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.emptyIcon  { color: var(--soft-accent); }
+.emptyTitle { font-size: 1rem; font-weight: 600; color: var(--main-text); }
+.emptyHint  { font-size: 0.875rem; }
+
+/* Table */
+.tableWrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(36,49,44,0.05); }
+.table { width: 100%; border-collapse: collapse; background: var(--card); }
+.table thead tr { background: var(--admin-bg); }
+.table th { padding: 12px 16px; font-size: 0.75rem; font-weight: 700; color: var(--secondary-text); text-align: left; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.row { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+.row:last-child { border-bottom: none; }
+.row:hover { background: var(--highlight); }
+.table td { padding: 14px 16px; vertical-align: middle; font-size: 0.875rem; }
+
+/* Cells */
+.studentCell { min-width: 160px; }
+.studentName  { font-weight: 700; color: var(--main-text); margin-bottom: 2px; }
+.studentEmail { font-size: 0.78rem; color: var(--secondary-text); }
+
+.mobileCell { white-space: nowrap; }
+.mobile { font-weight: 600; color: var(--main-text); }
+
+.addressCell { max-width: 220px; }
+.addressRow  { display: flex; align-items: flex-start; gap: 5px; font-size: 0.82rem; color: var(--secondary-text); }
+.mapIcon     { flex-shrink: 0; margin-top: 2px; color: var(--brand); }
+
+.districtCell { white-space: nowrap; font-size: 0.875rem; color: var(--main-text); }
+
+.pincodeCell { white-space: nowrap; }
+.pincodeBadge {
+  display: inline-block;
+  font-size: 0.78rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 100px;
+  background: var(--highlight); color: var(--brand-dark);
+  border: 1px solid var(--border);
+}
+
+.dateCell { font-size: 0.78rem; color: var(--secondary-text); white-space: nowrap; min-width: 130px; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  .page { padding: 20px 12px 40px; }
+}

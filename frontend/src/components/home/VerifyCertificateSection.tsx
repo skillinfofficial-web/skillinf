@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './VerifyCertificateSection.module.css';
 
@@ -25,24 +25,37 @@ function daysBetween(a: string, b: string) {
 }
 
 /* Props: embedded = true → show form directly (for /verify-certificate page)
-          embedded = false/undefined → show trigger button (for homepage) */
-export default function VerifyCertificateSection({ embedded }: { embedded?: boolean }) {
-  const [certId,  setCertId]  = useState('');
+          embedded = false/undefined → show trigger button (for homepage)
+          prefillId → auto-fill certificate ID (from QR code scan) */
+export default function VerifyCertificateSection({ embedded, prefillId }: { embedded?: boolean; prefillId?: string }) {
+  const [certId,  setCertId]  = useState(prefillId || '');
   const [loading, setLoading] = useState(false);
   const [result,  setResult]  = useState<CertData | null>(null);
   const [error,   setError]   = useState('');
 
-  const verify = async () => {
-    if (!certId.trim()) return;
+  // verifyById must be defined BEFORE useEffect that calls it
+  const verifyById = useCallback(async (id: string) => {
+    if (!id.trim()) return;
     setError(''); setResult(null); setLoading(true);
     try {
-      const res  = await fetch(`/api/verify-certificate?id=${encodeURIComponent(certId.trim())}`);
+      const res  = await fetch(`/api/verify-certificate?id=${encodeURIComponent(id.trim())}`);
       const data = await res.json();
       if (data.success) setResult(data.data);
       else              setError(data.message);
     } catch { setError('Network error. Please try again.'); }
     finally  { setLoading(false); }
-  };
+  }, []);
+
+  // Auto-fill + auto-verify when navigated from QR code (?id=...)
+  useEffect(() => {
+    if (prefillId && prefillId.trim()) {
+      setCertId(prefillId.trim());
+      const t = setTimeout(() => verifyById(prefillId.trim()), 400);
+      return () => clearTimeout(t);
+    }
+  }, [prefillId, verifyById]);
+
+  const verify = () => verifyById(certId);
 
   const reset = () => { setCertId(''); setResult(null); setError(''); };
 

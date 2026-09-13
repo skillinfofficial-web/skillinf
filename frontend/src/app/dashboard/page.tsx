@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './Dashboard.module.css';
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
@@ -14,13 +15,18 @@ interface UserDoc {
   submissions: { step1: string | null; step2: string | null; step3: string | null; step4: string | null };
   certificateUnlocked: boolean;
   paymentDone: boolean;
+  physicalCertificate?: {
+    paid: boolean;
+    address: string;
+    mobile: string;
+    district: string;
+    pincode: string;
+    registeredAt?: string;
+  } | null;
 }
 interface Week { week: number; deadlineDays: number; tutorialUrl: string; keyFeatures: string[]; whatYouLearn: string; }
 
 /* ── Helpers ───────────────────────────────────────────────────────────── */
-function daysBetween(a: string, b: string) {
-  return Math.max(0, Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86400000));
-}
 function addDays(dateStr: string, days: number) {
   const d = new Date(dateStr); d.setDate(d.getDate() + days); return d;
 }
@@ -42,17 +48,17 @@ function getInitials(name: string) {
 function progressPct(user: UserDoc): number {
   let pts = 0;
   if (user.linkedinVerified === true) pts += 20;
-  ['step1','step2','step3','step4'].forEach(k => { if (user.steps[k as keyof typeof user.steps]) pts += 20; });
+  ['step1', 'step2', 'step3', 'step4'].forEach(k => { if (user.steps[k as keyof typeof user.steps]) pts += 20; });
   return pts;
 }
 
 /* -- Offer Letter PDF helper -- */
 async function imgToBase64(url: string): Promise<string> {
-  const res  = await fetch(url);
+  const res = await fetch(url);
   const blob = await res.blob();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload  = () => resolve(reader.result as string);
+    reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
@@ -67,32 +73,25 @@ async function downloadOfferLetter(user: UserDoc) {
   ]);
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const W  = doc.internal.pageSize.getWidth();   // 210
-  const H  = doc.internal.pageSize.getHeight();  // 297
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
   const ML = 20; const MR = W - 20;
 
   const todayStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
   const startStr = new Date(user.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-  const endStr   = new Date(user.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  const endStr = new Date(user.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  /* 1 - WATERMARK logo 5% opacity behind text */
   doc.saveGraphicsState();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (doc as any).setGState(new (doc as any).GState({ opacity: 0.05 }));
   doc.addImage(logoB64, 'PNG', 22, 95, 160, 80, undefined, 'FAST');
   doc.restoreGraphicsState();
 
-  /* 2 - LIGHT GREEN HEADER BAR */
   doc.setFillColor(218, 245, 233); doc.rect(0, 0, W, 44, 'F');
-
-  /* 3 - LOGO top-left inside header (1024x512 = 2:1 ratio -> 48x24mm) */
   doc.addImage(logoB64, 'PNG', ML, 10, 48, 24, undefined, 'FAST');
-
-  /* 4 - DATE right-aligned below header */
   doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(60, 60, 60);
   doc.text(`Date: ${todayStr}`, MR, 54, { align: 'right' });
 
-  /* 5 - TO / NAME / INTERN ID */
   let y = 66;
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(60, 60, 60);
   doc.text('TO,', ML, y); y += 7;
@@ -101,29 +100,25 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(120, 120, 120);
   doc.text(`Intern ID: ${user._id}`, ML, y); y += 14;
 
-  /* 6 - SUBJECT with left green bar */
   doc.setFillColor(0, 184, 148); doc.rect(ML, y - 5, 2, 11, 'F');
   doc.setFillColor(240, 253, 248); doc.rect(ML + 2.5, y - 6, MR - ML - 2.5, 13, 'F');
   doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 122, 99);
   const subjectLines = doc.splitTextToSize(`Subject: Offer Letter for Internship in ${user.domain}`, MR - ML - 10);
   doc.text(subjectLines, ML + 6, y + 1); y += subjectLines.length * 7 + 11;
 
-  /* 7 - DEAR */
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 30);
   doc.text(`Dear ${user.name},`, ML, y); y += 10;
 
-  /* 8 - INTRO PARAGRAPH */
   const intro = 'We are delighted to inform you that you have been selected for an internship opportunity with Skillinf. This internship is designed to provide you with practical industry exposure through real-world projects, guided learning, and professional mentorship.';
   const introLines = doc.splitTextToSize(intro, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(introLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += introLines.length * 6.2 + 8;
 
-  /* 9 - DETAILS TABLE */
   const tableRows: [string, string][] = [
-    ['Internship Role',   `Intern - ${user.domain}`],
+    ['Internship Role', `Intern - ${user.domain}`],
     ['Commencement Date', startStr],
-    ['Completion Date',   endStr],
-    ['Work Mode',         'Remote / Project-Based'],
+    ['Completion Date', endStr],
+    ['Work Mode', 'Remote / Project-Based'],
   ];
   const valX = ML + 62; const rowH = 10;
   tableRows.forEach(([label, value], i) => {
@@ -135,19 +130,14 @@ async function downloadOfferLetter(user: UserDoc) {
   });
   y += tableRows.length * rowH + 12;
 
-  /* 10 - CLOSING TEXT first */
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(15, 23, 42);
   doc.text('Welcome to Skillinf, and congratulations!', ML, y); y += 7;
 
-  /* 11 - BODY PARAGRAPH immediately below, no extra gap */
   const body = 'Your progress and participation will be monitored throughout the internship. Successful completion will be based on your engagement, project performance, and fulfillment of the assigned internship requirements. We are excited to have you begin this learning journey with Skillinf and wish you every success in your professional development.';
   const bodyLines = doc.splitTextToSize(body, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(bodyLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += bodyLines.length * 6.2 + 10;
 
-
-  /* 12 - SEAL: 1024x1024 square -> 38x38mm, 80% opacity, left side */
-  // Clamp so it never overflows page bottom (needs 38mm height + footer 20mm)
   const sealY = Math.min(y, H - 60);
   doc.saveGraphicsState();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -155,11 +145,9 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.addImage(sealB64, 'PNG', ML, sealY, 38, 38, undefined, 'FAST');
   doc.restoreGraphicsState();
 
-  /* 13 - MSME: 1024x810 -> ratio 1.264:1 -> 22x17.4mm, right-aligned, same vertical as seal */
   const msmeW = 22; const msmeH = 17.4;
   doc.addImage(msmeB64, 'PNG', MR - msmeW, sealY + (38 - msmeH) / 2, msmeW, msmeH, undefined, 'FAST');
 
-  /* 14 - FOOTER */
   const footerY = H - 14;
   doc.setDrawColor(210, 210, 210); doc.setLineWidth(0.25); doc.line(ML, footerY - 6, MR, footerY - 6);
   doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(150, 150, 150);
@@ -167,9 +155,103 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.text('For verification, contact Skillinf Verification Cell.', W / 2, footerY + 3.5, { align: 'center' });
   doc.text('www.skillinf.in', W / 2, footerY + 8, { align: 'center' });
 
-  /* 15 - SAVE with correct filename */
   const safeName = user.name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
   doc.save(`${safeName}_skillinf_internship.pdf`);
+}
+
+/* ── Certificate PDF generator ──────────────────────────────────────────── */
+async function downloadCertificate(user: UserDoc) {
+  const { jsPDF } = await import('jspdf');
+  const QRCode = (await import('qrcode')).default;
+
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const W = 297; const H = 210;
+
+  const [templateB64] = await Promise.all([imgToBase64('/certificate-template.png')]);
+
+  const verifyUrl = `https://skillinf.in/verify-certificate?id=${user._id}`;
+  const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+    width: 120, margin: 1,
+    color: { dark: '#000000', light: '#ffffff' },
+  });
+
+  doc.addImage(templateB64, 'PNG', 0, 0, W, H, undefined, 'FAST');
+
+  const name = user.name;
+  doc.setFont('helvetica', 'bolditalic');
+  doc.setFontSize(38);
+  doc.setTextColor(26, 35, 126);
+  doc.text(name, W / 2, 100, { align: 'center' });
+
+  const nameWidth = doc.getTextWidth(name);
+  const lineX1 = W / 2 - nameWidth / 2;
+  const lineX2 = W / 2 + nameWidth / 2;
+  doc.setDrawColor(26, 35, 126);
+  doc.setLineWidth(0.5);
+  doc.line(lineX1, 103, lineX2, 103);
+
+  const startStr = new Date(user.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  const endStr = new Date(user.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  const bodyFontSize = 11;
+  const lineH = 6.5;
+  let bY = 118;
+  const CX = W / 2;
+  const maxW = 210;
+
+  function drawMixedLine(segments: { text: string; bold: boolean }[], y: number) {
+    let totalW = 0;
+    segments.forEach(s => {
+      doc.setFont('helvetica', s.bold ? 'bold' : 'normal');
+      doc.setFontSize(bodyFontSize);
+      totalW += doc.getTextWidth(s.text);
+    });
+    let curX = CX - totalW / 2;
+    segments.forEach(s => {
+      doc.setFont('helvetica', s.bold ? 'bold' : 'normal');
+      doc.setFontSize(bodyFontSize);
+      doc.setTextColor(s.bold ? 26 : 34, s.bold ? 35 : 34, s.bold ? 126 : 34);
+      const w = doc.getTextWidth(s.text);
+      doc.text(s.text, curX, y);
+      curX += w;
+    });
+  }
+
+  drawMixedLine([
+    { text: 'This is to certify that ', bold: false },
+    { text: name, bold: true },
+    { text: ' has successfully completed the', bold: false },
+  ], bY); bY += lineH;
+
+  drawMixedLine([
+    { text: user.domain, bold: true },
+    { text: ' Internship at Skillinf from ', bold: false },
+    { text: startStr, bold: true },
+    { text: ' to ', bold: false },
+    { text: endStr, bold: true },
+    { text: '.', bold: false },
+  ], bY); bY += lineH;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(bodyFontSize);
+  doc.setTextColor(34, 34, 34);
+  doc.text('During the internship, the candidate successfully completed the assigned tasks,', CX, bY, { align: 'center', maxWidth: maxW }); bY += lineH;
+  doc.text('activities, and projects.', CX, bY, { align: 'center', maxWidth: maxW });
+
+  const qrX = 18; const qrY = 165; const qrSize = 22;
+  doc.addImage(qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(60, 60, 60);
+  doc.text(`Certificate ID:`, qrX + qrSize + 3, qrY + qrSize / 2 - 2);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(26, 35, 126);
+  doc.text(user._id, qrX + qrSize + 3, qrY + qrSize / 2 + 3);
+
+  const safeName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+  doc.save(`${safeName}_skillinf_certificate.pdf`);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -177,22 +259,36 @@ async function downloadOfferLetter(user: UserDoc) {
 ══════════════════════════════════════════════════════════════════════ */
 export default function DashboardPage() {
   const router = useRouter();
-  const [user,    setUser]    = useState<UserDoc | null>(null);
-  const [weeks,   setWeeks]   = useState<Week[]>([]);
+  const [user, setUser] = useState<UserDoc | null>(null);
+  const [weeks, setWeeks] = useState<Week[]>([]);
   const [loading, setLoading] = useState(true);
-  const [noData,  setNoData]  = useState(false);
-  const [liUrl,   setLiUrl]   = useState('');
-  const [liMsg,   setLiMsg]   = useState('');
-  const [liLoad,  setLiLoad]  = useState(false);
-  const [stepLinks,     setStepLinks]     = useState(['','','','']);
-  const [stepMsgs,      setStepMsgs]      = useState(['','','','']);
-  const [stepLoads,     setStepLoads]     = useState([false,false,false,false]);
-  const [stepVerifying, setStepVerifying] = useState([false,false,false,false]);
+  const [noData, setNoData] = useState(false);
+  const [liUrl, setLiUrl] = useState('');
+  const [liMsg, setLiMsg] = useState('');
+  const [liLoad, setLiLoad] = useState(false);
+  const [stepLinks, setStepLinks] = useState(['', '', '', '']);
+  const [stepMsgs, setStepMsgs] = useState(['', '', '', '']);
+  const [stepLoads, setStepLoads] = useState([false, false, false, false]);
+  const [stepVerifying, setStepVerifying] = useState([false, false, false, false]);
 
-  // Payment modal state
+  // Payment prices
+  const [eCertPrice, setECertPrice] = useState(149);
+  const [physicalCertPrice, setPhysicalCertPrice] = useState(149);
+
+  // E-cert payment modal
   const [showPayModal, setShowPayModal] = useState(false);
-  const [payLoad,      setPayLoad]      = useState(false);
-  const [payMsg,       setPayMsg]       = useState('');
+  const [payLoad, setPayLoad] = useState(false);
+  const [payMsg, setPayMsg] = useState('');
+
+  // Physical cert modal
+  const [showPhysicalModal, setShowPhysicalModal] = useState(false);
+  const [physicalForm, setPhysicalForm] = useState({ address: '', mobile: '', district: '', pincode: '' });
+  const [physicalPayLoad, setPhysicalPayLoad] = useState(false);
+  const [physicalPayMsg, setPhysicalPayMsg] = useState('');
+  const [physicalSuccess, setPhysicalSuccess] = useState(false);
+
+  // Lock tooltip
+  const [showLockMsg, setShowLockMsg] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -205,27 +301,39 @@ export default function DashboardPage() {
       const cd = await cr.json();
       if (cd.success) setWeeks(cd.weeks); else setNoData(true);
     } catch { router.push('/sign-in'); }
-    finally   { setLoading(false); }
+    finally { setLoading(false); }
   }, [router]);
+
+  // Fetch payment config prices
+  useEffect(() => {
+    fetch('/api/admin/payment-config')
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.config) {
+          setECertPrice(d.config.eCertPrice ?? 149);
+          setPhysicalCertPrice(d.config.physicalCertPrice ?? 149);
+        }
+      })
+      .catch(() => {/* use defaults */});
+  }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  const signOut = async () => { await fetch('/api/auth/logout',{method:'POST'}); router.push('/'); };
+  const signOut = async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/'); };
 
-  /* ── Certificate payment via Cashfree ───────────────────────────────── */
+  /* ── E-Certificate payment ──────────────────────────────────────────── */
   const handleCertificatePayment = async () => {
     if (!user) return;
     setPayLoad(true); setPayMsg('');
     try {
-      // 1. Create order on our API
-      const orderRes  = await fetch('/api/payment/create-order', {
+      const orderRes = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: 149,
+          amount: eCertPrice,
           itemName: user.domain,
           itemType: 'certificate',
-          customerName:  user.name,
+          customerName: user.name,
           customerEmail: user.email,
           customerPhone: '9999999999',
         }),
@@ -237,35 +345,21 @@ export default function DashboardPage() {
       }
 
       const { orderId, paymentSessionId } = orderData;
-
-      // 2. Open Cashfree checkout
       const { load } = await import('@cashfreepayments/cashfree-js');
       const env = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'sandbox') as 'sandbox' | 'production';
       const cashfree = await load({ mode: env });
 
-      cashfree.checkout({
-        paymentSessionId,
-        redirectTarget: '_modal',
-      }).then(async (result) => {
-        if (result.error) {
-          setPayMsg(result.error.message || 'Payment failed. Try again.');
-          setPayLoad(false); return;
-        }
-        // 3. Verify with our backend
+      cashfree.checkout({ paymentSessionId, redirectTarget: '_modal' }).then(async (result) => {
+        if (result.error) { setPayMsg(result.error.message || 'Payment failed. Try again.'); setPayLoad(false); return; }
         setPayMsg('Verifying payment…');
-        const verRes  = await fetch('/api/payment/verify', {
+        const verRes = await fetch('/api/payment/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId }),
         });
         const verData = await verRes.json();
-        if (verData.success) {
-          setPayMsg('');
-          setShowPayModal(false);
-          await loadData();   // refresh user — paymentDone + certificateUnlocked now true
-        } else {
-          setPayMsg(verData.message || 'Could not verify payment. Contact support.');
-        }
+        if (verData.success) { setPayMsg(''); setShowPayModal(false); await loadData(); }
+        else { setPayMsg(verData.message || 'Could not verify payment. Contact support.'); }
         setPayLoad(false);
       });
     } catch (err) {
@@ -274,41 +368,104 @@ export default function DashboardPage() {
     }
   };
 
+  /* ── Physical Certificate payment ───────────────────────────────────── */
+  const handlePhysicalCertificatePayment = async () => {
+    if (!user) return;
+    const { address, mobile, district, pincode } = physicalForm;
+    if (!address.trim() || !mobile.trim() || !district.trim() || !pincode.trim()) {
+      setPhysicalPayMsg('Please fill in all fields.'); return;
+    }
+    if (!/^\d{10}$/.test(mobile.trim())) { setPhysicalPayMsg('Mobile number must be exactly 10 digits.'); return; }
+    if (!/^\d{6}$/.test(pincode.trim())) { setPhysicalPayMsg('Pincode must be exactly 6 digits.'); return; }
+
+    setPhysicalPayLoad(true); setPhysicalPayMsg('');
+    try {
+      const orderRes = await fetch('/api/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: physicalCertPrice,
+          itemName: user.domain,
+          itemType: 'physical-certificate',
+          customerName: user.name,
+          customerEmail: user.email,
+          customerPhone: mobile.trim(),
+        }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || orderData.error) {
+        setPhysicalPayMsg(orderData.error || 'Could not create order. Try again.');
+        setPhysicalPayLoad(false); return;
+      }
+
+      const { orderId, paymentSessionId } = orderData;
+      const { load } = await import('@cashfreepayments/cashfree-js');
+      const env = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'sandbox') as 'sandbox' | 'production';
+      const cashfree = await load({ mode: env });
+
+      cashfree.checkout({ paymentSessionId, redirectTarget: '_modal' }).then(async (result) => {
+        if (result.error) { setPhysicalPayMsg(result.error.message || 'Payment failed. Try again.'); setPhysicalPayLoad(false); return; }
+        setPhysicalPayMsg('Verifying payment…');
+        const verRes = await fetch('/api/payment/verify-physical', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId, address: address.trim(), mobile: mobile.trim(), district: district.trim(), pincode: pincode.trim() }),
+        });
+        const verData = await verRes.json();
+        if (verData.success) {
+          setPhysicalPayMsg('');
+          setShowPhysicalModal(false);
+          setPhysicalSuccess(true);
+          await loadData();
+        } else {
+          setPhysicalPayMsg(verData.message || 'Could not verify payment. Contact support.');
+        }
+        setPhysicalPayLoad(false);
+      });
+    } catch (err) {
+      setPhysicalPayMsg(err instanceof Error ? err.message : 'Something went wrong.');
+      setPhysicalPayLoad(false);
+    }
+  };
+
   const submitLinkedin = async () => {
     setLiMsg(''); setLiLoad(true);
     try {
-      const res  = await fetch('/api/user/linkedin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:liUrl})});
+      const res = await fetch('/api/user/linkedin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: liUrl }) });
       const data = await res.json();
       setLiMsg(data.message);
       if (data.success) { setLiUrl(''); loadData(); }
     } catch { setLiMsg('Something went wrong.'); }
-    finally  { setLiLoad(false); }
+    finally { setLiLoad(false); }
   };
 
   const submitStep = async (idx: number) => {
     const n = idx + 1;
-    const L = [...stepLoads]; L[idx]=true; setStepLoads(L);
+    const L = [...stepLoads]; L[idx] = true; setStepLoads(L);
     const M = [...stepMsgs];
     try {
-      const res  = await fetch('/api/user/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({step:n,driveLink:stepLinks[idx]})});
+      const res = await fetch('/api/user/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ step: n, driveLink: stepLinks[idx] }) });
       const data = await res.json();
       if (data.success) {
-        const V=[...stepVerifying]; V[idx]=true; setStepVerifying(V);
-        M[idx]=''; setStepMsgs(M);
-        setTimeout(()=>{ const V2=[...stepVerifying]; V2[idx]=false; setStepVerifying(V2); loadData(); }, 2500);
-      } else { M[idx]=data.message; setStepMsgs(M); }
-    } catch { M[idx]='Something went wrong.'; setStepMsgs(M); }
-    finally  { const L2=[...stepLoads]; L2[idx]=false; setStepLoads(L2); }
+        const V = [...stepVerifying]; V[idx] = true; setStepVerifying(V);
+        M[idx] = ''; setStepMsgs(M);
+        setTimeout(() => { const V2 = [...stepVerifying]; V2[idx] = false; setStepVerifying(V2); loadData(); }, 2500);
+      } else { M[idx] = data.message; setStepMsgs(M); }
+    } catch { M[idx] = 'Something went wrong.'; setStepMsgs(M); }
+    finally { const L2 = [...stepLoads]; L2[idx] = false; setStepLoads(L2); }
   };
 
   /* Loading */
   if (loading) return (
-    <div className={styles.loader}><div className={styles.spin}/><p>Loading your dashboard…</p></div>
+    <div className={styles.loader}><div className={styles.spin} /><p>Loading your dashboard…</p></div>
   );
   if (!user) return null;
 
-  const pct     = progressPct(user);
+  const pct = progressPct(user);
   const allDone = user.certificateUnlocked;
+  const eCertPaid = user.paymentDone;
+  const physicalCertPaid = user.physicalCertificate?.paid === true;
+  const physicalCertEnabled = eCertPaid && allDone;
   const initials = getInitials(user.name);
 
   let cumDays = 0;
@@ -319,7 +476,9 @@ export default function DashboardPage() {
 
       {/* ══ TOPBAR ════════════════════════════════════════════════════════ */}
       <header className={styles.topbar}>
-        <Link href="/" className={styles.topLogo}>SKILLINF</Link>
+        <Link href="/" className={styles.topLogo}>
+          <Image src="/skillinf-logo.png" alt="SkillInf" width={110} height={55} style={{ objectFit: 'contain', objectPosition: 'left center', height: '36px', width: 'auto' }} priority />
+        </Link>
         <nav className={styles.topNav}>
           <span className={styles.topEmail}>{user.email}</span>
           <button className={styles.signOutBtn} onClick={signOut}>Sign Out</button>
@@ -335,7 +494,7 @@ export default function DashboardPage() {
           <div className={styles.heroLeft}>
             <div className={styles.avatarWrap}>
               <div className={styles.avatar}>{initials}</div>
-              <div className={styles.avatarDot}/>
+              <div className={styles.avatarDot} />
             </div>
             <div className={styles.heroInfo}>
               <p className={styles.heroGreet}>WELCOME BACK,</p>
@@ -343,7 +502,7 @@ export default function DashboardPage() {
               <span className={styles.heroDomain}>{user.domain}</span>
               <div className={styles.progressRow}>
                 <div className={styles.progressTrack}>
-                  <div className={styles.progressFill} style={{ width: `${pct}%` }}/>
+                  <div className={styles.progressFill} style={{ width: `${pct}%` }} />
                 </div>
                 <span className={styles.progressPct}>{pct}%</span>
               </div>
@@ -357,9 +516,10 @@ export default function DashboardPage() {
           <div className={styles.heroRight}>
             <div className={styles.quoteBox}>
               <span className={styles.quoteMarks}>"</span>
-              <p className={styles.quoteText}>Small steps daily<br/>create big results.</p>
+              <p className={styles.quoteText}>Small steps daily<br />create big results.</p>
             </div>
             <div className={styles.heroActions}>
+              {/* Download Offer Letter */}
               <button className={styles.heroActionBtn} onClick={() => downloadOfferLetter(user)}>
                 <span className={styles.haBtnIcon}>📄</span>
                 <span className={styles.haBtnLabel}>
@@ -368,17 +528,59 @@ export default function DashboardPage() {
                 </span>
                 <span className={styles.haBtnArrow}>→</span>
               </button>
-              <button className={`${styles.heroActionBtn} ${!allDone ? styles.heroActionBtnLocked : ''}`} disabled={!allDone}>
-                <span className={styles.haBtnIcon}>🎓</span>
-                <span className={styles.haBtnLabel}>
-                  <span className={styles.haBtnTop}>Download</span>
-                  <span className={styles.haBtnSub}>Certificate</span>
-                </span>
-                <span className={styles.haBtnArrow}>{allDone ? '→' : '🔒'}</span>
-              </button>
+
+              {/* Get Physical Certificate */}
+              <div className={styles.physBtnWrap}>
+                <button
+                  className={`${styles.heroActionBtn} ${!physicalCertEnabled ? styles.heroActionBtnLocked : ''} ${physicalCertPaid ? styles.heroActionBtnDone : ''}`}
+                  onClick={() => {
+                    if (!physicalCertEnabled) {
+                      setShowLockMsg(true);
+                      setTimeout(() => setShowLockMsg(false), 4000);
+                    } else {
+                      setShowPhysicalModal(true);
+                    }
+                  }}
+                >
+                  <span className={styles.haBtnIcon}>📦</span>
+                  <span className={styles.haBtnLabel}>
+                    <span className={styles.haBtnTop}>{physicalCertPaid ? 'Requested' : 'Get Physical'}</span>
+                    <span className={styles.haBtnSub}>{physicalCertPaid ? 'Certificate ✓' : 'Certificate'}</span>
+                  </span>
+                  <span className={styles.haBtnArrow}>{physicalCertEnabled ? (physicalCertPaid ? '✓' : '→') : '🔒'}</span>
+                </button>
+                {showLockMsg && (
+                  <div className={styles.lockTooltip}>
+                    First complete all 4 steps and get your e-certificate — only then this option will be enabled.
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* ══ PHYSICAL CERT SUCCESS BANNER ══════════════════════════════ */}
+        {physicalSuccess && (
+          <div className={styles.physSuccessBanner}>
+            <span className={styles.physSuccessIcon}>🎉</span>
+            <div>
+              <p className={styles.physSuccessTitle}>Physical Certificate Requested!</p>
+              <p className={styles.physSuccessSub}>Your certificate will be delivered to your registered address within <strong>2–3 working days</strong>.</p>
+            </div>
+            <button className={styles.physSuccessClose} onClick={() => setPhysicalSuccess(false)}>✕</button>
+          </div>
+        )}
+
+        {/* Already paid — show persistent status */}
+        {physicalCertPaid && !physicalSuccess && (
+          <div className={styles.physSuccessBanner}>
+            <span className={styles.physSuccessIcon}>📦</span>
+            <div>
+              <p className={styles.physSuccessTitle}>Physical Certificate On Its Way!</p>
+              <p className={styles.physSuccessSub}>Your certificate is being processed and will be delivered to your registered address within <strong>2–3 working days</strong>.</p>
+            </div>
+          </div>
+        )}
 
         {/* ══ LINKEDIN CARD ══════════════════════════════════════════════ */}
         {user.linkedinVerified !== true && (
@@ -428,7 +630,7 @@ export default function DashboardPage() {
               <h2 className={styles.stepsSectionTitle}>Course Journey</h2>
               <p className={styles.stepsSectionSub}>Complete each step sequentially to unlock your certificate</p>
             </div>
-            <span className={styles.stepsCount}>{['step1','step2','step3','step4'].filter(k=>user.steps[k as keyof typeof user.steps]).length} / 4 completed</span>
+            <span className={styles.stepsCount}>{['step1', 'step2', 'step3', 'step4'].filter(k => user.steps[k as keyof typeof user.steps]).length} / 4 completed</span>
           </div>
 
           {noData ? (
@@ -439,17 +641,16 @@ export default function DashboardPage() {
           ) : (
             <div className={styles.stepsGrid}>
               {weeks.map((week, idx) => {
-                const n         = (idx + 1) as 1 | 2 | 3 | 4;
+                const n = (idx + 1) as 1 | 2 | 3 | 4;
                 const available = isStepAvailable(user, n);
-                const done      = user.steps[`step${n}` as keyof typeof user.steps];
-                const dueDate   = dueDates[idx];
-                const dl        = daysLeft(dueDate);
+                const done = user.steps[`step${n}` as keyof typeof user.steps];
+                const dueDate = dueDates[idx];
+                const dl = daysLeft(dueDate);
                 const verifying = stepVerifying[idx];
 
                 return (
                   <div key={n} className={`${styles.stepCard} ${done ? styles.stepDone : !available ? styles.stepLocked : styles.stepActive}`}>
 
-                    {/* Card top row */}
                     <div className={styles.scTop}>
                       <div className={`${styles.scNum} ${done ? styles.scNumDone : !available ? styles.scNumLocked : styles.scNumActive}`}>{done ? '✓' : n}</div>
                       <span className={done ? styles.badgeDone : available ? styles.badgeAvail : styles.badgeLocked}>
@@ -457,7 +658,6 @@ export default function DashboardPage() {
                       </span>
                     </div>
 
-                    {/* Due date */}
                     <div className={styles.scDue}>
                       <span className={styles.scDueIcon}>📅</span>
                       <span className={styles.scDueText}>Due {fmtDate(dueDate)}</span>
@@ -465,20 +665,16 @@ export default function DashboardPage() {
                       {dl === 0 && !done && <span className={`${styles.scDaysLeft} ${styles.overdue}`}>Overdue</span>}
                     </div>
 
-                    {/* Title */}
                     <h3 className={styles.scTitle}>{user.domain} — Week {n}</h3>
 
-                    {/* Tutorial button */}
                     <a href={week.tutorialUrl} target="_blank" rel="noreferrer"
                       className={`${styles.ytBtn} ${!available ? styles.ytDisabled : ''}`}
                       onClick={e => !available && e.preventDefault()}>
                       <span className={styles.ytPlay}>▶</span> Watch Task Tutorial
                     </a>
 
-                    {/* Description */}
                     <p className={styles.scDesc}>{week.whatYouLearn}</p>
 
-                    {/* Key features */}
                     <div className={styles.features}>
                       <p className={styles.featTitle}>Key Features</p>
                       <ul className={styles.featList}>
@@ -486,7 +682,6 @@ export default function DashboardPage() {
                       </ul>
                     </div>
 
-                    {/* Submit / status area — always at bottom */}
                     <div className={styles.scBottom}>
                       {done ? (
                         <div className={styles.doneRow}>
@@ -498,7 +693,7 @@ export default function DashboardPage() {
                         </div>
                       ) : verifying ? (
                         <div className={styles.verifyingRow}>
-                          <span className={styles.verifyingDot}/>
+                          <span className={styles.verifyingDot} />
                           Verifying… done in 2–3 min
                         </div>
                       ) : (
@@ -507,7 +702,7 @@ export default function DashboardPage() {
                             <input className={styles.driveInput} type="url"
                               placeholder="Paste Google Drive / project link…"
                               value={stepLinks[idx]}
-                              onChange={e => { const l=[...stepLinks]; l[idx]=e.target.value; setStepLinks(l); }} />
+                              onChange={e => { const l = [...stepLinks]; l[idx] = e.target.value; setStepLinks(l); }} />
                           )}
                           {stepMsgs[idx] && <p className={styles.stepErrMsg}>{stepMsgs[idx]}</p>}
                           <button className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
@@ -530,33 +725,33 @@ export default function DashboardPage() {
           <div className={styles.certBannerLeft}>
             <span className={styles.certBannerIcon}>🎓</span>
             <div>
-              <p className={styles.certBannerTitle}>Get Your Certificate</p>
+              <p className={styles.certBannerTitle}>Get Your E-Certificate</p>
               <p className={styles.certBannerSub}>
-                {user.paymentDone
-                  ? 'Payment complete — your certificate is unlocked!'
+                {eCertPaid
+                  ? 'Payment complete — click to download your certificate!'
                   : allDone
-                  ? 'All steps complete! Pay ₹149 to unlock your certificate.'
-                  : 'Complete all 4 course steps to unlock your certificate.'}
+                    ? `All steps complete! Pay ₹${eCertPrice} to unlock your certificate.`
+                    : 'Complete all 4 course steps to unlock your certificate.'}
               </p>
             </div>
           </div>
           <button
             className={styles.certBannerBtn}
-            disabled={!allDone || payLoad}
+            disabled={(!allDone && !eCertPaid) || payLoad}
             onClick={() => {
-              if (user.paymentDone) return;   // already paid
-              setShowPayModal(true);
+              if (eCertPaid) { downloadCertificate(user); }
+              else { setShowPayModal(true); }
             }}
           >
-            {user.paymentDone
-              ? '✅ Certificate Unlocked'
+            {eCertPaid
+              ? '⬇️ Download Certificate'
               : allDone
-              ? '💳 Pay ₹149 & Get Certificate'
-              : '🔒 Complete all steps first'}
+                ? `💳 Pay ₹${eCertPrice} & Get Certificate`
+                : '🔒 Complete all steps first'}
           </button>
         </div>
 
-        {/* ══ PAYMENT MODAL ══════════════════════════════════════════════ */}
+        {/* ══ E-CERT PAYMENT MODAL ═══════════════════════════════════════ */}
         {showPayModal && (
           <div className={styles.payOverlay} onClick={() => { if (!payLoad) setShowPayModal(false); }}>
             <div className={styles.payCard} onClick={e => e.stopPropagation()}>
@@ -565,7 +760,7 @@ export default function DashboardPage() {
               <h2 className={styles.payTitle}>Unlock Your Certificate</h2>
               <p className={styles.paySub}>One-time payment for your <strong>{user.domain}</strong> internship certificate</p>
               <div className={styles.payPriceBox}>
-                <span className={styles.payAmount}>₹149</span>
+                <span className={styles.payAmount}>₹{eCertPrice}</span>
                 <span className={styles.payPriceNote}>One-time · All inclusive</span>
               </div>
               <ul className={styles.payFeatures}>
@@ -575,12 +770,71 @@ export default function DashboardPage() {
                 <li>✅ SkillInf MSME-registered seal</li>
               </ul>
               {payMsg && <p className={styles.payMsg}>{payMsg}</p>}
-              <button
-                className={styles.payBtn}
-                disabled={payLoad}
-                onClick={handleCertificatePayment}
-              >
-                {payLoad ? 'Processing…' : 'Pay ₹149 with Cashfree'}
+              <button className={styles.payBtn} disabled={payLoad} onClick={handleCertificatePayment}>
+                {payLoad ? 'Processing…' : `Pay ₹${eCertPrice} with Cashfree`}
+              </button>
+              <p className={styles.payFooter}>🔒 Secured by Cashfree · UPI · Cards · Net Banking</p>
+            </div>
+          </div>
+        )}
+
+        {/* ══ PHYSICAL CERT MODAL ════════════════════════════════════════ */}
+        {showPhysicalModal && (
+          <div className={styles.payOverlay} onClick={() => { if (!physicalPayLoad) setShowPhysicalModal(false); }}>
+            <div className={styles.physCard} onClick={e => e.stopPropagation()}>
+              <button className={styles.payClose} onClick={() => { if (!physicalPayLoad) { setShowPhysicalModal(false); setPhysicalPayMsg(''); } }}>✕</button>
+              <div className={styles.payIcon}>📦</div>
+              <h2 className={styles.payTitle}>Get Physical Certificate</h2>
+              <p className={styles.paySub}>We&apos;ll courier your certificate directly to your address within <strong>2–3 working days</strong>.</p>
+              <div className={styles.payPriceBox}>
+                <span className={styles.payAmount}>₹{physicalCertPrice}</span>
+                <span className={styles.payPriceNote}>Includes delivery · All inclusive</span>
+              </div>
+              <div className={styles.physForm}>
+                <label className={styles.physLabel}>Full Delivery Address</label>
+                <textarea
+                  className={styles.physTextarea}
+                  placeholder="House No., Street, Area, Landmark…"
+                  rows={3}
+                  value={physicalForm.address}
+                  onChange={e => setPhysicalForm(f => ({ ...f, address: e.target.value }))}
+                />
+                <div className={styles.physRow}>
+                  <div className={styles.physFieldGroup}>
+                    <label className={styles.physLabel}>Mobile Number</label>
+                    <input
+                      className={styles.physInput}
+                      type="tel"
+                      placeholder="10-digit mobile"
+                      maxLength={10}
+                      value={physicalForm.mobile}
+                      onChange={e => setPhysicalForm(f => ({ ...f, mobile: e.target.value.replace(/\D/g, '') }))}
+                    />
+                  </div>
+                  <div className={styles.physFieldGroup}>
+                    <label className={styles.physLabel}>Pincode</label>
+                    <input
+                      className={styles.physInput}
+                      type="tel"
+                      placeholder="6-digit pincode"
+                      maxLength={6}
+                      value={physicalForm.pincode}
+                      onChange={e => setPhysicalForm(f => ({ ...f, pincode: e.target.value.replace(/\D/g, '') }))}
+                    />
+                  </div>
+                </div>
+                <label className={styles.physLabel}>District</label>
+                <input
+                  className={styles.physInput}
+                  type="text"
+                  placeholder="Your district"
+                  value={physicalForm.district}
+                  onChange={e => setPhysicalForm(f => ({ ...f, district: e.target.value }))}
+                />
+              </div>
+              {physicalPayMsg && <p className={styles.payMsg}>{physicalPayMsg}</p>}
+              <button className={styles.payBtn} disabled={physicalPayLoad} onClick={handlePhysicalCertificatePayment}>
+                {physicalPayLoad ? 'Processing…' : `Pay ₹${physicalCertPrice} & Get Physical Certificate`}
               </button>
               <p className={styles.payFooter}>🔒 Secured by Cashfree · UPI · Cards · Net Banking</p>
             </div>
@@ -591,3 +845,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
