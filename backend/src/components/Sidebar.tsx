@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import NotificationBell from './NotificationBell';
 import {
   LayoutDashboard,
   PlusCircle,
@@ -82,7 +83,7 @@ export default function Sidebar() {
         </button>
         <span className={styles.mobileLogo}>SKILLINF ADMIN</span>
         <div className={styles.mobileProfile}>
-          <User size={18} />
+          <NotificationBell />
         </div>
       </header>
 
@@ -105,13 +106,16 @@ export default function Sidebar() {
             <span className={styles.logoName}>SKILLINF</span>
             <span className={styles.logoSub}>ADMIN</span>
           </div>
-          <button
-            className={styles.closeBtn}
-            onClick={() => setMobileOpen(false)}
-            aria-label="Close menu"
-          >
-            <X size={18} />
-          </button>
+          <div className={styles.logoActions}>
+            <NotificationBell />
+            <button
+              className={styles.closeBtn}
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}

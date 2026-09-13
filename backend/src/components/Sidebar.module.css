@@ -82,6 +82,15 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* Group that holds bell + close button */
+.logoActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
 .logoIcon {
   width: 36px;
   height: 36px;
