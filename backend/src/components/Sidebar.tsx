@@ -12,7 +12,7 @@ import {
   Building2,
   FileText,
   Award,
-  ShieldCheck,
+  GraduationCap,
   Link2,
   Settings,
   User,
@@ -46,8 +46,7 @@ const navSections = [
     title: 'MANAGEMENT',
     items: [
       { name: 'Applications', path: '/admin/applications', icon: FileText },
-      { name: 'Certificates', path: '/admin/certificates', icon: Award },
-      { name: 'Verification', path: '/admin/verification', icon: ShieldCheck },
+      { name: 'E-Certificate', path: '/admin/e-certificate', icon: GraduationCap },
       { name: 'LinkedIn Verify', path: '/admin/linkedin-verify', icon: Link2 },
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
       { name: 'Payments', path: '/admin/payments', icon: CreditCard },
