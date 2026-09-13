@@ -55,7 +55,7 @@ export default function InternshipsSection() {
                 <span className={styles.metaItem}>{internship.level}</span>
               </div>
               
-              <Link href="/internships" className={styles.cardLink}>
+              <Link href="/sign-up" className={styles.cardLink}>
                 View Internship &rarr;
               </Link>
             </div>

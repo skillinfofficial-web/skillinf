@@ -9,9 +9,11 @@ import {
   BookOpen,
   Layers,
   FolderKanban,
+  Building2,
   FileText,
   Award,
   ShieldCheck,
+  Link2,
   Settings,
   User,
   LogOut,
@@ -35,6 +37,7 @@ const navSections = [
       { name: 'Internships', path: '/admin/internships', icon: BookOpen },
       { name: 'Programs', path: '/admin/programs', icon: Layers },
       { name: 'Projects', path: '/admin/projects', icon: FolderKanban },
+      { name: 'Company Internships', path: '/admin/company-internships', icon: Building2 },
     ],
   },
   {
@@ -43,6 +46,7 @@ const navSections = [
       { name: 'Applications', path: '/admin/applications', icon: FileText },
       { name: 'Certificates', path: '/admin/certificates', icon: Award },
       { name: 'Verification', path: '/admin/verification', icon: ShieldCheck },
+      { name: 'LinkedIn Verify', path: '/admin/linkedin-verify', icon: Link2 },
     ],
   },
   {

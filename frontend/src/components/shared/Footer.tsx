@@ -6,6 +6,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className="container">
         <div className={styles.grid}>
+
           {/* Brand Column */}
           <div className={styles.brandCol}>
             <Link href="/" className={styles.logo}>SKILLINF</Link>
@@ -25,32 +26,35 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Columns */}
+          {/* Internships column (was Programs) */}
           <div className={styles.linksCol}>
-            <h4 className={styles.colTitle}>Programs</h4>
-            <Link href="#" className={styles.link}>AI & Machine Learning</Link>
-            <Link href="#" className={styles.link}>Full-Stack Web Dev</Link>
-            <Link href="#" className={styles.link}>Data Science</Link>
-            <Link href="#" className={styles.link}>Cybersecurity</Link>
+            <h4 className={styles.colTitle}>Internships</h4>
+            <Link href="/sign-up" className={styles.link}>AI &amp; Machine Learning</Link>
+            <Link href="/sign-up" className={styles.link}>Full-Stack Web Dev</Link>
+            <Link href="/sign-up" className={styles.link}>Data Science &amp; Analytics</Link>
+            <Link href="/sign-up" className={styles.link}>Cybersecurity</Link>
           </div>
 
+          {/* Resources column */}
           <div className={styles.linksCol}>
             <h4 className={styles.colTitle}>Resources</h4>
-            <Link href="#" className={styles.link}>Projects Showcase</Link>
-            <Link href="#" className={styles.link}>Student Success</Link>
-            <Link href="#" className={styles.link}>Certificate Verification</Link>
-            <Link href="#" className={styles.link}>Blog</Link>
+            <Link href="/projects" className={styles.link}>Project Showcase</Link>
+            <Link href="/sign-up" className={styles.link}>Student Success</Link>
+            <Link href="/verify-certificate" className={styles.link}>Certificate Verification</Link>
+            <Link href="/sign-up" className={styles.link}>Blog</Link>
           </div>
 
+          {/* Company column */}
           <div className={styles.linksCol}>
             <h4 className={styles.colTitle}>Company</h4>
-            <Link href="#" className={styles.link}>About Us</Link>
-            <Link href="#" className={styles.link}>Careers</Link>
-            <Link href="#" className={styles.link}>Contact Support</Link>
+            <Link href="/about" className={styles.link}>About Us</Link>
+            <Link href="/sign-up" className={styles.link}>Careers</Link>
+            <Link href="/support" className={styles.link}>Customer Support</Link>
             <Link href="#" className={styles.link}>Privacy Policy</Link>
           </div>
+
         </div>
-        
+
         <div className={styles.bottom}>
           <p>&copy; {new Date().getFullYear()} SkillInf. All rights reserved.</p>
         </div>

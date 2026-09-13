@@ -1,0 +1,72 @@
+.main { min-height: 100vh; background: #f8fafc; }
+
+.hero {
+  background: #0f172a;
+  padding: 64px 0 56px;
+  text-align: center;
+}
+.heroBadge {
+  display: inline-block;
+  background: rgba(0,184,148,0.15);
+  color: #00b894;
+  font-size: 0.78rem; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 18px; border-radius: 100px;
+  border: 1px solid rgba(0,184,148,0.3);
+  margin-bottom: 18px;
+}
+.heroTitle {
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 900; color: #ffffff;
+  letter-spacing: -0.03em; margin-bottom: 14px;
+}
+.heroSub {
+  font-size: 1rem; color: rgba(255,255,255,0.6);
+  max-width: 560px; margin: 0 auto; line-height: 1.7;
+}
+
+.formSection { padding: 40px 0; }
+
+.howSection { padding: 8px 0 48px; }
+.howTitle {
+  font-size: 1.1rem; font-weight: 800; color: #0f172a;
+  margin-bottom: 20px; text-align: center;
+}
+.howGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.howCard {
+  background: #fff; border: 1px solid #e2e8f0;
+  border-radius: 14px; padding: 22px 20px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.howNum {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #0f172a; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800; flex-shrink: 0;
+}
+.howText { font-size: 0.875rem; color: #475569; line-height: 1.6; }
+
+.cta {
+  background: #00b894;
+  padding: 36px 0;
+  text-align: center;
+}
+.ctaText { font-size: 1rem; color: rgba(255,255,255,0.85); margin-bottom: 16px; font-weight: 600; }
+.ctaBtn {
+  display: inline-block;
+  background: #fff; color: #007a63;
+  padding: 12px 28px; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.ctaBtn:hover { transform: translateY(-2px); }
+
+@media (max-width: 640px) {
+  .hero { padding: 48px 0 40px; }
+  .howGrid { grid-template-columns: 1fr; }
+}

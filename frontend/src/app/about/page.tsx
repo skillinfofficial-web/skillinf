@@ -62,14 +62,14 @@ const offers = [
     icon: <Briefcase size={24} className={styles.offerIcon} />,
     title: "Internships",
     text: "Gain practical experience through structured internship experiences designed around learning, project work, and skill development.",
-    href: "/internships",
+    href: "/sign-up",
     cta: "Explore Internships",
   },
   {
     icon: <GraduationCap size={24} className={styles.offerIcon} />,
     title: "Programs",
     text: "Develop focused technical skills through structured, project-oriented programs that help learners progress from fundamentals to practical implementation.",
-    href: "/programs",
+    href: "/sign-up",
     cta: "Explore Programs",
   },
   {
@@ -354,7 +354,7 @@ export default function AboutPage() {
               opportunities.
             </p>
             <div className={styles.ctaButtons}>
-              <Link href="/internships" className={styles.ctaPrimary} id="about-cta-internships">
+              <Link href="/sign-up" className={styles.ctaPrimary} id="about-cta-internships">
                 Explore Internships
               </Link>
               <Link href="/programs" className={styles.ctaSecondary} id="about-cta-programs">

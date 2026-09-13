@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import AddContentForm from '@/components/AddContentForm';
 import styles from './add.module.css';
 
@@ -11,10 +12,17 @@ export default function AddContentPage() {
   return (
     <div className={styles.pageContainer}>
       <header className={styles.pageHeader}>
-        <h1 className={styles.title}>Add New Content</h1>
-        <p className={styles.description}>
-          Create and publish an internship, program, or project for SkillInf.
-        </p>
+        <div className={styles.headerRow}>
+          <div>
+            <h1 className={styles.title}>Content Management</h1>
+            <p className={styles.description}>
+              Create and publish an internship, program, or project for SkillInf.
+            </p>
+          </div>
+          <Link href="/admin/company-internships/new" className={styles.addCompanyBtn}>
+            + Add Company Internship
+          </Link>
+        </div>
       </header>
       <AddContentForm />
     </div>

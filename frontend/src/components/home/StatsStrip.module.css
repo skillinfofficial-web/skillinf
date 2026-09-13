@@ -1,0 +1,97 @@
+/* ── Strip wrapper ───────────────────────────────────────────────────────── */
+.strip {
+  background: #ffffff;
+  border-top: 1px solid var(--hp-accent-border);
+  border-bottom: 1px solid var(--hp-accent-border);
+  padding: 32px 0;
+}
+
+/* ── Inner flex row ──────────────────────────────────────────────────────── */
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+}
+
+/* ── Live indicator ──────────────────────────────────────────────────────── */
+.liveGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--hp-accent);
+  flex-shrink: 0;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.5); }
+  50%       { box-shadow: 0 0 0 7px rgba(0, 184, 148, 0); }
+}
+
+.liveLabel {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hp-accent-dark);
+}
+
+/* ── Vertical divider ────────────────────────────────────────────────────── */
+.divider {
+  width: 1px;
+  height: 40px;
+  background: var(--hp-accent-border);
+  flex-shrink: 0;
+}
+
+/* ── Individual stat ─────────────────────────────────────────────────────── */
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statNum {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.plus {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--hp-accent);
+  vertical-align: super;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5c6f78;
+  letter-spacing: 0.01em;
+}
+
+/* ── Mobile: stack vertically ────────────────────────────────────────────── */
+@media (max-width: 540px) {
+  .inner   { flex-direction: column; gap: 20px; }
+  .divider { width: 40px; height: 1px; }
+  .statNum { font-size: 2rem; }
+}
+
+/* ── Desktop ─────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .strip  { padding: 40px 0; }
+  .statNum { font-size: 2.8rem; }
+}

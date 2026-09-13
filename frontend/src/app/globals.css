@@ -1,5 +1,5 @@
 :root {
-  /* SkillInf Color Palette */
+  /* SkillInf Color Palette — Sage (platform-wide, unchanged) */
   --main-brand: #6B9080;
   --brand-dark: #3F5F54;
   --soft-accent: #DCE9E3;
@@ -7,7 +7,7 @@
   --card: #FFFFFF;
   --main-text: #24312C;
   --secondary-text: #66736D;
-  --border: #E4EBE7; /* E2E9E5 is requested for admin border, we can add it or just use it */
+  --border: #E4EBE7;
   --admin-border: #E2E9E5;
   --highlight: #F0F6F3;
   --success: #4F8A70;
@@ -15,10 +15,23 @@
   --input-bg: #FBFCFB;
   --error: #D9534F;
 
+  /* Homepage accent palette — Teal-Green (matches reference image) */
+  --hp-accent:        #00B894;  /* bright teal-green — buttons, eyebrow, active */
+  --hp-accent-dark:   #007A63;  /* deep green — hover states, stat numbers       */
+  --hp-accent-deep:   #0F172A;  /* very dark navy — headings, extreme contrast   */
+  --hp-accent-bg:     #E6FAF6;  /* pale green tint — badge / pill backgrounds    */
+  --hp-accent-border: #A3E6D8;  /* soft green border                             */
+  --hp-accent-mid:    #00A080;  /* mid green — transition hover                  */
+
+  /* Announcement bar */
+  --announcement-height: 44px;
+
   /* Layout */
   --max-width: 1280px;
-  --nav-height: 76px;
+  --nav-height: 72px;
 }
+
+
 
 /* Ensure no dark mode overrides for this specific brand identity unless requested, 
    but keeping a fallback just in case. The prompt specifies a precise warm white background. */
