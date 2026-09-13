@@ -30,6 +30,12 @@
   flex-shrink: 0;
   height: 36px;
 }
+.topLogoImg {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  object-position: left center;
+}
 .topNav   { display: flex; align-items: center; gap: 16px; }
 .topEmail { font-size: 0.78rem; color: #94a3b8; font-weight: 500; }
 .signOutBtn {

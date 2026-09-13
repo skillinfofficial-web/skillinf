@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import styles from './SignUp.module.css';
 
 const DOMAINS = [
@@ -21,25 +21,23 @@ const DOMAINS = [
 
 export default function SignUpPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const isChangeDomain = searchParams.get('addDomain') === '1';
+  const [isChangeDomain, setIsChangeDomain] = useState(false);
 
   const [form, setForm] = useState({
     name: '', email: '', mobileNumber: '', domain: '',
     startDate: '', endDate: '',
   });
-  const [error,       setError]       = useState('');
-  const [loading,     setLoading]     = useState(false);
-  const [success,     setSuccess]     = useState(false);
-  const [successMsg,  setSuccessMsg]  = useState('');
+  const [error,        setError]        = useState('');
+  const [loading,      setLoading]      = useState(false);
+  const [success,      setSuccess]      = useState(false);
+  const [successMsg,   setSuccessMsg]   = useState('');
   const [isAdditional, setIsAdditional] = useState(false);
 
-  // If coming from "Change Domain", pre-fill a hint
+  // Read ?addDomain=1 from URL without useSearchParams (avoids Suspense requirement)
   useEffect(() => {
-    if (isChangeDomain) {
-      setError('');
-    }
-  }, [isChangeDomain]);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('addDomain') === '1') setIsChangeDomain(true);
+  }, []);
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(prev => ({ ...prev, [k]: e.target.value }));
@@ -56,10 +54,10 @@ export default function SignUpPage() {
       });
       const data = await res.json();
       if (!data.success) { setError(data.message); return; }
-      setIsAdditional(data.isAdditional);
-      setSuccessMsg(data.message);
+      setIsAdditional(!!data.isAdditional);
+      setSuccessMsg(data.message || 'Account created successfully!');
       setSuccess(true);
-      setTimeout(() => router.push('/sign-in'), 2500);
+      setTimeout(() => router.push('/sign-in'), 3000);
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -74,9 +72,9 @@ export default function SignUpPage() {
         <Link href="/" className={styles.logoWrap} aria-label="SkillInf Home">
           <Image
             src="/skillinf-logo.png"
-            alt="SkillInf — Learn Built Grow"
-            width={160}
-            height={60}
+            alt="SkillInf"
+            width={140}
+            height={50}
             priority
             className={styles.logoImg}
           />
@@ -103,8 +101,8 @@ export default function SignUpPage() {
             <div>
               <p className={styles.mdbTitle}>Multiple Domain Internships Supported!</p>
               <p className={styles.mdbText}>
-                You can enroll in multiple internship domains using the same email ID and mobile number.
-                Each domain gives you a separate dashboard and certificate.
+                One person can do multiple domain internships with the same email ID and password.
+                Each domain gets a separate dashboard and certificate.
               </p>
             </div>
           </div>
@@ -112,7 +110,7 @@ export default function SignUpPage() {
           {success ? (
             <div className={`${styles.successBox} ${isAdditional ? styles.successBoxMulti : ''}`}>
               <span className={styles.successIcon}>{isAdditional ? '🎓' : '✓'}</span>
-              <p>{successMsg || 'Account created! Redirecting to Sign In…'}</p>
+              <p>{successMsg}</p>
             </div>
           ) : (
             <form onSubmit={submit} className={styles.form} noValidate>

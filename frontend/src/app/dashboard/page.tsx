@@ -477,7 +477,12 @@ export default function DashboardPage() {
       {/* ══ TOPBAR ════════════════════════════════════════════════════════ */}
       <header className={styles.topbar}>
         <Link href="/" className={styles.topLogo}>
-          <Image src="/skillinf-logo.png" alt="SkillInf" width={110} height={55} style={{ objectFit: 'contain', objectPosition: 'left center', height: '36px', width: 'auto' }} priority />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/skillinf-logo.png"
+            alt="SkillInf"
+            className={styles.topLogoImg}
+          />
         </Link>
         <nav className={styles.topNav}>
           <span className={styles.topEmail}>{user.email}</span>
