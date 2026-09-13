@@ -31,34 +31,63 @@ export async function POST(req: Request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return err('Enter a valid email address.');
 
     const db = await getDatabase();
+    const emailNorm = email.trim().toLowerCase();
 
-    // ── Uniqueness check ───────────────────────────────────────────────────
-    const existing = await db.collection('users').findOne({ email: email.trim().toLowerCase() });
-    if (existing) return err('This email is already registered. Please sign in.', 409);
+    // ── Check: same email + same domain = not allowed ──────────────────────
+    const exactDuplicate = await db.collection('users').findOne({
+      email: emailNorm,
+      domain,
+    });
+    if (exactDuplicate) {
+      return err(`You are already enrolled in ${domain} with this email. Please sign in or choose a different domain.`, 409);
+    }
 
-    // ── Hash password (mobile number) ──────────────────────────────────────
-    const mobileHash = await bcrypt.hash(mobileNumber.trim(), 12);
+    // ── Existing user with same email (different domain) ───────────────────
+    const existingUser = await db.collection('users').findOne({ email: emailNorm });
+    let mobileHash: string;
+
+    if (existingUser) {
+      // Verify mobile matches the existing account
+      const mobileMatches = await bcrypt.compare(mobileNumber.trim(), existingUser.mobileHash as string);
+      if (!mobileMatches) {
+        return err('This email is registered with a different mobile number. Please use your original mobile number.', 401);
+      }
+      // Reuse existing hash — keeps login consistent
+      mobileHash = existingUser.mobileHash as string;
+    } else {
+      // Brand new user — hash their mobile
+      mobileHash = await bcrypt.hash(mobileNumber.trim(), 12);
+    }
+
     const now = new Date();
-
     const doc = {
-      name:             name.trim(),
-      email:            email.trim().toLowerCase(),
+      name:                existingUser ? (existingUser.name as string) : name.trim(),
+      email:               emailNorm,
       mobileHash,
       domain,
       startDate,
       endDate,
-      linkedinVerified: false as boolean | 'pending',
-      linkedinPostUrl:  null as string | null,
-      steps: { step1: false, step2: false, step3: false, step4: false },
-      submissions: { step1: null as string | null, step2: null as string | null,
-                     step3: null as string | null, step4: null as string | null },
+      linkedinVerified:    false as boolean | 'pending',
+      linkedinPostUrl:     null as string | null,
+      steps:               { step1: false, step2: false, step3: false, step4: false },
+      submissions:         { step1: null as string | null, step2: null as string | null,
+                             step3: null as string | null, step4: null as string | null },
       certificateUnlocked: false,
-      createdAt: now,
-      updatedAt: now,
+      paymentDone:         false,
+      createdAt:           now,
+      updatedAt:           now,
     };
 
     await db.collection('users').insertOne(doc);
-    return NextResponse.json({ success: true, message: 'Account created successfully.' }, { status: 201 });
+
+    const isAdditional = !!existingUser;
+    return NextResponse.json({
+      success: true,
+      message: isAdditional
+        ? `Successfully enrolled in ${domain}! You now have multiple domain internships. Please sign in and select your domain.`
+        : 'Account created successfully.',
+      isAdditional,
+    }, { status: 201 });
   } catch (e) {
     console.error('[POST /api/auth/register]', e);
     return NextResponse.json({ success: false, message: 'Server error. Please try again.' }, { status: 500 });

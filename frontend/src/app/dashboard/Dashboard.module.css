@@ -127,8 +127,36 @@
   color: #a5b4fc;
   border: 1px solid rgba(99,102,241,0.3);
   padding: 3px 10px; border-radius: 100px;
-  margin-bottom: 16px;
 }
+/* Row holding domain badge + add domain button */
+.domainRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.changeDomainBtn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #00b894;
+  background: rgba(0,184,148,0.12);
+  border: 1px solid rgba(0,184,148,0.3);
+  padding: 3px 10px;
+  border-radius: 100px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  white-space: nowrap;
+}
+.changeDomainBtn:hover {
+  background: rgba(0,184,148,0.22);
+  border-color: rgba(0,184,148,0.5);
+  transform: translateY(-1px);
+}
+
 .progressRow {
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 5px;

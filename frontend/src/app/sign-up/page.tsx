@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './SignUp.module.css';
 
 const DOMAINS = [
@@ -21,13 +21,25 @@ const DOMAINS = [
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isChangeDomain = searchParams.get('addDomain') === '1';
+
   const [form, setForm] = useState({
     name: '', email: '', mobileNumber: '', domain: '',
     startDate: '', endDate: '',
   });
-  const [error,   setError]   = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error,       setError]       = useState('');
+  const [loading,     setLoading]     = useState(false);
+  const [success,     setSuccess]     = useState(false);
+  const [successMsg,  setSuccessMsg]  = useState('');
+  const [isAdditional, setIsAdditional] = useState(false);
+
+  // If coming from "Change Domain", pre-fill a hint
+  useEffect(() => {
+    if (isChangeDomain) {
+      setError('');
+    }
+  }, [isChangeDomain]);
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(prev => ({ ...prev, [k]: e.target.value }));
@@ -37,11 +49,17 @@ export default function SignUpPage() {
     setError('');
     setLoading(true);
     try {
-      const res  = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const res  = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
       const data = await res.json();
       if (!data.success) { setError(data.message); return; }
+      setIsAdditional(data.isAdditional);
+      setSuccessMsg(data.message);
       setSuccess(true);
-      setTimeout(() => router.push('/sign-in'), 1800);
+      setTimeout(() => router.push('/sign-in'), 2500);
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -69,14 +87,32 @@ export default function SignUpPage() {
       <main className={styles.main}>
         <div className={styles.card}>
           <div className={styles.cardHead}>
-            <h1 className={styles.title}>Create your SkillInf account</h1>
-            <p className={styles.sub}>Join thousands of students building real skills</p>
+            <h1 className={styles.title}>
+              {isChangeDomain ? 'Add Another Domain' : 'Create your SkillInf account'}
+            </h1>
+            <p className={styles.sub}>
+              {isChangeDomain
+                ? 'Enroll in a new internship domain using your existing email and mobile number'
+                : 'Join thousands of students building real skills'}
+            </p>
+          </div>
+
+          {/* ── Multi-domain info banner ── */}
+          <div className={styles.multiDomainBanner}>
+            <span className={styles.mdbIcon}>🎯</span>
+            <div>
+              <p className={styles.mdbTitle}>Multiple Domain Internships Supported!</p>
+              <p className={styles.mdbText}>
+                You can enroll in multiple internship domains using the same email ID and mobile number.
+                Each domain gives you a separate dashboard and certificate.
+              </p>
+            </div>
           </div>
 
           {success ? (
-            <div className={styles.successBox}>
-              <span className={styles.successIcon}>✓</span>
-              <p>Account created! Redirecting to Sign In…</p>
+            <div className={`${styles.successBox} ${isAdditional ? styles.successBoxMulti : ''}`}>
+              <span className={styles.successIcon}>{isAdditional ? '🎓' : '✓'}</span>
+              <p>{successMsg || 'Account created! Redirecting to Sign In…'}</p>
             </div>
           ) : (
             <form onSubmit={submit} className={styles.form} noValidate>
@@ -126,7 +162,7 @@ export default function SignUpPage() {
               </div>
 
               <button id="su-submit" className={styles.submitBtn} type="submit" disabled={loading}>
-                {loading ? 'Creating Account…' : 'Create Account'}
+                {loading ? 'Enrolling…' : isChangeDomain ? 'Enroll in New Domain' : 'Create Account'}
               </button>
             </form>
           )}

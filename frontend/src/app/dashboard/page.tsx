@@ -499,7 +499,16 @@ export default function DashboardPage() {
             <div className={styles.heroInfo}>
               <p className={styles.heroGreet}>WELCOME BACK,</p>
               <h1 className={styles.heroName}>{user.name}</h1>
-              <span className={styles.heroDomain}>{user.domain}</span>
+              <div className={styles.domainRow}>
+                <span className={styles.heroDomain}>{user.domain}</span>
+                <Link
+                  href="/sign-up?addDomain=1"
+                  className={styles.changeDomainBtn}
+                  title="Enroll in another internship domain"
+                >
+                  + Add New Domain
+                </Link>
+              </div>
               <div className={styles.progressRow}>
                 <div className={styles.progressTrack}>
                   <div className={styles.progressFill} style={{ width: `${pct}%` }} />

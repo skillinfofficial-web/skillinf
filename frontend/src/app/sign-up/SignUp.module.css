@@ -147,3 +147,29 @@
   .card    { padding: 28px 20px; }
   .dateRow { grid-template-columns: 1fr; }
 }
+
+/* ── Multi-domain info banner ─────────────────────────────── */
+.multiDomainBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: linear-gradient(135deg, #e6faf6 0%, #f0fdf8 100%);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.mdbIcon  { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+.mdbTitle { font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0 0 3px; }
+.mdbText  { font-size: 0.78rem; color: #047857; line-height: 1.5; margin: 0; }
+
+/* Success box variant for additional enrollment */
+.successBoxMulti {
+  background: linear-gradient(135deg, #e6faf6, #f0fdf8);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 24px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+

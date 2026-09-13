@@ -19,7 +19,34 @@
 .submitBtn { width: 100%; padding: 13px; background: #00b894; color: #ffffff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.15s; margin-top: 4px; }
 .submitBtn:hover:not(:disabled) { background: #007a63; transform: translateY(-1px); }
 .submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
-.footer  { font-size: 0.85rem; color: #66736d; text-align: center; }
+.footer  { font-size: 0.85rem; color: #66736d; text-align: center; margin-top: 20px; }
 .link    { color: #00b894; font-weight: 700; text-decoration: none; }
 .link:hover { text-decoration: underline; }
 @media (max-width: 480px) { .card { padding: 28px 20px; } }
+
+/* ── Domain picker ──────────────────────────────────────── */
+.domainPicker { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.domainList   { display: flex; flex-direction: column; gap: 8px; }
+
+.domainOption {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; border: 1.5px solid #dce9e3; border-radius: 12px;
+  background: #fbfcfb; cursor: pointer; width: 100%; text-align: left;
+  font-size: 0.92rem; font-family: inherit;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.domainOption:hover { border-color: #00b894; background: #f0fdf8; }
+.domainOptionActive {
+  border-color: #00b894; background: #e6faf6;
+  box-shadow: 0 0 0 3px rgba(0,184,148,0.12);
+}
+.domainRadio { font-size: 1.1rem; color: #00b894; flex-shrink: 0; }
+.domainName  { flex: 1; font-weight: 700; color: #0f172a; }
+.domainCheck { font-size: 0.85rem; color: #00b894; font-weight: 800; }
+
+.backBtn {
+  background: none; border: 1.5px solid #dce9e3; border-radius: 10px;
+  padding: 10px; font-size: 0.875rem; font-weight: 700; color: #66736d;
+  cursor: pointer; width: 100%; transition: border-color 0.15s, color 0.15s;
+}
+.backBtn:hover { border-color: #00b894; color: #00b894; }
