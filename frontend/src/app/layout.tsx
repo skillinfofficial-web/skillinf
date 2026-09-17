@@ -35,7 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <head>
+      <body className={inter.className}>
+        {children}
+        <FloatingChat />
         {/* Google Analytics */}
         <Script
           strategy="afterInteractive"
@@ -49,10 +51,6 @@ export default function RootLayout({
             gtag('config', 'G-CBQGRL2K5M');
           `}
         </Script>
-      </head>
-      <body className={inter.className}>
-        {children}
-        <FloatingChat />
       </body>
     </html>
   );
