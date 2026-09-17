@@ -12,7 +12,6 @@ import {
   FolderKanban,
   Building2,
   FileText,
-  Award,
   GraduationCap,
   Link2,
   Settings,
@@ -23,6 +22,8 @@ import {
   Leaf,
   Package,
   CreditCard,
+  Tag,
+  Megaphone,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -37,20 +38,22 @@ const navSections = [
   {
     title: 'CONTENT',
     items: [
-      { name: 'Internships', path: '/admin/internships', icon: BookOpen },
-      { name: 'Programs', path: '/admin/programs', icon: Layers },
-      { name: 'Projects', path: '/admin/projects', icon: FolderKanban },
-      { name: 'Company Internships', path: '/admin/company-internships', icon: Building2 },
+      { name: 'Internships',          path: '/admin/internships',          icon: BookOpen },
+      { name: 'Programs',             path: '/admin/programs',             icon: Layers },
+      { name: 'Projects',             path: '/admin/projects',             icon: FolderKanban },
+      { name: 'Company Internships',  path: '/admin/company-internships',  icon: Building2 },
+      { name: 'Domains',              path: '/admin/domains',              icon: Tag },
+      { name: 'Announcement Bar',     path: '/admin/announcement',         icon: Megaphone },
     ],
   },
   {
     title: 'MANAGEMENT',
     items: [
-      { name: 'Applications', path: '/admin/applications', icon: FileText },
-      { name: 'E-Certificate', path: '/admin/e-certificate', icon: GraduationCap },
-      { name: 'LinkedIn Verify', path: '/admin/linkedin-verify', icon: Link2 },
+      { name: 'Applications',          path: '/admin/applications',          icon: FileText },
+      { name: 'E-Certificate',         path: '/admin/e-certificate',         icon: GraduationCap },
+      { name: 'LinkedIn Verify',       path: '/admin/linkedin-verify',       icon: Link2 },
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
-      { name: 'Payments', path: '/admin/payments', icon: CreditCard },
+      { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
     ],
   },
   {
@@ -153,7 +156,13 @@ export default function Sidebar() {
             <User size={16} />
             <span>Admin Profile</span>
           </Link>
-          <button className={styles.footerLink}>
+          <button
+            className={styles.footerLink}
+            onClick={() => {
+              document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+              window.location.href = '/admin/login';
+            }}
+          >
             <LogOut size={16} />
             <span>Logout</span>
           </button>

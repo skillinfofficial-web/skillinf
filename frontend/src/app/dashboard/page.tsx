@@ -9,6 +9,7 @@ import styles from './Dashboard.module.css';
 /* ── Types ─────────────────────────────────────────────────────────────── */
 interface UserDoc {
   _id: string; name: string; email: string; domain: string;
+  mobileNumber?: string;  // stored since Sept 2026; may be absent for older accounts
   startDate: string; endDate: string;
   linkedinVerified: boolean | 'pending'; linkedinPostUrl: string | null;
   steps: { step1: boolean; step2: boolean; step3: boolean; step4: boolean };
@@ -335,7 +336,7 @@ export default function DashboardPage() {
           itemType: 'certificate',
           customerName: user.name,
           customerEmail: user.email,
-          customerPhone: '9999999999',
+          customerPhone: user.mobileNumber || '',  // real mobile; empty string falls back to CF's validation
         }),
       });
       const orderData = await orderRes.json();

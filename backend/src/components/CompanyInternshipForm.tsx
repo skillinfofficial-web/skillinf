@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import styles from './CompanyInternshipForm.module.css';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -11,6 +11,21 @@ interface WeekData {
   tutorialUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
+}
+
+interface InitialWeek {
+  week: number;
+  deadlineDays: number;
+  tutorialUrl: string;
+  keyFeatures: string[];
+  whatYouLearn: string;
+}
+
+interface Props {
+  editMode?:    boolean;
+  editId?:      string;
+  initialName?: string;
+  initialWeeks?: InitialWeek[];
 }
 
 const WEEK_SUBTITLES = [
@@ -24,11 +39,15 @@ const YOUTUBE_REGEX =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)[\w-]{11}|youtu\.be\/[\w-]{11})(?:[?&].*)?$/;
 
 function makeBlankWeek(): WeekData {
+  return { deadlineDays: '7', tutorialUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '' };
+}
+
+function weekFromInitial(w: InitialWeek): WeekData {
   return {
-    deadlineDays: '7',
-    tutorialUrl: '',
-    keyFeatures: ['', '', '', ''],
-    whatYouLearn: '',
+    deadlineDays: String(w.deadlineDays),
+    tutorialUrl:  w.tutorialUrl,
+    keyFeatures:  w.keyFeatures.length >= 4 ? w.keyFeatures : [...w.keyFeatures, ...Array(4 - w.keyFeatures.length).fill('')],
+    whatYouLearn: w.whatYouLearn,
   };
 }
 
@@ -37,13 +56,10 @@ function Stepper({ current }: { current: number }) {
   return (
     <div className={styles.stepper}>
       {[1, 2, 3, 4].map((n) => {
-        const done = n < current;
+        const done   = n < current;
         const active = n === current;
         return (
-          <div
-            key={n}
-            className={`${styles.stepItem} ${done ? styles.completed : ''} ${active ? styles.active : ''}`}
-          >
+          <div key={n} className={`${styles.stepItem} ${done ? styles.completed : ''} ${active ? styles.active : ''}`}>
             <div className={styles.stepCircle}>
               {done ? <CheckCircle size={16} /> : n}
             </div>
@@ -59,46 +75,62 @@ function Stepper({ current }: { current: number }) {
 function validateStep(week: WeekData, weekNum: number): Record<string, string> {
   const errs: Record<string, string> = {};
   const days = Number(week.deadlineDays);
-  if (!week.deadlineDays || !Number.isInteger(days) || days < 1) {
+  if (!week.deadlineDays || !Number.isInteger(days) || days < 1)
     errs.deadlineDays = `Enter a positive whole number (e.g. 7).`;
-  }
-  if (!week.tutorialUrl.trim() || !YOUTUBE_REGEX.test(week.tutorialUrl.trim())) {
+  if (!week.tutorialUrl.trim() || !YOUTUBE_REGEX.test(week.tutorialUrl.trim()))
     errs.tutorialUrl = `Enter a valid YouTube URL (youtube.com/watch?v=... or youtu.be/...).`;
-  }
   week.keyFeatures.forEach((f, i) => {
     if (!f.trim()) errs[`feature_${i}`] = `Feature ${i + 1} is required.`;
   });
-  if (week.keyFeatures.length < 4) {
+  if (week.keyFeatures.length < 4)
     errs.keyFeatures = `At least 4 key features are required.`;
-  }
-  if (!week.whatYouLearn.trim()) {
+  if (!week.whatYouLearn.trim())
     errs.whatYouLearn = `What You Learn is required.`;
-  } else if (week.whatYouLearn.length > 250) {
+  else if (week.whatYouLearn.length > 250)
     errs.whatYouLearn = `Must be 250 characters or fewer.`;
-  }
   void weekNum;
   return errs;
 }
 
 // ── Main Component ────────────────────────────────────────────────────────────
-export default function CompanyInternshipForm() {
+export default function CompanyInternshipForm({ editMode = false, editId, initialName = '', initialWeeks }: Props) {
   const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [internshipName, setInternshipName] = useState('');
-  const [nameError, setNameError] = useState('');
-  const [weeks, setWeeks] = useState<WeekData[]>([
-    makeBlankWeek(),
-    makeBlankWeek(),
-    makeBlankWeek(),
-    makeBlankWeek(),
-  ]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [submitMsg, setSubmitMsg] = useState('');
+  const [step,           setStep]           = useState(1);
+  const [internshipName, setInternshipName] = useState(initialName);
+  const [nameError,      setNameError]      = useState('');
+  const [weeks,          setWeeks]          = useState<WeekData[]>(() =>
+    initialWeeks ? initialWeeks.map(weekFromInitial) : [makeBlankWeek(), makeBlankWeek(), makeBlankWeek(), makeBlankWeek()]
+  );
+  const [errors,         setErrors]         = useState<Record<string, string>>({});
+  const [submitStatus,   setSubmitStatus]   = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [submitMsg,      setSubmitMsg]      = useState('');
+
+  // ── Domains ──────────────────────────────────────────────────────────────
+  const [domains,        setDomains]        = useState<string[]>([]);
+  const [domainsLoading, setDomainsLoading] = useState(true);
+  const [domainsError,   setDomainsError]   = useState('');
+
+  useEffect(() => {
+    fetch('/api/domains')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          // API returns objects { name } — extract to string[]
+          const names = (d.domains as ({ name: string } | string)[]).map((x) =>
+            typeof x === 'string' ? x : x.name
+          );
+          setDomains(names);
+        } else {
+          setDomainsError('Failed to load domains.');
+        }
+      })
+      .catch(() => setDomainsError('Network error loading domains.'))
+      .finally(() => setDomainsLoading(false));
+  }, []);
 
   const currentWeek = weeks[step - 1];
 
-  // ── Week state helpers ──────────────────────────────────────────────────────
+  // ── Week state helpers ──────────────────────────────────────────────────
   const updateWeek = (field: keyof WeekData, value: string | string[]) => {
     setWeeks((prev) => {
       const next = [...prev];
@@ -109,59 +141,37 @@ export default function CompanyInternshipForm() {
 
   const updateFeature = (idx: number, value: string) => {
     const updated = [...currentWeek.keyFeatures];
-    updated[idx] = value;
+    updated[idx]  = value;
     updateWeek('keyFeatures', updated);
   };
 
-  const addFeature = () => {
-    updateWeek('keyFeatures', [...currentWeek.keyFeatures, '']);
-  };
-
+  const addFeature    = () => updateWeek('keyFeatures', [...currentWeek.keyFeatures, '']);
   const removeFeature = (idx: number) => {
-    if (idx < 4) return; // first 4 are locked
-    const updated = currentWeek.keyFeatures.filter((_, i) => i !== idx);
-    updateWeek('keyFeatures', updated);
+    if (idx < 4) return;
+    updateWeek('keyFeatures', currentWeek.keyFeatures.filter((_, i) => i !== idx));
   };
 
-  // ── Deadline days: only allow integers ─────────────────────────────────────
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    // Allow empty for UX, but only digits
-    if (raw === '' || /^\d+$/.test(raw)) {
-      updateWeek('deadlineDays', raw);
-    }
+    if (raw === '' || /^\d+$/.test(raw)) updateWeek('deadlineDays', raw);
   };
 
-  // ── Navigation ──────────────────────────────────────────────────────────────
+  // ── Navigation ────────────────────────────────────────────────────────────
   const handleNext = () => {
-    // Validate internship name on step 1
-    if (step === 1 && !internshipName.trim()) {
-      setNameError('Internship name is required.');
-      return;
-    }
+    if (step === 1 && !internshipName.trim()) { setNameError('Please select an internship domain.'); return; }
     setNameError('');
-
     const errs = validateStep(currentWeek, step);
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setStep((s) => Math.min(s + 1, 4));
   };
 
-  const handleBack = () => {
-    setErrors({});
-    setStep((s) => Math.max(s - 1, 1));
-  };
+  const handleBack = () => { setErrors({}); setStep((s) => Math.max(s - 1, 1)); };
 
-  // ── Submit ───────────────────────────────────────────────────────────────────
+  // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
     const errs = validateStep(currentWeek, step);
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setSubmitStatus('loading');
 
@@ -169,24 +179,22 @@ export default function CompanyInternshipForm() {
       const payload = {
         name: internshipName.trim(),
         weeks: weeks.map((w, i) => ({
-          week: i + 1,
+          week:         i + 1,
           deadlineDays: Number(w.deadlineDays),
-          tutorialUrl: w.tutorialUrl.trim(),
-          keyFeatures: w.keyFeatures.map((f) => f.trim()),
+          tutorialUrl:  w.tutorialUrl.trim(),
+          keyFeatures:  w.keyFeatures.map((f) => f.trim()),
           whatYouLearn: w.whatYouLearn.trim(),
         })),
       };
 
-      const res = await fetch('/api/company-internships', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
+      const url    = editMode ? `/api/company-internships/${editId}` : '/api/company-internships';
+      const method = editMode ? 'PUT' : 'POST';
+      const res    = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data   = await res.json();
 
       if (data.success) {
         setSubmitStatus('success');
-        setSubmitMsg('Company internship created successfully!');
+        setSubmitMsg(editMode ? 'Internship updated successfully!' : 'Company internship created successfully!');
         setTimeout(() => router.push('/admin/company-internships'), 1500);
       } else {
         setSubmitStatus('error');
@@ -198,7 +206,7 @@ export default function CompanyInternshipForm() {
     }
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div>
       {/* Status banners */}
@@ -213,26 +221,39 @@ export default function CompanyInternshipForm() {
         </div>
       )}
 
-      {/* Internship Name — shown on all steps */}
+      {/* ── Domain / Internship Name ── */}
       <div className={styles.nameCard}>
         <div className={styles.fieldGroup}>
           <label className={styles.label}>
-            Internship Name <span className={styles.required}>*</span>
+            Internship Domain <span className={styles.required}>*</span>
           </label>
-          <input
-            id="internship-name"
-            type="text"
-            className={`${styles.input} ${nameError ? styles.inputError : ''}`}
-            value={internshipName}
-            onChange={(e) => { setInternshipName(e.target.value); setNameError(''); }}
-            placeholder="Enter internship name"
-            disabled={step > 1}
-          />
-          {nameError && <p className={styles.errorText}>{nameError}</p>}
-          {step > 1 && (
+
+          {domainsLoading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--secondary-text)', fontSize: '0.875rem', padding: '10px 0' }}>
+              <Loader2 size={16} style={{ animation: 'spin 0.8s linear infinite' }} /> Loading domains…
+            </div>
+          ) : domainsError ? (
+            <p className={styles.errorText}>{domainsError}</p>
+          ) : domains.length === 0 ? (
             <p className={styles.helperText}>
-              Name is locked after Step 1. Go back to change it.
+              No domains found. Go to Company Internships and click <strong>+ Add Domain</strong> first.
             </p>
+          ) : (
+            <select
+              id="internship-name"
+              className={`${styles.input} ${nameError ? styles.inputError : ''}`}
+              value={internshipName}
+              onChange={(e) => { setInternshipName(e.target.value); setNameError(''); }}
+              disabled={editMode && step > 1}
+            >
+              <option value="">— Select a domain —</option>
+              {domains.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+          )}
+
+          {nameError && <p className={styles.errorText}>{nameError}</p>}
+          {editMode && step > 1 && (
+            <p className={styles.helperText}>Domain is locked after Step 1. Go back to change it.</p>
           )}
         </div>
       </div>
@@ -262,7 +283,7 @@ export default function CompanyInternshipForm() {
           {errors.deadlineDays && <p className={styles.errorText}>{errors.deadlineDays}</p>}
         </div>
 
-        {/* What You Do — YouTube URL */}
+        {/* Tutorial URL */}
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor={`tutorial-${step}`}>
             What You Do <span className={styles.required}>*</span>
@@ -275,17 +296,13 @@ export default function CompanyInternshipForm() {
             onChange={(e) => updateWeek('tutorialUrl', e.target.value)}
             placeholder="https://www.youtube.com/watch?v=..."
           />
-          <p className={styles.helperText}>
-            YouTube tutorial URL (supports watch, shorts, and youtu.be links).
-          </p>
+          <p className={styles.helperText}>YouTube tutorial URL (supports watch, shorts, and youtu.be links).</p>
           {errors.tutorialUrl && <p className={styles.errorText}>{errors.tutorialUrl}</p>}
         </div>
 
         {/* Key Features */}
         <div className={styles.fieldGroup}>
-          <label className={styles.label}>
-            Key Features <span className={styles.required}>*</span>
-          </label>
+          <label className={styles.label}>Key Features <span className={styles.required}>*</span></label>
           <div className={styles.featureList}>
             {currentWeek.keyFeatures.map((feat, idx) => {
               const locked = idx < 4;
@@ -301,12 +318,7 @@ export default function CompanyInternshipForm() {
                     id={`feature-${step}-${idx}`}
                   />
                   {!locked && (
-                    <button
-                      type="button"
-                      className={styles.removeBtn}
-                      onClick={() => removeFeature(idx)}
-                      aria-label={`Remove feature ${idx + 1}`}
-                    >
+                    <button type="button" className={styles.removeBtn} onClick={() => removeFeature(idx)} aria-label={`Remove feature ${idx + 1}`}>
                       <X size={14} />
                     </button>
                   )}
@@ -322,11 +334,7 @@ export default function CompanyInternshipForm() {
               ) : null
             )}
           </div>
-          <button
-            type="button"
-            className={styles.addBtn}
-            onClick={addFeature}
-          >
+          <button type="button" className={styles.addBtn} onClick={addFeature}>
             <Plus size={15} /> Add Feature
           </button>
           {errors.keyFeatures && <p className={styles.errorText}>{errors.keyFeatures}</p>}
@@ -346,9 +354,7 @@ export default function CompanyInternshipForm() {
             rows={3}
             maxLength={250}
           />
-          <div
-            className={`${styles.charCount} ${currentWeek.whatYouLearn.length >= 230 ? styles.charWarn : ''}`}
-          >
+          <div className={`${styles.charCount} ${currentWeek.whatYouLearn.length >= 230 ? styles.charWarn : ''}`}>
             {currentWeek.whatYouLearn.length} / 250
           </div>
           {errors.whatYouLearn && <p className={styles.errorText}>{errors.whatYouLearn}</p>}
@@ -357,14 +363,10 @@ export default function CompanyInternshipForm() {
         {/* Navigation */}
         <div className={`${styles.navRow} ${step === 1 ? styles.navRowEnd : ''}`}>
           {step > 1 && (
-            <button type="button" className={styles.backBtn} onClick={handleBack}>
-              ← Back
-            </button>
+            <button type="button" className={styles.backBtn} onClick={handleBack}>← Back</button>
           )}
           {step < 4 ? (
-            <button type="button" className={styles.nextBtn} onClick={handleNext}>
-              Next →
-            </button>
+            <button type="button" className={styles.nextBtn} onClick={handleNext}>Next →</button>
           ) : (
             <button
               type="button"
@@ -372,7 +374,7 @@ export default function CompanyInternshipForm() {
               onClick={handleSubmit}
               disabled={submitStatus === 'loading'}
             >
-              {submitStatus === 'loading' ? 'Saving…' : 'Create Internship'}
+              {submitStatus === 'loading' ? 'Saving…' : editMode ? 'Update Internship' : 'Create Internship'}
             </button>
           )}
         </div>

@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './SignUp.module.css';
 
-const DOMAINS = [
+// Fallback domains shown while loading or if API fails
+const FALLBACK_DOMAINS = [
   'AI & Machine Learning',
   'Data Science',
   'Web Development',
@@ -33,10 +34,34 @@ export default function SignUpPage() {
   const [successMsg,   setSuccessMsg]   = useState('');
   const [isAdditional, setIsAdditional] = useState(false);
 
+  // Dynamic domains state
+  const [domains,        setDomains]        = useState<string[]>(FALLBACK_DOMAINS);
+  const [domainsLoading, setDomainsLoading] = useState(true);
+
   // Read ?addDomain=1 from URL without useSearchParams (avoids Suspense requirement)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('addDomain') === '1') setIsChangeDomain(true);
+  }, []);
+
+  // Fetch domains dynamically from admin-managed list
+  useEffect(() => {
+    fetch('/api/domains')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.domains && d.domains.length > 0) {
+          // API returns objects { name } — extract to string[]
+          const names = d.domains.map((x: { name: string } | string) =>
+            typeof x === 'string' ? x : x.name
+          );
+          setDomains(names);
+        }
+        // If API fails or returns empty, keep the FALLBACK_DOMAINS
+      })
+      .catch(() => {
+        // Silently keep fallback domains on network error
+      })
+      .finally(() => setDomainsLoading(false));
   }, []);
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -140,9 +165,11 @@ export default function SignUpPage() {
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="su-domain">Course Domain</label>
                 <select id="su-domain" className={styles.select} value={form.domain}
-                  onChange={update('domain')} required>
-                  <option value="">— Select your domain —</option>
-                  {DOMAINS.map(d => <option key={d} value={d}>{d}</option>)}
+                  onChange={update('domain')} required disabled={domainsLoading}>
+                  <option value="">
+                    {domainsLoading ? 'Loading domains…' : '— Select your domain —'}
+                  </option>
+                  {domains.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
 

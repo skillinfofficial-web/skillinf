@@ -1,0 +1,333 @@
+/* ─── Page ────────────────────────────────────────────────────────────────── */
+.page { max-width: 700px; }
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.desc { font-size: 0.9rem; color: var(--secondary-text); }
+
+.countBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ─── Add Card ─────────────────────────────────────────────────────────────── */
+.addCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.addCardTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--main-text);
+}
+
+.addForm {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.addInput {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  font-size: 0.9rem;
+  color: var(--main-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.addInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  background: #fff;
+}
+.addInput::placeholder { color: #a8b5b0; }
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+.addBtn:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); }
+.addBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.formError, .formSuccess {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.formError   { background: #fdf2f2; border: 1px solid #f5c6cb; color: var(--error); }
+.formSuccess { background: #f0faf5; border: 1px solid #a7d9c0; color: var(--success); }
+
+/* ─── States ──────────────────────────────────────────────────────────────── */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 24px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--secondary-text);
+  text-align: center;
+  font-size: 0.9rem;
+}
+.stateError { border-color: var(--error); color: var(--error); background: #fdf2f2; }
+.emptyIcon  { color: var(--border); }
+.emptyTitle { font-size: 1rem; font-weight: 600; color: var(--main-text); }
+.emptyHint  { font-size: 0.875rem; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; }
+
+/* ─── Domain List ─────────────────────────────────────────────────────────── */
+.list {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.row:last-child { border-bottom: none; }
+.row:hover { background: var(--bg); }
+
+.rowNum {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--secondary-text);
+  width: 22px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.domainName {
+  flex: 1;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--main-text);
+}
+
+.rowActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.editBtn, .deleteBtn, .saveBtn, .cancelBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.editBtn {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+.editBtn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.deleteBtn {
+  background: #fdf2f2;
+  color: var(--error);
+}
+.deleteBtn:hover { background: var(--error); color: #fff; border-color: var(--error); }
+
+.saveBtn {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.saveBtn:hover:not(:disabled) { background: var(--primary-dark); }
+.saveBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.cancelBtn {
+  background: var(--card);
+  color: var(--secondary-text);
+}
+.cancelBtn:hover { background: var(--primary-light); color: var(--main-text); }
+
+/* ─── Inline Edit ─────────────────────────────────────────────────────────── */
+.editGroup {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.editInput {
+  flex: 1;
+  min-width: 140px;
+  padding: 7px 12px;
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.9rem;
+  color: var(--main-text);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.inlineErr {
+  font-size: 0.78rem;
+  color: var(--error);
+  font-weight: 500;
+}
+
+/* ─── Modal Overlay ───────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(36,49,44,0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(36,49,44,0.18);
+  padding: 28px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.modalIcon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.modalIconDanger { background: #fdf2f2; color: var(--error); }
+
+.modalTitle { font-size: 1.05rem; font-weight: 700; color: var(--main-text); margin-bottom: 4px; }
+.modalSub   { font-size: 0.82rem; color: var(--secondary-text); }
+
+.modalClose {
+  margin-left: auto; background: none; border: none;
+  color: var(--secondary-text); cursor: pointer;
+  padding: 4px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s; flex-shrink: 0;
+}
+.modalClose:hover { color: var(--main-text); background: var(--primary-light); }
+
+.modalActions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.cancelActionBtn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--main-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cancelActionBtn:hover:not(:disabled) { background: var(--primary-light); }
+
+.confirmDeleteBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: var(--error);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.confirmDeleteBtn:hover:not(:disabled) { background: #b94643; transform: translateY(-1px); }
+.confirmDeleteBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .header { flex-direction: column; }
+  .addForm { flex-direction: column; }
+  .addBtn { width: 100%; justify-content: center; }
+  .row { padding: 12px 14px; }
+}

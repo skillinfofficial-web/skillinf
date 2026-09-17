@@ -12,7 +12,7 @@ export async function GET() {
     const user = await db.collection('users').findOne({ _id: new ObjectId(auth.userId) });
     if (!user) return NextResponse.json({ success: false, message: 'User not found.' }, { status: 404 });
 
-    // Return user doc without the password hash
+    // Return user doc without the bcrypt hash — mobileNumber (plain) is kept for payment prefill
     const { mobileHash: _mh, ...safeUser } = user;
     return NextResponse.json({ success: true, user: { ...safeUser, _id: safeUser._id.toString() } });
   } catch (e) {
