@@ -594,29 +594,11 @@ export default function DashboardPage() {
                 Internship Progress · {fmtDate(new Date(user.startDate))} → {fmtDate(new Date(user.endDate))}
               </p>
 
-              {/* ── Referral code + job opportunity ── */}
-              {user.myReferralCode && (
-                <div className={styles.referralBox}>
-                  <div className={styles.referralRow}>
-                    <span className={styles.referralLabel}>🎁 Your Referral Code</span>
-                    <div className={styles.referralCodeWrap}>
-                      <span className={styles.referralCode}>{user.myReferralCode}</span>
-                      <button className={styles.shareBtn} onClick={handleShareReferral}>Share</button>
-                    </div>
-                  </div>
-                  <p className={styles.referralHint}>
-                    Share this code with friends — when they sign up using your code, you get credit!
-                  </p>
-                </div>
-              )}
             </div>
           </div>
 
           {/* Right — quote + actions */}
           <div className={styles.heroRight}>
-            <div className={styles.quoteBox}>
-              <p className={styles.quoteText}>Based on your performance, we provide job opportunities at our company.</p>
-            </div>
             <div className={styles.heroActions}>
               {/* Download Offer Letter */}
               <button className={styles.heroActionBtn} onClick={() => downloadOfferLetter(user)}>
@@ -678,6 +660,21 @@ export default function DashboardPage() {
               <p className={styles.physSuccessTitle}>Physical Certificate On Its Way!</p>
               <p className={styles.physSuccessSub}>Your certificate is being processed and will be delivered to your registered address within <strong>2–3 working days</strong>.</p>
             </div>
+          </div>
+        )}
+
+        {/* REFERRAL CARD */}
+        {user.myReferralCode && (
+          <div className={styles.referralCard}>
+            <div className={styles.referralCardLeft}>
+              <p className={styles.referralCardLabel}>Your Referral Code</p>
+              <div className={styles.referralCardRow}>
+                <span className={styles.referralCardCode}>{user.myReferralCode}</span>
+                <button className={styles.referralCardShareBtn} onClick={handleShareReferral}>Share</button>
+              </div>
+              <p className={styles.referralCardHint}>Share this code with friends - when they sign up using your code, you get credit!</p>
+            </div>
+            <p className={styles.referralCardQuote}>Based on your performance, we provide job opportunities at our company.</p>
           </div>
         )}
 
