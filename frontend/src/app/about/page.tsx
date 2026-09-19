@@ -21,7 +21,7 @@ import {
 import styles from "./AboutPage.module.css";
 
 export const metadata: Metadata = {
-  title: 'About SkillInf — Our Mission & Story',
+  title: { absolute: 'About SkillInf — Our Mission & Story' },
   description: 'Learn about SkillInf — our mission to help students gain real-world internship experience and become career-ready through structured programs.',
   alternates: { canonical: 'https://www.skillinf.in/about' },
   openGraph: { url: 'https://www.skillinf.in/about' },

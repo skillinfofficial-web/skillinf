@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Help & Support Center — SkillInf',
+  title: { absolute: 'Help & Support Center — SkillInf' },
   description: 'Get help from the SkillInf team. Contact us for questions about internship enrollment, certificates, or payments.',
   alternates: { canonical: 'https://www.skillinf.in/support' },
   openGraph: { url: 'https://www.skillinf.in/support' },

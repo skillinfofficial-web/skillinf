@@ -113,11 +113,11 @@ export default function SignUpPage() {
             <h1 className={styles.title}>
               {isChangeDomain ? 'Add Another Domain' : 'Create your SkillInf account'}
             </h1>
-            <p className={styles.sub}>
+            <h2 className={styles.sub}>
               {isChangeDomain
                 ? 'Enroll in a new internship domain using your existing email and mobile number'
                 : 'Join thousands of students building real skills'}
-            </p>
+            </h2>
           </div>
 
           {/* ── Multi-domain info banner ── */}

@@ -96,11 +96,11 @@ export default function SignInPage() {
             <h1 className={styles.title}>
               {selectingDomain ? 'Choose Your Domain' : 'Welcome back'}
             </h1>
-            <p className={styles.sub}>
+            <h2 className={styles.sub}>
               {selectingDomain
                 ? 'You have multiple internship enrollments. Select which domain to continue with.'
                 : 'Sign in to continue your internship journey'}
-            </p>
+            </h2>
           </div>
 
           {/* ── Domain picker step ── */}
