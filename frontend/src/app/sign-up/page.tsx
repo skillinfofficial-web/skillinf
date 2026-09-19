@@ -26,7 +26,7 @@ export default function SignUpPage() {
 
   const [form, setForm] = useState({
     name: '', email: '', mobileNumber: '', domain: '',
-    startDate: '', endDate: '',
+    startDate: '', endDate: '', referralCode: '',
   });
   const [error,        setError]        = useState('');
   const [loading,      setLoading]      = useState(false);
@@ -184,6 +184,18 @@ export default function SignUpPage() {
                   <input id="su-end" className={styles.input} type="date"
                     value={form.endDate} onChange={update('endDate')} required />
                 </div>
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="su-referral">
+                  Referral Code <span className={styles.hint}>(optional)</span>
+                </label>
+                <input id="su-referral" className={styles.input} type="text"
+                  placeholder="e.g. SKLAB1234"
+                  value={form.referralCode}
+                  onChange={update('referralCode')}
+                  maxLength={12}
+                  autoComplete="off" />
               </div>
 
               <button id="su-submit" className={styles.submitBtn} type="submit" disabled={loading}>

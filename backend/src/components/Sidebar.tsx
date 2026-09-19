@@ -24,6 +24,7 @@ import {
   CreditCard,
   Tag,
   Megaphone,
+  Gift,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -54,6 +55,7 @@ const navSections = [
       { name: 'LinkedIn Verify',       path: '/admin/linkedin-verify',       icon: Link2 },
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
       { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
+      { name: 'Referrals',             path: '/admin/referrals',             icon: Gift },
     ],
   },
   {

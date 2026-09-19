@@ -542,6 +542,22 @@ export default function DashboardPage() {
               <p className={styles.progressMeta}>
                 Internship Progress · {fmtDate(new Date(user.startDate))} → {fmtDate(new Date(user.endDate))}
               </p>
+
+              {/* ── Referral code + job opportunity ── */}
+              {user.myReferralCode && (
+                <div className={styles.referralBox}>
+                  <div className={styles.referralRow}>
+                    <span className={styles.referralLabel}>🎁 Your Referral Code</span>
+                    <span className={styles.referralCode}>{user.myReferralCode}</span>
+                  </div>
+                  <p className={styles.referralHint}>
+                    Share this code with friends — when they sign up using your code, you get credit!
+                  </p>
+                  <p className={styles.jobOpportunityText}>
+                    🚀 Based on your performance, we provide job opportunities at our company.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
