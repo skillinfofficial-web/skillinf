@@ -666,40 +666,7 @@ export default function DashboardPage() {
             <span className={styles.stepsCount}>{['step1', 'step2', 'step3', 'step4'].filter(k => user.steps[k as keyof typeof user.steps]).length} / 4 completed</span>
           </div>
 
-          {/* Deadline countdown banner */}
-          {(() => {
-            const nextDue = dueDates.find((d, i) => !user.steps[`step${i+1}` as keyof typeof user.steps]);
-            if (!nextDue) return null;
-            const msLeft = nextDue.getTime() - Date.now();
-            if (msLeft <= 0) return (
-              <div className={styles.deadlineBanner} style={{background:'#fff0f0',borderColor:'#f87171'}}>
-                <span className={styles.deadlineIcon}>⚠️</span>
-                <div>
-                  <p className={styles.deadlineTitle}>Deadline Passed</p>
-                  <p className={styles.deadlineSub}>Your next step deadline was {fmtDate(nextDue)}. Submit as soon as possible.</p>
-                </div>
-              </div>
-            );
-            const totalHrs = Math.floor(msLeft / 3600000);
-            const days = Math.floor(totalHrs / 24);
-            const hrs = totalHrs % 24;
-            const mins = Math.floor((msLeft % 3600000) / 60000);
-            const urgent = days < 2;
-            return (
-              <div className={styles.deadlineBanner} style={urgent ? {background:'#fff7ed',borderColor:'#fb923c'} : {}}>
-                <span className={styles.deadlineIcon}>{urgent ? '⏰' : '📅'}</span>
-                <div>
-                  <p className={styles.deadlineTitle}>
-                    Next Deadline: {fmtDate(nextDue)}
-                    {urgent && <span className={styles.deadlineUrgent}> — Hurry up!</span>}
-                  </p>
-                  <p className={styles.deadlineSub}>
-                    Time remaining: <strong>{days}d {hrs}h {mins}m</strong>
-                  </p>
-                </div>
-              </div>
-            );
-          })()}
+
 
           {noData ? (
             <div className={styles.noDataBox}>
