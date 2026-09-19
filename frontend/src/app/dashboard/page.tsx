@@ -299,6 +299,7 @@ export default function DashboardPage() {
   // My Internships Switcher
   const [showInternshipsModal, setShowInternshipsModal] = useState(false);
   const [switchingTo, setSwitchingTo] = useState<string | null>(null);
+  const [selectedInternship, setSelectedInternship] = useState<string>('__current__');
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -552,7 +553,7 @@ export default function DashboardPage() {
         </Link>
         <nav className={styles.topNav}>
           <span className={styles.topEmail}>{user.email}</span>
-          <button className={styles.myInternshipsBtn} onClick={() => setShowInternshipsModal(true)}>
+          <button className={styles.myInternshipsBtn} onClick={() => { setSelectedInternship('__current__'); setShowInternshipsModal(true); }}>
             My Internships
           </button>
           <button className={styles.signOutBtn} onClick={signOut}>Sign Out</button>
@@ -951,38 +952,66 @@ export default function DashboardPage() {
 
         {/* ══ MY INTERNSHIPS MODAL ══════════════════════════════════════════ */}
         {showInternshipsModal && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-              <div className={styles.modalHeader}>
-                <h3 className={styles.modalTitle}>My Internships</h3>
-                <button className={styles.closeModalBtn} onClick={() => setShowInternshipsModal(false)}>✕</button>
-              </div>
-              <div className={styles.modalBody}>
-                <p className={styles.internshipsInfo}>You are currently viewing: <strong>{user.domain}</strong></p>
-                {otherInternships.length > 0 ? (
-                  <ul className={styles.internshipsList}>
-                    {otherInternships.map(intern => (
-                      <li key={intern.id} className={styles.internshipItem}>
-                        <span className={styles.internshipName}>{intern.domain}</span>
-                        <button 
-                          className={styles.switchBtn} 
-                          onClick={() => handleSwitchDomain(intern.id)}
-                          disabled={switchingTo === intern.id}
-                        >
-                          {switchingTo === intern.id ? 'Switching...' : 'Switch'}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className={styles.noInternships}>You don't have any other internships enrolled.</p>
-                )}
-                <div className={styles.addDomainWrap}>
-                  <Link href="/sign-up?addDomain=1" className={styles.addDomainBtnFull}>
-                    + Enroll in another internship
-                  </Link>
+          <div className={styles.modalOverlay} onClick={() => setShowInternshipsModal(false)}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+
+              {/* Header */}
+              <div className={styles.miHeader}>
+                <div>
+                  <h2 className={styles.miTitle}>My Internships</h2>
+                  <p className={styles.miSub}>Select a domain to switch your active internship</p>
                 </div>
+                <button className={styles.miClose} onClick={() => setShowInternshipsModal(false)}>✕</button>
               </div>
+
+              {/* Internship list — current first, then others */}
+              <div className={styles.miList}>
+                {/* Current active domain */}
+                <div
+                  className={`${styles.miItem} ${selectedInternship === '__current__' ? styles.miItemSelected : ''}`}
+                  onClick={() => setSelectedInternship('__current__')}
+                >
+                  <div className={styles.miItemLeft}>
+                    <span className={styles.miDot} />
+                    <span className={styles.miDomainName}>{user.domain}</span>
+                  </div>
+                  <span className={styles.miCurrentBadge}>Active</span>
+                </div>
+
+                {/* Other enrolled domains */}
+                {otherInternships.map(intern => (
+                  <div
+                    key={intern.id}
+                    className={`${styles.miItem} ${selectedInternship === intern.id ? styles.miItemSelected : ''}`}
+                    onClick={() => setSelectedInternship(intern.id)}
+                  >
+                    <div className={styles.miItemLeft}>
+                      <span className={styles.miDotInactive} />
+                      <span className={styles.miDomainName}>{intern.domain}</span>
+                    </div>
+                  </div>
+                ))}
+
+                {otherInternships.length === 0 && (
+                  <p className={styles.miEmpty}>You are enrolled in only one internship right now.</p>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className={styles.miActions}>
+                <button
+                  className={styles.miSwitchBtn}
+                  disabled={!selectedInternship || selectedInternship === '__current__' || !!switchingTo}
+                  onClick={() => selectedInternship && selectedInternship !== '__current__' && handleSwitchDomain(selectedInternship)}
+                >
+                  {switchingTo ? 'Switching…' : 'Switch to Selected'}
+                </button>
+
+                <Link href="/sign-up?addDomain=1" className={styles.miAddBtn} onClick={() => setShowInternshipsModal(false)}>
+                  + Add New Domain
+                </Link>
+              </div>
+
             </div>
           </div>
         )}
@@ -991,4 +1020,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
 

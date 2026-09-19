@@ -1100,3 +1100,175 @@
   .liRight { min-width: unset; width: 100%; }
   .modalContent { margin: 16px; padding: 20px 16px; max-height: 85vh; overflow-y: auto; }
 }
+
+/* -----------------------------------------------------------
+   MY INTERNSHIPS MODAL
+----------------------------------------------------------- */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modalContent {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 60px rgba(15,23,42,0.18);
+  overflow: hidden;
+}
+
+/* Header */
+.miHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.miTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 3px;
+  letter-spacing: -0.02em;
+}
+.miSub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+.miClose {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.miClose:hover { color: #0f172a; background: #f1f5f9; }
+
+/* List of internships */
+.miList {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.miItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.miItem:hover { border-color: #cbd5e1; background: #f1f5f9; }
+.miItemSelected {
+  border-color: #0f172a;
+  background: #f8fafc;
+}
+.miItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.miDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  flex-shrink: 0;
+}
+.miDotInactive {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+.miDomainName {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.miCurrentBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #10b981;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 100px;
+  padding: 2px 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.miEmpty {
+  font-size: 0.83rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px 0 8px;
+  margin: 0;
+}
+
+/* Action buttons */
+.miActions {
+  padding: 16px 20px 22px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.miSwitchBtn {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, opacity 0.18s;
+  letter-spacing: 0.01em;
+}
+.miSwitchBtn:hover:not(:disabled) { background: #1e293b; }
+.miSwitchBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.miAddBtn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  text-align: center;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 11px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  background: #f8fafc;
+  transition: border-color 0.18s, color 0.18s, background 0.18s;
+  box-sizing: border-box;
+}
+.miAddBtn:hover {
+  border-color: #94a3b8;
+  color: #0f172a;
+  background: #f1f5f9;
+}
