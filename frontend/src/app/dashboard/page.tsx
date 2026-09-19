@@ -730,8 +730,8 @@ export default function DashboardPage() {
                         <div className={styles.verifyingRow}>
                           <span className={styles.verifyingDot} />
                           <div>
-                            <p className={styles.verifyingTitle}>AI Verification in Progress…</p>
-                            <p className={styles.verifyingText}>Your project is being reviewed by AI. This takes 1–3 minutes.</p>
+                            <p className={styles.verifyingTitle}>Review in Progress…</p>
+                            <p className={styles.verifyingText}>Your project is being reviewed. This takes 2–3 minutes.</p>
                             {verifyCountdowns[idx] > 0 && (
                               <p className={styles.verifyingTimer}>
                                 Estimated time: {Math.floor(verifyCountdowns[idx] / 60)}m {verifyCountdowns[idx] % 60}s
