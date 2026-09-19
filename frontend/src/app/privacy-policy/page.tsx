@@ -3,7 +3,9 @@ import styles from './PrivacyPolicy.module.css';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | SkillInf',
-  description: 'Privacy Policy for SkillInf — learn how we collect, use, and protect your personal information.',
+  description: 'Read the SkillInf Privacy Policy. Learn how we collect, use, and protect your personal information when you use our internship platform.',
+  alternates: { canonical: 'https://www.skillinf.in/privacy-policy' },
+  openGraph: { url: 'https://www.skillinf.in/privacy-policy' },
 };
 
 export default function PrivacyPolicyPage() {

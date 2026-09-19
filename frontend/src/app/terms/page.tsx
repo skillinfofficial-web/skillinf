@@ -3,7 +3,9 @@ import styles from '../privacy-policy/PrivacyPolicy.module.css';
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | SkillInf',
-  description: 'Terms and Conditions for using SkillInf internship programs, training services, and certificates.',
+  description: 'Read the SkillInf Terms & Conditions for using our internship programs, training services, certificates, and website.',
+  alternates: { canonical: 'https://www.skillinf.in/terms' },
+  openGraph: { url: 'https://www.skillinf.in/terms' },
 };
 
 export default function TermsPage() {

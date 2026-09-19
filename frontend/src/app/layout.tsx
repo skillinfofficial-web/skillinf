@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | SkillInf",
   },
   description:
-    "SkillInf offers free virtual internships in AI, Web Development, Data Science, and more. Gain hands-on project experience, build a portfolio, and earn a certificate — all online.",
+    "Free virtual internships in AI, Web Development & Data Science. Build real projects, earn a certificate, and become career-ready — all online.",
   keywords: [
     "free virtual internship",
     "student internship online",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "SkillInf | Free Virtual Internships for Students",
     description:
-      "Gain real-world project experience, build a portfolio, and earn a verified certificate through SkillInf's structured virtual internship programs.",
+      "Gain real project experience, build a portfolio, and earn a verified certificate through SkillInf's virtual internship programs.",
     url: BASE_URL + "/",
     type: "website",
     locale: "en_US",

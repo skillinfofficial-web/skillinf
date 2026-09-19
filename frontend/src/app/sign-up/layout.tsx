@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Sign Up — Join a Free Internship',
-  description: 'Create your SkillInf account and enroll in a free virtual internship program in AI, Web Development, Data Science, and more. Start building your career today.',
+  title: 'Free Internship Sign Up — Join SkillInf Today',
+  description: 'Create a free SkillInf account and enroll in a virtual internship in AI, Web Dev, or Data Science. Start your free journey today.',
   alternates: { canonical: 'https://www.skillinf.in/sign-up' },
   openGraph: { url: 'https://www.skillinf.in/sign-up' },
 };

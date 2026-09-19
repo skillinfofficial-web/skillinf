@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Training Programs',
-  description: 'Explore SkillInf training programs designed to build practical, job-ready skills. Choose from AI, Web Development, Data Science, and more structured learning paths.',
+  title: 'Online Internship Programs — SkillInf',
+  description: 'Explore SkillInf training programs in AI, Web Development, Data Science and more. Build practical, job-ready skills with guided projects.',
   alternates: { canonical: 'https://www.skillinf.in/programs' },
   openGraph: { url: 'https://www.skillinf.in/programs' },
 };

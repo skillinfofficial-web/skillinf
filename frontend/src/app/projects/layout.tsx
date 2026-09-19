@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Student Project Showcase',
-  description: 'Explore real projects built by SkillInf interns. Browse AI, web development, data science projects and see what students have built during their internships.',
+  title: 'Student Project Showcase — SkillInf Interns',
+  description: 'Browse real projects built by SkillInf interns in AI, web development, and data science. See what students build during their internship.',
   alternates: { canonical: 'https://www.skillinf.in/projects' },
   openGraph: { url: 'https://www.skillinf.in/projects' },
 };

@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard/', '/api/', '/sign-in/', '/sign-up/'],
+        disallow: ['/dashboard/', '/api/', '/cdn-cgi/'],
       },
       // Explicitly allow AI crawlers for citation visibility
       { userAgent: 'GPTBot', allow: '/' },
