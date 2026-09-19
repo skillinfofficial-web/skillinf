@@ -261,6 +261,7 @@ async function downloadCertificate(user: UserDoc) {
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<UserDoc | null>(null);
+  const [otherInternships, setOtherInternships] = useState<{id: string, domain: string}[]>([]);
   const [weeks, setWeeks] = useState<Week[]>([]);
   const [loading, setLoading] = useState(true);
   const [noData, setNoData] = useState(false);
@@ -292,14 +293,20 @@ export default function DashboardPage() {
   // Lock tooltip
   const [showLockMsg, setShowLockMsg] = useState(false);
 
+  // My Internships Switcher
+  const [showInternshipsModal, setShowInternshipsModal] = useState(false);
+  const [switchingTo, setSwitchingTo] = useState<string | null>(null);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const meRes = await fetch('/api/auth/me');
       if (!meRes.ok) { router.push('/sign-in'); return; }
-      const { user: u } = await meRes.json() as { user: UserDoc };
-      setUser(u);
-      const cr = await fetch(`/api/course?domain=${encodeURIComponent(u.domain)}`);
+      const data = await meRes.json() as { user: UserDoc, otherInternships: {id: string, domain: string}[] };
+      setUser(data.user);
+      if (data.otherInternships) setOtherInternships(data.otherInternships);
+      
+      const cr = await fetch(`/api/course?domain=${encodeURIComponent(data.user.domain)}`);
       const cd = await cr.json();
       if (cd.success) setWeeks(cd.weeks); else setNoData(true);
     } catch { router.push('/sign-in'); }
@@ -322,6 +329,43 @@ export default function DashboardPage() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const signOut = async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/'); };
+
+  const handleSwitchDomain = async (targetId: string) => {
+    setSwitchingTo(targetId);
+    try {
+      const res = await fetch('/api/auth/switch-domain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetDomainId: targetId })
+      });
+      if (res.ok) {
+        setShowInternshipsModal(false);
+        await loadData();
+      } else {
+        alert('Failed to switch internship.');
+      }
+    } catch {
+      alert('Network error.');
+    } finally {
+      setSwitchingTo(null);
+    }
+  };
+
+  const handleShareReferral = async () => {
+    if (!user?.myReferralCode) return;
+    const shareUrl = `${window.location.origin}/sign-up?ref=${user.myReferralCode}`;
+    const shareData = {
+      title: 'Join SkillInf Internships',
+      text: 'Use my referral code to join SkillInf internships and get started!',
+      url: shareUrl,
+    };
+    if (navigator.share) {
+      try { await navigator.share(shareData); } catch (e) { console.log('Share canceled', e); }
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      alert('Referral link copied to clipboard!');
+    }
+  };
 
   /* ── E-Certificate payment ──────────────────────────────────────────── */
   const handleCertificatePayment = async () => {
@@ -505,6 +549,9 @@ export default function DashboardPage() {
         </Link>
         <nav className={styles.topNav}>
           <span className={styles.topEmail}>{user.email}</span>
+          <button className={styles.myInternshipsBtn} onClick={() => setShowInternshipsModal(true)}>
+            My Internships
+          </button>
           <button className={styles.signOutBtn} onClick={signOut}>Sign Out</button>
         </nav>
       </header>
@@ -548,7 +595,10 @@ export default function DashboardPage() {
                 <div className={styles.referralBox}>
                   <div className={styles.referralRow}>
                     <span className={styles.referralLabel}>🎁 Your Referral Code</span>
-                    <span className={styles.referralCode}>{user.myReferralCode}</span>
+                    <div className={styles.referralCodeWrap}>
+                      <span className={styles.referralCode}>{user.myReferralCode}</span>
+                      <button className={styles.shareBtn} onClick={handleShareReferral}>Share</button>
+                    </div>
                   </div>
                   <p className={styles.referralHint}>
                     Share this code with friends — when they sign up using your code, you get credit!
@@ -896,6 +946,44 @@ export default function DashboardPage() {
                 {physicalPayLoad ? 'Processing…' : `Pay ₹${physicalCertPrice} & Get Physical Certificate`}
               </button>
               <p className={styles.payFooter}>🔒 Secured by Cashfree · UPI · Cards · Net Banking</p>
+            </div>
+          </div>
+        )}
+
+        {/* ══ MY INTERNSHIPS MODAL ══════════════════════════════════════════ */}
+        {showInternshipsModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>My Internships</h3>
+                <button className={styles.closeModalBtn} onClick={() => setShowInternshipsModal(false)}>✕</button>
+              </div>
+              <div className={styles.modalBody}>
+                <p className={styles.internshipsInfo}>You are currently viewing: <strong>{user.domain}</strong></p>
+                {otherInternships.length > 0 ? (
+                  <ul className={styles.internshipsList}>
+                    {otherInternships.map(intern => (
+                      <li key={intern.id} className={styles.internshipItem}>
+                        <span className={styles.internshipName}>{intern.domain}</span>
+                        <button 
+                          className={styles.switchBtn} 
+                          onClick={() => handleSwitchDomain(intern.id)}
+                          disabled={switchingTo === intern.id}
+                        >
+                          {switchingTo === intern.id ? 'Switching...' : 'Switch'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className={styles.noInternships}>You don't have any other internships enrolled.</p>
+                )}
+                <div className={styles.addDomainWrap}>
+                  <Link href="/sign-up?addDomain=1" className={styles.addDomainBtnFull}>
+                    + Enroll in another internship
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         )}

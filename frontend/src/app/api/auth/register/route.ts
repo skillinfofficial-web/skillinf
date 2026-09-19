@@ -16,7 +16,7 @@ function genReferralCode(): string {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, mobileNumber, domain, startDate, endDate, referralCode } = await req.json();
+    const { name, email, mobileNumber, domain, startDate, endDate, referralCode, collegeUniversity } = await req.json();
 
     if (!name?.trim())         return err('Name is required.');
     if (!email?.trim())        return err('Email is required.');
@@ -83,6 +83,7 @@ export async function POST(req: Request) {
       domain,
       startDate,
       endDate,
+      collegeUniversity:   collegeUniversity?.trim() || null,
       myReferralCode,
       referredBy,
       linkedinVerified:    false as boolean | 'pending',

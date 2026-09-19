@@ -26,7 +26,7 @@ export default function SignUpPage() {
 
   const [form, setForm] = useState({
     name: '', email: '', mobileNumber: '', domain: '',
-    startDate: '', endDate: '', referralCode: '',
+    startDate: '', endDate: '', referralCode: '', collegeUniversity: '',
   });
   const [error,        setError]        = useState('');
   const [loading,      setLoading]      = useState(false);
@@ -38,10 +38,12 @@ export default function SignUpPage() {
   const [domains,        setDomains]        = useState<string[]>(FALLBACK_DOMAINS);
   const [domainsLoading, setDomainsLoading] = useState(true);
 
-  // Read ?addDomain=1 from URL without useSearchParams (avoids Suspense requirement)
+  // Read ?addDomain=1 and ?ref= from URL without useSearchParams (avoids Suspense requirement)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('addDomain') === '1') setIsChangeDomain(true);
+    const refParam = params.get('ref');
+    if (refParam) setForm(prev => ({ ...prev, referralCode: refParam }));
   }, []);
 
   // Fetch domains dynamically from admin-managed list
@@ -145,6 +147,17 @@ export default function SignUpPage() {
                 <label className={styles.label} htmlFor="su-name">Full Name</label>
                 <input id="su-name" className={styles.input} type="text" placeholder="Arun Kumar"
                   value={form.name} onChange={update('name')} required autoComplete="name" />
+                <p className={styles.fieldNote}>📋 This name will be printed on your certificate. Please enter your correct full name.</p>
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="su-college">
+                  College / University <span className={styles.hint}>(optional)</span>
+                </label>
+                <input id="su-college" className={styles.input} type="text"
+                  placeholder="e.g. Anna University"
+                  value={form.collegeUniversity} onChange={update('collegeUniversity')}
+                  autoComplete="organization" />
               </div>
 
               <div className={styles.field}>
