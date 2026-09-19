@@ -11,6 +11,9 @@ interface UserDoc {
   _id: string; name: string; email: string; domain: string;
   mobileNumber?: string;  // stored since Sept 2026; may be absent for older accounts
   startDate: string; endDate: string;
+  myReferralCode?: string;
+  referredBy?: string | null;
+  collegeUniversity?: string | null;
   linkedinVerified: boolean | 'pending'; linkedinPostUrl: string | null;
   steps: { step1: boolean; step2: boolean; step3: boolean; step4: boolean };
   submissions: { step1: string | null; step2: string | null; step3: string | null; step4: string | null };
