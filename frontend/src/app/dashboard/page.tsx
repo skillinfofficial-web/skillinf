@@ -665,16 +665,20 @@ export default function DashboardPage() {
 
         {/* REFERRAL CARD */}
         {user.myReferralCode && (
-          <div className={styles.referralCard}>
-            <div className={styles.referralCardLeft}>
-              <p className={styles.referralCardLabel}>Your Referral Code</p>
-              <div className={styles.referralCardRow}>
-                <span className={styles.referralCardCode}>{user.myReferralCode}</span>
-                <button className={styles.referralCardShareBtn} onClick={handleShareReferral}>Share</button>
+          <div className={styles.refCard}>
+            <div className={styles.refLeft}>
+              <div className={styles.refIconBox}>
+                <span className={styles.refIcon}>%</span>
               </div>
-              <p className={styles.referralCardHint}>Share this code with friends - when they sign up using your code, you get credit!</p>
+              <div>
+                <p className={styles.refTitle}>Your Referral Code</p>
+                <p className={styles.refSub}>Share this code — friends who sign up with it get credited to you.</p>
+              </div>
             </div>
-            <p className={styles.referralCardQuote}>Based on your performance, we provide job opportunities at our company.</p>
+            <div className={styles.refRight}>
+              <span className={styles.refCode}>{user.myReferralCode}</span>
+              <button className={styles.refShareBtn} onClick={handleShareReferral}>Share</button>
+            </div>
           </div>
         )}
 
