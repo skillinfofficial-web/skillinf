@@ -1,0 +1,88 @@
+/* Shared style for Privacy Policy and Terms pages */
+.page {
+  min-height: 100vh;
+  background: #f8faf9;
+  padding: 60px 0 80px;
+}
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid #d4e8df;
+}
+.lastUpdated {
+  font-size: 0.8rem;
+  color: #6B9080;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.title {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  color: #1a2e25;
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+.intro {
+  font-size: 1.05rem;
+  color: #4a5e54;
+  line-height: 1.7;
+}
+.body h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a2e25;
+  margin: 0 0 12px;
+}
+.section {
+  margin-bottom: 36px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid #e6f0eb;
+}
+.section:last-of-type { border-bottom: none; }
+.section p {
+  font-size: 0.97rem;
+  color: #374a40;
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+.section ul {
+  margin: 8px 0 12px 20px;
+  padding: 0;
+  list-style: disc;
+}
+.section li {
+  font-size: 0.95rem;
+  color: #374a40;
+  line-height: 1.7;
+  margin-bottom: 4px;
+}
+.contactSection { background: #f0f8f4; border-radius: 12px; padding: 24px; border-bottom: none; }
+.contactBox {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contactBox p { font-size: 0.95rem; color: #374a40; margin: 0; }
+.contactBox a { color: #6B9080; text-decoration: none; font-weight: 500; }
+.contactBox a:hover { text-decoration: underline; }
+.acknowledge {
+  font-size: 0.9rem;
+  color: #6B9080;
+  font-style: italic;
+  margin-top: 32px;
+  border-top: 1px solid #d4e8df;
+  padding-top: 20px;
+}
+.copyright {
+  font-size: 0.85rem;
+  color: #8fa89b;
+  margin-top: 8px;
+}

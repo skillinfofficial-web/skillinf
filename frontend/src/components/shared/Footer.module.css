@@ -100,3 +100,23 @@
     text-align: left;
   }
 }
+
+.bottomLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.bottomLink {
+  font-size: 0.82rem;
+  color: var(--secondary-text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.bottomLink:hover { color: var(--main-brand); }
+
+.bottomDot {
+  color: var(--secondary-text);
+  font-size: 0.82rem;
+}

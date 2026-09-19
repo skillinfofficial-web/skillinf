@@ -271,6 +271,7 @@ export default function DashboardPage() {
   const [stepMsgs, setStepMsgs] = useState(['', '', '', '']);
   const [stepLoads, setStepLoads] = useState([false, false, false, false]);
   const [stepVerifying, setStepVerifying] = useState([false, false, false, false]);
+  const [verifyCountdowns, setVerifyCountdowns] = useState([0, 0, 0, 0]); // seconds remaining per step
 
   // Payment prices
   const [eCertPrice, setECertPrice] = useState(149);
@@ -450,7 +451,24 @@ export default function DashboardPage() {
       if (data.success) {
         const V = [...stepVerifying]; V[idx] = true; setStepVerifying(V);
         M[idx] = ''; setStepMsgs(M);
-        setTimeout(() => { const V2 = [...stepVerifying]; V2[idx] = false; setStepVerifying(V2); loadData(); }, 2500);
+        // Random AI verification delay: 60–180 seconds
+        const delaySecs = Math.floor(Math.random() * 121) + 60; // 60 to 180
+        const C = [...verifyCountdowns]; C[idx] = delaySecs; setVerifyCountdowns(C);
+        // Countdown ticker
+        const interval = setInterval(() => {
+          setVerifyCountdowns(prev => {
+            const next = [...prev];
+            next[idx] = Math.max(0, next[idx] - 1);
+            return next;
+          });
+        }, 1000);
+        // After delay: mark done
+        setTimeout(() => {
+          clearInterval(interval);
+          setStepVerifying(prev => { const v = [...prev]; v[idx] = false; return v; });
+          setVerifyCountdowns(prev => { const c = [...prev]; c[idx] = 0; return c; });
+          loadData();
+        }, delaySecs * 1000);
       } else { M[idx] = data.message; setStepMsgs(M); }
     } catch { M[idx] = 'Something went wrong.'; setStepMsgs(M); }
     finally { const L2 = [...stepLoads]; L2[idx] = false; setStepLoads(L2); }
@@ -648,6 +666,41 @@ export default function DashboardPage() {
             <span className={styles.stepsCount}>{['step1', 'step2', 'step3', 'step4'].filter(k => user.steps[k as keyof typeof user.steps]).length} / 4 completed</span>
           </div>
 
+          {/* Deadline countdown banner */}
+          {(() => {
+            const nextDue = dueDates.find((d, i) => !user.steps[`step${i+1}` as keyof typeof user.steps]);
+            if (!nextDue) return null;
+            const msLeft = nextDue.getTime() - Date.now();
+            if (msLeft <= 0) return (
+              <div className={styles.deadlineBanner} style={{background:'#fff0f0',borderColor:'#f87171'}}>
+                <span className={styles.deadlineIcon}>⚠️</span>
+                <div>
+                  <p className={styles.deadlineTitle}>Deadline Passed</p>
+                  <p className={styles.deadlineSub}>Your next step deadline was {fmtDate(nextDue)}. Submit as soon as possible.</p>
+                </div>
+              </div>
+            );
+            const totalHrs = Math.floor(msLeft / 3600000);
+            const days = Math.floor(totalHrs / 24);
+            const hrs = totalHrs % 24;
+            const mins = Math.floor((msLeft % 3600000) / 60000);
+            const urgent = days < 2;
+            return (
+              <div className={styles.deadlineBanner} style={urgent ? {background:'#fff7ed',borderColor:'#fb923c'} : {}}>
+                <span className={styles.deadlineIcon}>{urgent ? '⏰' : '📅'}</span>
+                <div>
+                  <p className={styles.deadlineTitle}>
+                    Next Deadline: {fmtDate(nextDue)}
+                    {urgent && <span className={styles.deadlineUrgent}> — Hurry up!</span>}
+                  </p>
+                  <p className={styles.deadlineSub}>
+                    Time remaining: <strong>{days}d {hrs}h {mins}m</strong>
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
+
           {noData ? (
             <div className={styles.noDataBox}>
               <p>📚 No course content found for <strong>{user.domain}</strong>.</p>
@@ -709,7 +762,15 @@ export default function DashboardPage() {
                       ) : verifying ? (
                         <div className={styles.verifyingRow}>
                           <span className={styles.verifyingDot} />
-                          Verifying… done in 2–3 min
+                          <div>
+                            <p className={styles.verifyingTitle}>AI Verification in Progress…</p>
+                            <p className={styles.verifyingText}>Your project is being reviewed by AI. This takes 1–3 minutes.</p>
+                            {verifyCountdowns[idx] > 0 && (
+                              <p className={styles.verifyingTimer}>
+                                Estimated time: {Math.floor(verifyCountdowns[idx] / 60)}m {verifyCountdowns[idx] % 60}s
+                              </p>
+                            )}
+                          </div>
                         </div>
                       ) : (
                         <>

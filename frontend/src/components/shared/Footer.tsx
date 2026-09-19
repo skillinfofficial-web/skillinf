@@ -78,13 +78,19 @@ export default function Footer() {
             <Link href="/about" className={styles.link}>About Us</Link>
             <Link href="/sign-up" className={styles.link}>Careers</Link>
             <Link href="/support" className={styles.link}>Customer Support</Link>
-            <Link href="#" className={styles.link}>Privacy Policy</Link>
+            <Link href="/privacy-policy" className={styles.link}>Privacy Policy</Link>
+            <Link href="/terms" className={styles.link}>Terms &amp; Conditions</Link>
           </div>
 
         </div>
 
         <div className={styles.bottom}>
           <p>&copy; {new Date().getFullYear()} SkillInf. All rights reserved.</p>
+          <div className={styles.bottomLinks}>
+            <Link href="/privacy-policy" className={styles.bottomLink}>Privacy Policy</Link>
+            <span className={styles.bottomDot}>·</span>
+            <Link href="/terms" className={styles.bottomLink}>Terms &amp; Conditions</Link>
+          </div>
         </div>
       </div>
     </footer>
