@@ -14,7 +14,7 @@ const WA_NUMBERS = [
 
 function buildWaText(name: string, email: string, mobile: string, query: string) {
   return encodeURIComponent(
-    `*SkillInf Support Query*\n\n` +
+    `*skillinf Support Query*\n\n` +
     `*Name:* ${name}\n` +
     `*Email:* ${email}\n` +
     `*Mobile:* ${mobile}\n\n` +

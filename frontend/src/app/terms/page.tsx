@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import styles from '../privacy-policy/PrivacyPolicy.module.css';
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | SkillInf',
-  description: 'Read the SkillInf Terms & Conditions for using our internship programs, training services, certificates, and website.',
+  title: 'Terms & Conditions | skillinf',
+  description: 'Read the skillinf Terms & Conditions for using our internship programs, training services, certificates, and website.',
   alternates: { canonical: 'https://www.skillinf.in/terms' },
   openGraph: { url: 'https://www.skillinf.in/terms' },
 };
@@ -16,7 +16,7 @@ export default function TermsPage() {
           <p className={styles.lastUpdated}>Last Updated: September 18, 2026</p>
           <h1 className={styles.title}>Terms &amp; Conditions</h1>
           <p className={styles.intro}>
-            Welcome to <strong>SkillInf</strong>. By accessing our website, registering for an internship,
+            Welcome to <strong>skillinf</strong>. By accessing our website, registering for an internship,
             purchasing a certificate or service, or participating in our internship and training programs,
             you agree to comply with the following Terms &amp; Conditions.
           </p>
@@ -24,7 +24,7 @@ export default function TermsPage() {
         <div className={styles.body}>
           <section className={styles.section}>
             <h2>1. About Our Services</h2>
-            <p>SkillInf provides internship opportunities, learning and training programs, internship-related services, certificates, digital certificates, physical certificates, and related educational or professional development services. The specific services included in each internship or program may vary depending on the selected program.</p>
+            <p>skillinf provides internship opportunities, learning and training programs, internship-related services, certificates, digital certificates, physical certificates, and related educational or professional development services. The specific services included in each internship or program may vary depending on the selected program.</p>
           </section>
           <section className={styles.section}>
             <h2>2. Registration and Application</h2>
@@ -32,11 +32,11 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>3. Payment</h2>
-            <p>Certain services, certificates, training programs, or other offerings may require payment. Before making a payment, you should review the applicable program details, fees, inclusions, and requirements. Once payment has been successfully completed and the applicable service or processing has commenced, the payment is generally <strong>non-refundable</strong>, except where a refund is required under applicable law or where SkillInf expressly agrees otherwise.</p>
+            <p>Certain services, certificates, training programs, or other offerings may require payment. Before making a payment, you should review the applicable program details, fees, inclusions, and requirements. Once payment has been successfully completed and the applicable service or processing has commenced, the payment is generally <strong>non-refundable</strong>, except where a refund is required under applicable law or where skillinf expressly agrees otherwise.</p>
           </section>
           <section className={styles.section}>
             <h2>4. Digital / E-Certificate</h2>
-            <p>Where a digital or e-certificate is included as part of a paid service, the certificate will be issued after the applicable requirements have been completed and verified. The digital certificate may be provided electronically through the registered email address, user account, or another designated method. Once a certificate has been generated based on information provided by the participant, SkillInf may not be responsible for errors resulting from incorrect information submitted by the participant.</p>
+            <p>Where a digital or e-certificate is included as part of a paid service, the certificate will be issued after the applicable requirements have been completed and verified. The digital certificate may be provided electronically through the registered email address, user account, or another designated method. Once a certificate has been generated based on information provided by the participant, skillinf may not be responsible for errors resulting from incorrect information submitted by the participant.</p>
           </section>
           <section className={styles.section}>
             <h2>5. Physical Certificate</h2>
@@ -44,7 +44,7 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>6. LinkedIn Post Verification</h2>
-            <p>For programs where LinkedIn posting is part of the required process, participants may be required to publish a LinkedIn post according to instructions provided by SkillInf. The next stage of the program, including access to certain course or learning sections, may be made available <strong>only after the required LinkedIn post has been successfully verified</strong>. Participants are responsible for ensuring that their LinkedIn post meets the stated requirements.</p>
+            <p>For programs where LinkedIn posting is part of the required process, participants may be required to publish a LinkedIn post according to instructions provided by skillinf. The next stage of the program, including access to certain course or learning sections, may be made available <strong>only after the required LinkedIn post has been successfully verified</strong>. Participants are responsible for ensuring that their LinkedIn post meets the stated requirements.</p>
           </section>
           <section className={styles.section}>
             <h2>7. Course and Learning Access</h2>
@@ -60,11 +60,11 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>10. Certificate Verification</h2>
-            <p>SkillInf may maintain records necessary to verify certificates issued by the company. Certificate verification information may include participant name, certificate ID, program or internship title, issue date, and completion status. Participants must not alter, modify, forge, duplicate, or falsely represent a certificate issued by the company.</p>
+            <p>skillinf may maintain records necessary to verify certificates issued by the company. Certificate verification information may include participant name, certificate ID, program or internship title, issue date, and completion status. Participants must not alter, modify, forge, duplicate, or falsely represent a certificate issued by the company.</p>
           </section>
           <section className={styles.section}>
             <h2>11. Use of Company Materials</h2>
-            <p>Program materials, documents, videos, assignments, designs, logos, website content, and other materials provided by SkillInf may be protected by applicable intellectual property laws. Unless expressly permitted, participants must not resell course materials, redistribute paid content, copy or reproduce protected materials for commercial purposes, claim company-created materials as their own, or modify or misuse company certificates, logos, or official documents.</p>
+            <p>Program materials, documents, videos, assignments, designs, logos, website content, and other materials provided by skillinf may be protected by applicable intellectual property laws. Unless expressly permitted, participants must not resell course materials, redistribute paid content, copy or reproduce protected materials for commercial purposes, claim company-created materials as their own, or modify or misuse company certificates, logos, or official documents.</p>
           </section>
           <section className={styles.section}>
             <h2>12. Participant Conduct</h2>
@@ -72,7 +72,7 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>13. LinkedIn and Social Media</h2>
-            <p>Participants are responsible for the content they publish on their own social media accounts. Where a LinkedIn post is required for program verification, participants must ensure that the post complies with LinkedIn&apos;s applicable rules and policies. SkillInf does not control LinkedIn&apos;s platform, account policies, availability, or moderation decisions.</p>
+            <p>Participants are responsible for the content they publish on their own social media accounts. Where a LinkedIn post is required for program verification, participants must ensure that the post complies with LinkedIn&apos;s applicable rules and policies. skillinf does not control LinkedIn&apos;s platform, account policies, availability, or moderation decisions.</p>
           </section>
           <section className={styles.section}>
             <h2>14. Third-Party Services</h2>
@@ -84,7 +84,7 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>16. Cancellation and Termination</h2>
-            <p>SkillInf may suspend or terminate access to a program if a participant violates these Terms, provides fraudulent information, misuses company resources, attempts to manipulate the certificate or verification process, or engages in unlawful or abusive behavior. Where participation is terminated because of a participant&apos;s violation, payments already made may not be refundable, subject to applicable law.</p>
+            <p>skillinf may suspend or terminate access to a program if a participant violates these Terms, provides fraudulent information, misuses company resources, attempts to manipulate the certificate or verification process, or engages in unlawful or abusive behavior. Where participation is terminated because of a participant&apos;s violation, payments already made may not be refundable, subject to applicable law.</p>
           </section>
           <section className={styles.section}>
             <h2>17. No Guarantee of Employment</h2>
@@ -96,7 +96,7 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>19. Limitation of Liability</h2>
-            <p>To the extent permitted by applicable law, SkillInf will not be responsible for indirect or consequential losses arising from the use of our website, programs, third-party platforms, or services. Nothing in these Terms is intended to exclude or limit any liability or consumer right that cannot legally be excluded or limited.</p>
+            <p>To the extent permitted by applicable law, skillinf will not be responsible for indirect or consequential losses arising from the use of our website, programs, third-party platforms, or services. Nothing in these Terms is intended to exclude or limit any liability or consumer right that cannot legally be excluded or limited.</p>
           </section>
           <section className={styles.section}>
             <h2>20. Privacy</h2>
@@ -114,7 +114,7 @@ export default function TermsPage() {
             <h2>23. Contact Us</h2>
             <p>If you have any questions regarding these Terms &amp; Conditions, please contact us:</p>
             <div className={styles.contactBox}>
-              <p><strong>Company:</strong> SkillInf</p>
+              <p><strong>Company:</strong> skillinf</p>
               <p><strong>Website:</strong> <a href="https://skillinf.in" target="_blank" rel="noreferrer">skillinf.in</a></p>
               <p><strong>Email:</strong> <a href="mailto:support@skillinf.in">support@skillinf.in</a></p>
               <p><strong>Phone:</strong> +91 93426 37290 &amp; +91 99946 11054</p>
@@ -122,7 +122,7 @@ export default function TermsPage() {
             </div>
           </section>
           <p className={styles.acknowledge}>By registering for our programs, making a payment, or using our website and services, you acknowledge that you have read and understood these Terms &amp; Conditions.</p>
-          <p className={styles.copyright}>&copy; 2026 SkillInf. All rights reserved.</p>
+          <p className={styles.copyright}>&copy; 2026 skillinf. All rights reserved.</p>
         </div>
       </div>
     </main>

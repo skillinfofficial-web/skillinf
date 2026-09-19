@@ -68,8 +68,8 @@ export default function VerifyCertificateSection({ embedded, prefillId }: { embe
             <div className={styles.triggerLeft}>
               <div className={styles.shieldIcon}>🛡️</div>
               <div>
-                <h2 className={styles.triggerTitle}>Verify a SkillInf Certificate</h2>
-                <p className={styles.triggerSub}>Instantly confirm the authenticity of any SkillInf internship certificate</p>
+                <h2 className={styles.triggerTitle}>Verify a skillinf Certificate</h2>
+                <p className={styles.triggerSub}>Instantly confirm the authenticity of any skillinf internship certificate</p>
               </div>
             </div>
             <Link href="/verify-certificate" className={styles.triggerBtn} id="verify-cert-open-btn">
@@ -87,7 +87,7 @@ export default function VerifyCertificateSection({ embedded, prefillId }: { embe
       {!result ? (
         <>
           <p className={styles.panelInfo}>
-            Enter the <strong>Certificate ID</strong> found at the bottom of the SkillInf certificate document.
+            Enter the <strong>Certificate ID</strong> found at the bottom of the skillinf certificate document.
           </p>
           <div className={styles.inputRow}>
             <input id="cert-id-input" className={styles.input} type="text"
@@ -116,9 +116,9 @@ export default function VerifyCertificateSection({ embedded, prefillId }: { embe
             <div className={styles.verifiedCheck}>✓</div>
             <div>
               <p className={styles.verifiedTitle}>Certificate Verified</p>
-              <p className={styles.verifiedSub}>This certificate was issued by SkillInf and is authentic.</p>
+              <p className={styles.verifiedSub}>This certificate was issued by skillinf and is authentic.</p>
             </div>
-            <div className={styles.skillinf}>SKILLINF</div>
+            <div className={styles.skillinf}>skillinf</div>
           </div>
           <div className={styles.detailsGrid}>
             {[
@@ -143,7 +143,7 @@ export default function VerifyCertificateSection({ embedded, prefillId }: { embe
             ))}
           </div>
           <div className={styles.resultFooter}>
-            <p className={styles.footerNote}>✓ Verified by SkillInf · <span>skillinf.com</span></p>
+            <p className={styles.footerNote}>✓ Verified by skillinf · <span>skillinf.com</span></p>
             <button className={styles.verifyAnotherBtn} onClick={reset}>Verify Another →</button>
           </div>
         </div>

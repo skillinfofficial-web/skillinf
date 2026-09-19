@@ -110,7 +110,7 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 30);
   doc.text(`Dear ${user.name},`, ML, y); y += 10;
 
-  const intro = 'We are delighted to inform you that you have been selected for an internship opportunity with Skillinf. This internship is designed to provide you with practical industry exposure through real-world projects, guided learning, and professional mentorship.';
+  const intro = 'We are delighted to inform you that you have been selected for an internship opportunity with skillinf. This internship is designed to provide you with practical industry exposure through real-world projects, guided learning, and professional mentorship.';
   const introLines = doc.splitTextToSize(intro, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(introLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += introLines.length * 6.2 + 8;
@@ -132,9 +132,9 @@ async function downloadOfferLetter(user: UserDoc) {
   y += tableRows.length * rowH + 12;
 
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(15, 23, 42);
-  doc.text('Welcome to Skillinf, and congratulations!', ML, y); y += 7;
+  doc.text('Welcome to skillinf, and congratulations!', ML, y); y += 7;
 
-  const body = 'Your progress and participation will be monitored throughout the internship. Successful completion will be based on your engagement, project performance, and fulfillment of the assigned internship requirements. We are excited to have you begin this learning journey with Skillinf and wish you every success in your professional development.';
+  const body = 'Your progress and participation will be monitored throughout the internship. Successful completion will be based on your engagement, project performance, and fulfillment of the assigned internship requirements. We are excited to have you begin this learning journey with skillinf and wish you every success in your professional development.';
   const bodyLines = doc.splitTextToSize(body, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(bodyLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += bodyLines.length * 6.2 + 10;
@@ -153,7 +153,7 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.setDrawColor(210, 210, 210); doc.setLineWidth(0.25); doc.line(ML, footerY - 6, MR, footerY - 6);
   doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(150, 150, 150);
   doc.text('This is an electronically generated document. No physical signature is required.', W / 2, footerY - 1, { align: 'center' });
-  doc.text('For verification, contact Skillinf Verification Cell.', W / 2, footerY + 3.5, { align: 'center' });
+  doc.text('For verification, contact skillinf Verification Cell.', W / 2, footerY + 3.5, { align: 'center' });
   doc.text('www.skillinf.in', W / 2, footerY + 8, { align: 'center' });
 
   const safeName = user.name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
@@ -226,7 +226,7 @@ async function downloadCertificate(user: UserDoc) {
 
   drawMixedLine([
     { text: user.domain, bold: true },
-    { text: ' Internship at Skillinf from ', bold: false },
+    { text: ' Internship at skillinf from ', bold: false },
     { text: startStr, bold: true },
     { text: ' to ', bold: false },
     { text: endStr, bold: true },
@@ -499,7 +499,7 @@ export default function DashboardPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/skillinf-logo.png"
-            alt="SkillInf"
+            alt="skillinf"
             className={styles.topLogoImg}
           />
         </Link>
@@ -631,7 +631,7 @@ export default function DashboardPage() {
                 <p className={styles.liSub}>
                   {user.linkedinVerified === 'pending'
                     ? 'Our team will verify within 3–4 hours. Step 1 unlocks on approval.'
-                    : 'Share your offer letter on LinkedIn with #SkillInf to unlock your course steps.'}
+                    : 'Share your offer letter on LinkedIn with #skillinf to unlock your course steps.'}
                 </p>
               </div>
             </div>
@@ -810,7 +810,7 @@ export default function DashboardPage() {
                 <li>✅ Verified Digital Certificate</li>
                 <li>✅ LinkedIn-shareable credential</li>
                 <li>✅ Instant download after payment</li>
-                <li>✅ SkillInf MSME-registered seal</li>
+                <li>✅ skillinf MSME-registered seal</li>
               </ul>
               {payMsg && <p className={styles.payMsg}>{payMsg}</p>}
               <button className={styles.payBtn} disabled={payLoad} onClick={handleCertificatePayment}>

@@ -24,9 +24,9 @@ export default function VerifyCertificatePage() {
         <section className={styles.hero}>
           <div className="container">
             <div className={styles.heroBadge}>🛡️ Certificate Verification</div>
-            <h1 className={styles.heroTitle}>Verify a SkillInf Certificate</h1>
+            <h1 className={styles.heroTitle}>Verify a skillinf Certificate</h1>
             <p className={styles.heroSub}>
-              Instantly confirm the authenticity of any SkillInf internship certificate
+              Instantly confirm the authenticity of any skillinf internship certificate
               using the unique Certificate ID printed on the document.
             </p>
           </div>
@@ -47,7 +47,7 @@ export default function VerifyCertificatePage() {
             <h2 className={styles.howTitle}>How to verify</h2>
             <div className={styles.howGrid}>
               {[
-                { step: '1', text: 'Find the Certificate ID at the bottom of the SkillInf certificate document.' },
+                { step: '1', text: 'Find the Certificate ID at the bottom of the skillinf certificate document.' },
                 { step: '2', text: 'Paste the ID in the field above and click Verify.' },
                 { step: '3', text: 'View the holder\'s name, domain, dates, and completion status instantly.' },
               ].map(h => (
@@ -63,7 +63,7 @@ export default function VerifyCertificatePage() {
         {/* CTA */}
         <section className={styles.cta}>
           <div className="container">
-            <p className={styles.ctaText}>Want to earn your own SkillInf certificate?</p>
+            <p className={styles.ctaText}>Want to earn your own skillinf certificate?</p>
             <Link href="/sign-up" className={styles.ctaBtn}>Start Your Internship →</Link>
           </div>
         </section>

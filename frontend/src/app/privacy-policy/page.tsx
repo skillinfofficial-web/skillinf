@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import styles from './PrivacyPolicy.module.css';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | SkillInf',
-  description: 'Read the SkillInf Privacy Policy. Learn how we collect, use, and protect your personal information when you use our internship platform.',
+  title: 'Privacy Policy | skillinf',
+  description: 'Read the skillinf Privacy Policy. Learn how we collect, use, and protect your personal information when you use our internship platform.',
   alternates: { canonical: 'https://www.skillinf.in/privacy-policy' },
   openGraph: { url: 'https://www.skillinf.in/privacy-policy' },
 };
@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
           <p className={styles.lastUpdated}>Last Updated: September 18, 2026</p>
           <h1 className={styles.title}>Privacy Policy</h1>
           <p className={styles.intro}>
-            At <strong>SkillInf</strong>, we respect your privacy and are committed to protecting the personal
+            At <strong>skillinf</strong>, we respect your privacy and are committed to protecting the personal
             information you provide when using our website, internship programs, training services, and related services.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
           </section>
           <section className={styles.section}>
             <h2>4. Certificates</h2>
-            <p>Information such as your name, internship title, completion details, and certificate ID may be retained to verify certificates issued by SkillInf. Where certificate verification is provided publicly, only the information necessary for verification will be displayed.</p>
+            <p>Information such as your name, internship title, completion details, and certificate ID may be retained to verify certificates issued by skillinf. Where certificate verification is provided publicly, only the information necessary for verification will be displayed.</p>
           </section>
           <section className={styles.section}>
             <h2>5. Communication</h2>
@@ -88,7 +88,7 @@ export default function PrivacyPolicyPage() {
             <h2>14. Contact Us</h2>
             <p>If you have questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact us:</p>
             <div className={styles.contactBox}>
-              <p><strong>Company:</strong> SkillInf</p>
+              <p><strong>Company:</strong> skillinf</p>
               <p><strong>Website:</strong> <a href="https://skillinf.in" target="_blank" rel="noreferrer">skillinf.in</a></p>
               <p><strong>Email:</strong> <a href="mailto:support@skillinf.in">support@skillinf.in</a></p>
               <p><strong>Phone:</strong> +91 93426 37290 &amp; +91 99946 11054</p>
@@ -96,7 +96,7 @@ export default function PrivacyPolicyPage() {
             </div>
           </section>
           <p className={styles.acknowledge}>By using our website or submitting information through our forms, you acknowledge that you have read this Privacy Policy.</p>
-          <p className={styles.copyright}>&copy; 2026 SkillInf. All rights reserved.</p>
+          <p className={styles.copyright}>&copy; 2026 skillinf. All rights reserved.</p>
         </div>
       </div>
     </main>

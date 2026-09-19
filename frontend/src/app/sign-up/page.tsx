@@ -94,10 +94,10 @@ export default function SignUpPage() {
     <div className={styles.page}>
       {/* ── Brand bar ── */}
       <div className={styles.brand}>
-        <Link href="/" className={styles.logoWrap} aria-label="SkillInf Home">
+        <Link href="/" className={styles.logoWrap} aria-label="skillinf Home">
           <Image
             src="/skillinf-logo.png"
-            alt="SkillInf"
+            alt="skillinf"
             width={140}
             height={50}
             priority
@@ -111,7 +111,7 @@ export default function SignUpPage() {
         <div className={styles.card}>
           <div className={styles.cardHead}>
             <h1 className={styles.title}>
-              {isChangeDomain ? 'Add Another Domain' : 'Create your SkillInf account'}
+              {isChangeDomain ? 'Add Another Domain' : 'Create your skillinf account'}
             </h1>
             <h2 className={styles.sub}>
               {isChangeDomain

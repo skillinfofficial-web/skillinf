@@ -9,7 +9,7 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className={styles.brandCol}>
-            <Link href="/" className={styles.logo}>SKILLINF</Link>
+            <Link href="/" className={styles.logo}>skillinf</Link>
             <p className={styles.desc}>
               We help students turn their academic knowledge into practical, career-ready skills through structured project-based learning.
             </p>
@@ -85,7 +85,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.bottom}>
-          <p>&copy; {new Date().getFullYear()} SkillInf. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} skillinf. All rights reserved.</p>
           <div className={styles.bottomLinks}>
             <Link href="/privacy-policy" className={styles.bottomLink}>Privacy Policy</Link>
             <span className={styles.bottomDot}>·</span>

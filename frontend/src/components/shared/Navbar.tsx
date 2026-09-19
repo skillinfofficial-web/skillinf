@@ -30,10 +30,10 @@ export default function Navbar() {
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={`container ${styles.navContainer}`}>
         {/* Logo — PNG image */}
-        <Link href="/" className={styles.logoWrap} aria-label="SkillInf Home">
+        <Link href="/" className={styles.logoWrap} aria-label="skillinf Home">
           <Image
             src="/skillinf-logo.png"
-            alt="SkillInf — Learn Built Grow"
+            alt="skillinf — Learn Built Grow"
             width={140}
             height={52}
             priority
