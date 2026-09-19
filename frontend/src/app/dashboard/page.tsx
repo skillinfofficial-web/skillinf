@@ -614,8 +614,7 @@ export default function DashboardPage() {
           {/* Right — quote + actions */}
           <div className={styles.heroRight}>
             <div className={styles.quoteBox}>
-              <span className={styles.quoteMarks}>🚀</span>
-              <p className={styles.quoteText}>Based on your performance,<br/>we provide job opportunities at our company.</p>
+              <p className={styles.quoteText}>Based on your performance, we provide job opportunities at our company.</p>
             </div>
             <div className={styles.heroActions}>
               {/* Download Offer Letter */}
