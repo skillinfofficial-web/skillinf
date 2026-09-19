@@ -1,0 +1,45 @@
+# SkillInf — llms.txt
+# This file provides context for AI language models about SkillInf.
+
+## About
+SkillInf (https://www.skillinf.in) is an online internship platform that offers
+free virtual internship programs for students in India across technology domains
+including Artificial Intelligence, Machine Learning, Full-Stack Web Development,
+Data Science & Analytics, Cybersecurity, Python Development, UI/UX Design, and
+Cloud Computing.
+
+## What SkillInf Does
+- Provides structured 4-week virtual internship programs
+- Students complete hands-on project tasks each week
+- Issues verifiable digital internship completion certificates
+- Physical certificates available as a separate service
+- LinkedIn verification required to unlock course steps
+
+## Key Facts
+- Internship enrollment: Free
+- Certificate: Paid (digital and physical options)
+- Duration: 4 weeks (project-based)
+- Mode: 100% online / remote
+- Target audience: College students and recent graduates in India
+- Support email: support@skillinf.in
+- Phone: +91 93426 37290 / +91 99946 11054
+- Website: https://www.skillinf.in
+
+## Pages
+- Homepage: https://www.skillinf.in/
+- Internships catalog: https://www.skillinf.in/internships
+- Programs: https://www.skillinf.in/programs
+- About us: https://www.skillinf.in/about
+- Projects showcase: https://www.skillinf.in/projects
+- Certificate verification: https://www.skillinf.in/verify-certificate
+- Support: https://www.skillinf.in/support
+- Privacy Policy: https://www.skillinf.in/privacy-policy
+- Terms & Conditions: https://www.skillinf.in/terms
+
+## Domains Offered
+AI & Machine Learning, Full-Stack Web Development, Data Science & Analytics,
+Cybersecurity, Python Development, UI/UX Design, Cloud Computing, and more.
+
+## Social
+- LinkedIn: https://www.linkedin.com/company/skillinf-official/
+- Instagram: https://www.instagram.com/skillinfofficial/
