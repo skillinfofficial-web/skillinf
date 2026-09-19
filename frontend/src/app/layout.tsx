@@ -197,6 +197,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        {/* Site verification */}
+        <meta name="ranknibbler-site-verification" content="186aacda7c45fec956c980c184a4beb5" />
         {/* Structured Data */}
         <script
           type="application/ld+json"
