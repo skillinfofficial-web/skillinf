@@ -2,15 +2,6 @@ import type { Metadata } from 'next';
 import Link from "next/link";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-
-export const metadata: Metadata = {
-  title: 'About Us',
-  description: 'Learn about SkillInf — our mission to help students gain real-world internship experience, build portfolios, and become career-ready through structured virtual internship programs.',
-  alternates: { canonical: 'https://www.skillinf.in/about' },
-  openGraph: { url: 'https://www.skillinf.in/about' },
-};
-
-
 import {
   Target,
   Eye,
@@ -29,10 +20,11 @@ import {
 } from "lucide-react";
 import styles from "./AboutPage.module.css";
 
-export const metadata = {
-  title: "About Us | SkillInf",
-  description:
-    "Learn about SkillInf — our mission to make practical learning accessible to every student through structured programs, internships, and real-world projects.",
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn about SkillInf — our mission to help students gain real-world internship experience, build portfolios, and become career-ready through structured virtual internship programs.',
+  alternates: { canonical: 'https://www.skillinf.in/about' },
+  openGraph: { url: 'https://www.skillinf.in/about' },
 };
 
 /* ------------------------------------------------------------------ */
