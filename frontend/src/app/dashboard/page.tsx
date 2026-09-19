@@ -603,9 +603,6 @@ export default function DashboardPage() {
                   <p className={styles.referralHint}>
                     Share this code with friends — when they sign up using your code, you get credit!
                   </p>
-                  <p className={styles.jobOpportunityText}>
-                    🚀 Based on your performance, we provide job opportunities at our company.
-                  </p>
                 </div>
               )}
             </div>
@@ -614,8 +611,8 @@ export default function DashboardPage() {
           {/* Right — quote + actions */}
           <div className={styles.heroRight}>
             <div className={styles.quoteBox}>
-              <span className={styles.quoteMarks}>"</span>
-              <p className={styles.quoteText}>Small steps daily<br />create big results.</p>
+              <span className={styles.quoteMarks}>🚀</span>
+              <p className={styles.quoteText}>Based on your performance,<br/>we provide job opportunities at our company.</p>
             </div>
             <div className={styles.heroActions}>
               {/* Download Offer Letter */}
