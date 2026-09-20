@@ -72,6 +72,18 @@
 .lockTooltip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: #0f172a; color: #e2e8f0; font-size: 0.76rem; font-weight: 500; line-height: 1.5; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); white-space: normal; width: 240px; text-align: center; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4); animation: fadeIn 0.18s ease; }
 .lockTooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: #0f172a; }
 
+/* REFERRAL CARD (standalone section) */
+.referralCard { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+.referralCardLeft { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+.referralCardIconBox { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #4338ca); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.referralCardIcon { font-size: 1.25rem; }
+.referralCardTitle { font-size: 0.9rem; font-weight: 800; color: #0f172a; margin: 0 0 3px; }
+.referralCardSub { font-size: 0.78rem; color: #64748b; line-height: 1.5; margin: 0; }
+.referralCardRight { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+.referralCardCode { font-size: 1rem; font-weight: 800; color: #0f172a; background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px 18px; letter-spacing: 0.16em; font-family: monospace; }
+.referralCardShareBtn { padding: 9px 22px; background: #6366f1; color: #fff; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.18s, transform 0.15s; white-space: nowrap; }
+.referralCardShareBtn:hover { background: #4f46e5; transform: translateY(-1px); }
+
 /* LINKEDIN CARD */
 .linkedinCard { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
 .liLeft   { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
@@ -261,6 +273,10 @@
   .linkedinCard  { flex-direction: column; align-items: stretch; }
   .liRight       { min-width: unset; }
   .liInputRow    { flex-direction: column; }
+  .referralCard  { flex-direction: column; align-items: stretch; }
+  .referralCardRight { justify-content: space-between; }
+  .referralCardCode  { flex: 1; text-align: center; }
+  .referralCardShareBtn { width: 100%; }
   .liSubmitBtn   { width: 100%; }
   .heroActions   { flex-direction: column; }
   .certBanner    { flex-direction: column; gap: 14px; }
