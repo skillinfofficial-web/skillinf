@@ -47,6 +47,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: BASE_URL + "/",
   },
+  /* ── Favicon / Icons ─────────────────────────────────────────────── */
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+  },
   openGraph: {
     title: "skillinf | Free Virtual Internships for Students",
     description:
@@ -200,6 +210,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        {/* Favicon — explicit tags so Google Bot always finds them */}
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         {/* Site verification */}
         <meta name="ranknibbler-site-verification" content="186aacda7c45fec956c980c184a4beb5" />
         {/* Structured Data */}
