@@ -1,9 +1,16 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, MongoClientOptions } from 'mongodb';
 
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
+
+const mongoOptions: MongoClientOptions = {
+  maxPoolSize: 5,              // Cap connections per serverless instance
+  minPoolSize: 1,              // Keep at least 1 connection warm
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+};
 
 function getClientPromise(): Promise<MongoClient> {
   const uri = process.env.MONGODB_URI;
@@ -13,16 +20,15 @@ function getClientPromise(): Promise<MongoClient> {
     );
   }
 
-  // Reuse connection in development (hot reload safe)
-  if (process.env.NODE_ENV === 'development') {
-    if (!global._mongoClientPromise) {
-      global._mongoClientPromise = new MongoClient(uri).connect();
-    }
-    return global._mongoClientPromise;
+  // In both development and production: reuse the global cached promise.
+  // - Development: global persists across hot reloads.
+  // - Production (serverless): global persists for the lifetime of the
+  //   function instance, so concurrent invocations share one connection pool
+  //   instead of each opening fresh connections.
+  if (!global._mongoClientPromise) {
+    global._mongoClientPromise = new MongoClient(uri, mongoOptions).connect();
   }
-
-  // In production, create a new client per cold start
-  return new MongoClient(uri).connect();
+  return global._mongoClientPromise;
 }
 
 export async function getDatabase(): Promise<Db> {
