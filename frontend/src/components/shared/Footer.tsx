@@ -12,6 +12,9 @@ export default function Footer() {
             <Link href="/" className={styles.logo}>skillinf</Link>
             <p className={styles.desc}>
               We help students turn their academic knowledge into practical, career-ready skills through structured project-based learning.
+              <br />
+              <br />
+              <strong>MSME Registration:</strong> UDYAM-TN-03-0349976
             </p>
             <div className={styles.socials}>
               {/* Instagram */}

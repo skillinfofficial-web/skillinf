@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | skillinf",
   },
   description:
-    "Free virtual internships in AI, Web Development & Data Science. Build real projects, earn a certificate, and become career-ready — all online.",
+    "Free virtual internships in AI, Web Development & Data Science. Build real projects, earn a govt verified certificate, and become career-ready — all online.",
   keywords: [
     "free virtual internship",
     "student internship online",
