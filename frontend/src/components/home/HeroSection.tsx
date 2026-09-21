@@ -19,7 +19,7 @@ export default function HeroSection() {
         {/* Main heading */}
         <h1 className={styles.title}>
           Free Virtual Internships<br />
-          <span className={styles.titleLine2}>for Students</span>
+          <span className={styles.titleLine2}>for Students 2026 Batch</span>
         </h1>
 
         {/* Description */}
