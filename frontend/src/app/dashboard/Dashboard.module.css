@@ -137,7 +137,7 @@
 .ytBtn:hover:not(.ytDisabled) { background: #cc0000; transform: scale(1.03); }
 .ytDisabled { background: #cbd5e1; cursor: not-allowed; pointer-events: none; }
 .ytPlay { font-size: 0.7rem; }
-.scDesc { font-size: 0.8rem; color: #475569; line-height: 1.6; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+.scDesc { font-size: 0.8rem; color: #475569; line-height: 1.6; word-break: break-word; overflow-wrap: break-word; }
 
 .features  { background: #f8fafc; border-radius: 10px; padding: 12px; flex: 1; overflow: hidden; min-width: 0; }
 .featTitle { font-size: 0.68rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 7px; }
@@ -290,7 +290,6 @@
   .stepsGrid  { display: flex; flex-direction: row; overflow-x: auto; gap: 12px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; }
   .stepCard   { min-width: calc(100vw - 48px); max-width: calc(100vw - 48px); flex-shrink: 0; scroll-snap-align: start; overflow: hidden; box-sizing: border-box; }
   .scTitle    { font-size: 0.85rem; word-break: break-word; }
-  .scDesc     { -webkit-line-clamp: 2; }
   .featList li { font-size: 0.74rem; }
   .physCard   { padding: 24px 16px 20px; }
   .physRow    { grid-template-columns: 1fr; }
