@@ -14,6 +14,7 @@ export async function GET() {
         paymentDone: 1,
         'physicalCertificate.paid': 1,
         createdAt: 1,
+        collegeUniversity: 1,
       })
       .sort({ createdAt: -1 })
       .toArray();
@@ -25,6 +26,7 @@ export async function GET() {
         name:             u.name ?? '—',
         email:            u.email ?? '—',
         domain:           u.domain ?? '—',
+        college:          u.collegeUniversity ?? null,
         linkedinVerified: u.linkedinVerified === true,
         step1:            u.steps?.step1 === true,
         step2:            u.steps?.step2 === true,

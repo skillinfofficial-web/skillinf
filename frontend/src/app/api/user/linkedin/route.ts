@@ -13,8 +13,14 @@ export async function POST(req: Request) {
     const { url } = await req.json();
     if (!url?.trim()) return NextResponse.json({ success: false, message: 'Please enter a LinkedIn URL.' }, { status: 400 });
 
-    if (!url.includes('linkedin.com')) {
-      return NextResponse.json({ success: false, message: 'Please enter a valid LinkedIn post or article URL.' }, { status: 400 });
+    // Accept LinkedIn posts (/posts/) and articles (/pulse/)
+    const isLinkedinPost    = url.includes('linkedin.com/posts/');
+    const isLinkedinArticle = url.includes('linkedin.com/pulse/');
+    if (!isLinkedinPost && !isLinkedinArticle) {
+      return NextResponse.json({
+        success: false,
+        message: 'Please enter a valid LinkedIn post URL (linkedin.com/posts/…) or article URL (linkedin.com/pulse/…).',
+      }, { status: 400 });
     }
 
     const db = await getDatabase();
@@ -23,7 +29,12 @@ export async function POST(req: Request) {
     const user = await db.collection('users').findOne({ _id: new ObjectId(auth.userId) });
     if (!user) return NextResponse.json({ success: false, message: 'User not found.' }, { status: 404 });
 
-    const now = new Date();
+    const now    = new Date();
+    const nowIST  = now.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
 
     // Upsert into linkedin_verify collection (one entry per user)
     await db.collection('linkedin_verify').updateOne(
@@ -36,8 +47,9 @@ export async function POST(req: Request) {
           linkedinUrl:  url.trim(),
           status:       'pending',
           updatedAt:    now,
+          updatedAtIST: nowIST,
         },
-        $setOnInsert: { createdAt: now },
+        $setOnInsert: { createdAt: now, createdAtIST: nowIST },
       },
       { upsert: true }
     );
@@ -50,16 +62,13 @@ export async function POST(req: Request) {
           linkedinPostUrl:  url.trim(),
           linkedinVerified: 'pending',
           updatedAt:        now,
+          updatedAtIST:     nowIST,
         },
       }
     );
 
     // Send email notification to admins (fire-and-forget, non-blocking)
-    const istTime = now.toLocaleString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit', hour12: true,
-    });
+    const istTime = nowIST;
 
     void sendMail({
       to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],

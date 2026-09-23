@@ -39,7 +39,12 @@ export async function POST(req: Request) {
     const user = await db.collection('users').findOne({ _id: new ObjectId(auth.userId) });
 
     /* Save physical cert details + mark paymentDone + certificateUnlocked */
-    const registeredAt = new Date();
+    const registeredAt    = new Date();
+    const registeredAtIST = registeredAt.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
     await db.collection('users').updateOne(
       { _id: new ObjectId(auth.userId) },
       {
@@ -52,6 +57,7 @@ export async function POST(req: Request) {
             paid: true,
             orderId,
             registeredAt,
+            registeredAtIST,
           },
           paymentDone:          true,
           certificateUnlocked:  true,
@@ -60,11 +66,7 @@ export async function POST(req: Request) {
     );
 
     /* Send admin notification email (fire-and-forget) */
-    const istTime = registeredAt.toLocaleString('en-IN', {
-      timeZone: 'Asia/Kolkata',
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit', hour12: true,
-    });
+    const istTime = registeredAtIST;
 
     const userName  = (user?.name  as string) || 'Unknown';
     const userEmail = (user?.email as string) || 'Unknown';

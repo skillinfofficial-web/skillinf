@@ -9,6 +9,7 @@ interface UserRecord {
   name: string;
   email: string;
   domain: string;
+  college: string | null;
   linkedinVerified: boolean;
   step1: boolean;
   step2: boolean;
@@ -81,7 +82,8 @@ export default function ApplicationsPage() {
       ? records.filter(r =>
           r.name.toLowerCase().includes(search.toLowerCase()) ||
           r.email.toLowerCase().includes(search.toLowerCase()) ||
-          r.domain.toLowerCase().includes(search.toLowerCase()))
+          r.domain.toLowerCase().includes(search.toLowerCase()) ||
+          (r.college ?? '').toLowerCase().includes(search.toLowerCase()))
       : records,
     [records, search]);
 
@@ -148,6 +150,7 @@ export default function ApplicationsPage() {
                 <tr>
                   <th className={styles.thStudent}>Student</th>
                   <th className={styles.thDomain}>Domain</th>
+                  <th className={styles.thDomain}>College / University</th>
                   <th className={styles.thJoined}>Joined</th>
                   <th className={styles.thProgress}>Progress</th>
                   {STEPS.map((s, i) => (
@@ -172,6 +175,9 @@ export default function ApplicationsPage() {
                       </td>
                       <td className={styles.tdDomain}>
                         <span className={styles.domainBadge}>{u.domain}</span>
+                      </td>
+                      <td className={styles.tdDomain}>
+                        <span style={{ fontSize: '0.78rem', color: '#475569' }}>{u.college ?? <span style={{ color: '#cbd5e1' }}>—</span>}</span>
                       </td>
                       <td className={styles.tdDate}>{fmtDate(u.createdAt)}</td>
                       <td className={styles.tdProgress}>
@@ -208,6 +214,7 @@ export default function ApplicationsPage() {
                     </div>
                     <div className={styles.cardMeta}>
                       <span className={styles.domainBadge}>{u.domain}</span>
+                      {u.college && <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>🎓 {u.college}</span>}
                       <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{fmtDate(u.createdAt)}</span>
                     </div>
                   </div>
