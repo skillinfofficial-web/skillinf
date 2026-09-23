@@ -102,6 +102,54 @@
 .liViewLink { font-size: 0.82rem; font-weight: 700; color: #6366f1; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
 .liViewLink:hover { text-decoration: underline; }
 
+/* LINKEDIN REJECTED CARD */
+.liRejectedCard {
+  background: #fff5f5;
+  border: 2px solid #fca5a5;
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 2px 12px rgba(220,38,38,0.08);
+}
+.liRejectedHeader { display: flex; align-items: flex-start; gap: 14px; }
+.liRejectedIconBox {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 12px; background: #ef4444;
+  display: flex; align-items: center; justify-content: center;
+}
+.liRejectedIcon { font-size: 1.2rem; font-weight: 900; color: #ffffff; }
+.liRejectedTitle { font-size: 0.95rem; font-weight: 800; color: #b91c1c; margin-bottom: 4px; }
+.liRejectedSub   { font-size: 0.8rem; color: #7f1d1d; line-height: 1.6; }
+
+.liRejectedChecklist {
+  background: #fff;
+  border: 1.5px solid #fca5a5;
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.liChecklistTitle { font-size: 0.82rem; font-weight: 800; color: #991b1b; margin-bottom: 10px; }
+.liChecklistItems { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.liChecklistItem  { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: #374151; line-height: 1.5; }
+.liChecklistBullet {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%; background: #ef4444;
+  color: #fff; font-size: 0.7rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.liPrevUrl { font-size: 0.78rem; color: #6b7280; }
+.liResubmitRow { display: flex; gap: 10px; flex-wrap: wrap; }
+.liResubmitBtn {
+  padding: 10px 20px; background: #dc2626; color: #fff;
+  border: none; border-radius: 10px; font-size: 0.85rem;
+  font-weight: 700; cursor: pointer; white-space: nowrap;
+  transition: background 0.18s;
+}
+.liResubmitBtn:hover:not(:disabled) { background: #b91c1c; }
+.liResubmitBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+
 /* STEPS SECTION */
 .stepsSection {}
 .stepsSectionHead  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }

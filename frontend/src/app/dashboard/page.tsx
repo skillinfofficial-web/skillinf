@@ -686,45 +686,113 @@ export default function DashboardPage() {
         )}
 
         {/* ══ LINKEDIN CARD ══════════════════════════════════════════════ */}
-        {user.linkedinVerified !== true && (
-          <div className={styles.linkedinCard}>
-            <div className={styles.liLeft}>
-              <div className={styles.liIconBox}>
-                <span className={styles.liIcon}>in</span>
-              </div>
-              <div>
-                <p className={styles.liTitle}>
-                  {user.linkedinVerified === 'pending'
-                    ? '⏳ LinkedIn Verification Under Review'
-                    : '⚡ LinkedIn Verification Required'}
-                </p>
-                <p className={styles.liSub}>
-                  {user.linkedinVerified === 'pending'
-                    ? 'Our team will verify within 3–4 hours. Step 1 unlocks on approval.'
-                    : 'Share your offer letter on LinkedIn with #skillinf to unlock your course steps.'}
-                </p>
-              </div>
-            </div>
-            {user.linkedinVerified !== 'pending' && (
-              <div className={styles.liRight}>
-                <div className={styles.liInputRow}>
-                  <input className={styles.liInput} type="url"
-                    placeholder="Paste LinkedIn post / article URL…"
-                    value={liUrl} onChange={e => setLiUrl(e.target.value)} />
-                  <button className={styles.liSubmitBtn} onClick={submitLinkedin} disabled={liLoad || !liUrl.trim()}>
-                    {liLoad ? 'Submitting…' : 'Submit'}
+        {user.linkedinVerified !== true && (() => {
+          const isRejected = user.linkedinVerified === false && !!user.linkedinPostUrl;
+          const isPending  = user.linkedinVerified === 'pending';
+
+          if (isRejected) {
+            /* ── REJECTED state ─────────────────────────────────────────── */
+            return (
+              <div className={styles.liRejectedCard}>
+                <div className={styles.liRejectedHeader}>
+                  <div className={styles.liRejectedIconBox}>
+                    <span className={styles.liRejectedIcon}>✕</span>
+                  </div>
+                  <div>
+                    <p className={styles.liRejectedTitle}>❌ LinkedIn Post Not Valid</p>
+                    <p className={styles.liRejectedSub}>
+                      Your submitted post was reviewed and could not be verified. Please check the requirements below and re-submit a valid post.
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.liRejectedChecklist}>
+                  <p className={styles.liChecklistTitle}>✅ Your LinkedIn post must meet ALL of these:</p>
+                  <ul className={styles.liChecklistItems}>
+                    <li className={styles.liChecklistItem}>
+                      <span className={styles.liChecklistBullet}>1</span>
+                      <span>Your post must include the hashtag <strong>#skillinf</strong></span>
+                    </li>
+                    <li className={styles.liChecklistItem}>
+                      <span className={styles.liChecklistBullet}>2</span>
+                      <span>Your post must contain or show your <strong>Skillinf Internship Offer Letter</strong></span>
+                    </li>
+                    <li className={styles.liChecklistItem}>
+                      <span className={styles.liChecklistBullet}>3</span>
+                      <span>The post must be published on <strong>your own LinkedIn account</strong></span>
+                    </li>
+                  </ul>
+                </div>
+
+                {user.linkedinPostUrl && (
+                  <p className={styles.liPrevUrl}>
+                    Previous submission:{' '}
+                    <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink}>
+                      View rejected post →
+                    </a>
+                  </p>
+                )}
+
+                <div className={styles.liResubmitRow}>
+                  <input
+                    className={styles.liInput}
+                    type="url"
+                    placeholder="Paste your new LinkedIn post / article URL…"
+                    value={liUrl}
+                    onChange={e => setLiUrl(e.target.value)}
+                  />
+                  <button
+                    className={styles.liResubmitBtn}
+                    onClick={submitLinkedin}
+                    disabled={liLoad || !liUrl.trim()}
+                  >
+                    {liLoad ? 'Submitting…' : '🔄 Re-Submit'}
                   </button>
                 </div>
                 {liMsg && <p className={styles.liMsg}>{liMsg}</p>}
               </div>
-            )}
-            {user.linkedinVerified === 'pending' && user.linkedinPostUrl && (
-              <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink}>
-                View submitted post →
-              </a>
-            )}
-          </div>
-        )}
+            );
+          }
+
+          /* ── PENDING / NOT-SUBMITTED state ──────────────────────────── */
+          return (
+            <div className={styles.linkedinCard}>
+              <div className={styles.liLeft}>
+                <div className={styles.liIconBox}>
+                  <span className={styles.liIcon}>in</span>
+                </div>
+                <div>
+                  <p className={styles.liTitle}>
+                    {isPending ? '⏳ LinkedIn Verification Under Review' : '⚡ LinkedIn Verification Required'}
+                  </p>
+                  <p className={styles.liSub}>
+                    {isPending
+                      ? 'Our team will verify within 3–4 hours. Step 1 unlocks on approval.'
+                      : 'Share your offer letter on LinkedIn with #skillinf to unlock your course steps.'}
+                  </p>
+                </div>
+              </div>
+              {!isPending && (
+                <div className={styles.liRight}>
+                  <div className={styles.liInputRow}>
+                    <input className={styles.liInput} type="url"
+                      placeholder="Paste LinkedIn post / article URL…"
+                      value={liUrl} onChange={e => setLiUrl(e.target.value)} />
+                    <button className={styles.liSubmitBtn} onClick={submitLinkedin} disabled={liLoad || !liUrl.trim()}>
+                      {liLoad ? 'Submitting…' : 'Submit'}
+                    </button>
+                  </div>
+                  {liMsg && <p className={styles.liMsg}>{liMsg}</p>}
+                </div>
+              )}
+              {isPending && user.linkedinPostUrl && (
+                <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink}>
+                  View submitted post →
+                </a>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ══ STEPS SECTION ══════════════════════════════════════════════ */}
         <div className={styles.stepsSection}>
