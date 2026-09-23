@@ -55,7 +55,39 @@
 
 .dateCell { font-size: 0.78rem; color: var(--secondary-text); white-space: nowrap; min-width: 130px; }
 
-/* Mobile */
+/* Mobile card layout */
+.cardList { display: none; flex-direction: column; gap: 12px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(36,49,44,0.05);
+}
+
+.cardHeader {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 12px; gap: 10px;
+}
+.cardName  { font-size: 0.95rem; font-weight: 700; color: var(--main-text); }
+.cardEmail { font-size: 0.78rem; color: var(--secondary-text); margin-top: 2px; }
+
+.cardRows { display: flex; flex-direction: column; gap: 8px; }
+.cardRow  { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; }
+.cardRowLabel {
+  min-width: 72px; font-size: 0.72rem; font-weight: 700;
+  color: var(--secondary-text); text-transform: uppercase;
+  letter-spacing: 0.04em; padding-top: 1px;
+}
+.cardRowValue { flex: 1; color: var(--main-text); font-weight: 500; word-break: break-word; }
+
 @media (max-width: 640px) {
-  .page { padding: 20px 12px 40px; }
+  .page { padding: 16px 12px 40px; }
+  .tableWrap { display: none; }
+  .cardList { display: flex; }
+}
+
+@media (max-width: 480px) {
+  .header { flex-direction: column; align-items: flex-start; }
 }

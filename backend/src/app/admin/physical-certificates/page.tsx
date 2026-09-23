@@ -76,44 +76,80 @@ export default function PhysicalCertificatesPage() {
       )}
 
       {!loading && !error && records.length > 0 && (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Mobile</th>
-                <th>Address</th>
-                <th>District</th>
-                <th>Pincode</th>
-                <th>Requested At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map(rec => (
-                <tr key={rec.id} className={styles.row}>
-                  <td className={styles.studentCell}>
-                    <p className={styles.studentName}>{rec.name}</p>
-                    <p className={styles.studentEmail}>{rec.email}</p>
-                  </td>
-                  <td className={styles.mobileCell}>
-                    <span className={styles.mobile}>{rec.mobile}</span>
-                  </td>
-                  <td className={styles.addressCell}>
-                    <div className={styles.addressRow}>
-                      <MapPin size={12} className={styles.mapIcon} />
-                      <span>{rec.address}</span>
-                    </div>
-                  </td>
-                  <td className={styles.districtCell}>{rec.district}</td>
-                  <td className={styles.pincodeCell}>
-                    <span className={styles.pincodeBadge}>{rec.pincode}</span>
-                  </td>
-                  <td className={styles.dateCell}>{fmtDate(rec.registeredAt)}</td>
+        <>
+          {/* Desktop/Tablet — table */}
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Mobile</th>
+                  <th>Address</th>
+                  <th>District</th>
+                  <th>Pincode</th>
+                  <th>Requested At</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {records.map(rec => (
+                  <tr key={rec.id} className={styles.row}>
+                    <td className={styles.studentCell}>
+                      <p className={styles.studentName}>{rec.name}</p>
+                      <p className={styles.studentEmail}>{rec.email}</p>
+                    </td>
+                    <td className={styles.mobileCell}>
+                      <span className={styles.mobile}>{rec.mobile}</span>
+                    </td>
+                    <td className={styles.addressCell}>
+                      <div className={styles.addressRow}>
+                        <MapPin size={12} className={styles.mapIcon} />
+                        <span>{rec.address}</span>
+                      </div>
+                    </td>
+                    <td className={styles.districtCell}>{rec.district}</td>
+                    <td className={styles.pincodeCell}>
+                      <span className={styles.pincodeBadge}>{rec.pincode}</span>
+                    </td>
+                    <td className={styles.dateCell}>{fmtDate(rec.registeredAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile — cards */}
+          <div className={styles.cardList}>
+            {records.map(rec => (
+              <div key={rec.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <p className={styles.cardName}>{rec.name}</p>
+                    <p className={styles.cardEmail}>{rec.email}</p>
+                  </div>
+                  <span className={styles.pincodeBadge}>{rec.pincode}</span>
+                </div>
+                <div className={styles.cardRows}>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>📱 Mobile</span>
+                    <span className={styles.cardRowValue}>{rec.mobile}</span>
+                  </div>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>📍 Address</span>
+                    <span className={styles.cardRowValue}>{rec.address}</span>
+                  </div>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>🏙️ District</span>
+                    <span className={styles.cardRowValue}>{rec.district}</span>
+                  </div>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>🕐 Date</span>
+                    <span className={styles.cardRowValue}>{fmtDate(rec.registeredAt)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

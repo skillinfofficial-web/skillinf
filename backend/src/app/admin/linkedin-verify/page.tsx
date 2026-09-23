@@ -89,66 +89,123 @@ export default function LinkedInVerifyPage() {
       )}
 
       {!loading && !error && records.length > 0 && (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>LinkedIn Post</th>
-                <th>Status</th>
-                <th>Submitted</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map(rec => (
-                <tr key={rec._id} className={styles.row}>
-                  <td className={styles.studentCell}>
-                    <p className={styles.studentName}>{rec.name}</p>
-                    <p className={styles.studentEmail}>{rec.email}</p>
-                  </td>
-                  <td className={styles.urlCell}>
-                    <a href={rec.linkedinUrl} target="_blank" rel="noreferrer" className={styles.urlLink}>
-                      <ExternalLink size={13} /> View Post
-                    </a>
-                    <p className={styles.urlText}>{rec.linkedinUrl}</p>
-                  </td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${styles[statusClass[rec.status]]}`}>
-                      {statusLabel[rec.status]}
-                    </span>
-                  </td>
-                  <td className={styles.dateCell}>{fmtDate(rec.createdAt)}</td>
-                  <td className={styles.actionsCell}>
-                    <button
-                      className={`${styles.btn} ${styles.verifyBtn}`}
-                      onClick={() => act(rec, 'verify')}
-                      disabled={busyId === rec._id || rec.status === 'approved'}
-                      title="Verify — unlocks Step 1 for this student"
-                    >
-                      {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <CheckCircle2 size={14} />}
-                      Verify
-                    </button>
-                    <button
-                      className={`${styles.btn} ${styles.rejectBtn}`}
-                      onClick={() => act(rec, 'unverify')}
-                      disabled={busyId === rec._id || rec.status === 'rejected'}
-                      title="Reject — student must resubmit"
-                    >
-                      {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <XCircle size={14} />}
-                      Unverify
-                    </button>
-                    {actionMsg?.id === rec._id && (
-                      <p className={`${styles.actionFeedback} ${actionMsg.ok ? styles.feedbackOk : styles.feedbackErr}`}>
-                        {actionMsg.msg}
-                      </p>
-                    )}
-                  </td>
+        <>
+          {/* Desktop/Tablet — table */}
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>LinkedIn Post</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {records.map(rec => (
+                  <tr key={rec._id} className={styles.row}>
+                    <td className={styles.studentCell}>
+                      <p className={styles.studentName}>{rec.name}</p>
+                      <p className={styles.studentEmail}>{rec.email}</p>
+                    </td>
+                    <td className={styles.urlCell}>
+                      <a href={rec.linkedinUrl} target="_blank" rel="noreferrer" className={styles.urlLink}>
+                        <ExternalLink size={13} /> View Post
+                      </a>
+                      <p className={styles.urlText}>{rec.linkedinUrl}</p>
+                    </td>
+                    <td>
+                      <span className={`${styles.statusBadge} ${styles[statusClass[rec.status]]}`}>
+                        {statusLabel[rec.status]}
+                      </span>
+                    </td>
+                    <td className={styles.dateCell}>{fmtDate(rec.createdAt)}</td>
+                    <td className={styles.actionsCell}>
+                      <button
+                        className={`${styles.btn} ${styles.verifyBtn}`}
+                        onClick={() => act(rec, 'verify')}
+                        disabled={busyId === rec._id || rec.status === 'approved'}
+                      >
+                        {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <CheckCircle2 size={14} />}
+                        Verify
+                      </button>
+                      <button
+                        className={`${styles.btn} ${styles.rejectBtn}`}
+                        onClick={() => act(rec, 'unverify')}
+                        disabled={busyId === rec._id || rec.status === 'rejected'}
+                      >
+                        {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <XCircle size={14} />}
+                        Unverify
+                      </button>
+                      {actionMsg?.id === rec._id && (
+                        <p className={`${styles.actionFeedback} ${actionMsg.ok ? styles.feedbackOk : styles.feedbackErr}`}>
+                          {actionMsg.msg}
+                        </p>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile — cards */}
+          <div className={styles.cardList}>
+            {records.map(rec => (
+              <div key={rec._id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <p className={styles.cardName}>{rec.name}</p>
+                    <p className={styles.cardEmail}>{rec.email}</p>
+                  </div>
+                  <span className={`${styles.statusBadge} ${styles[statusClass[rec.status]]}`}>
+                    {statusLabel[rec.status]}
+                  </span>
+                </div>
+                <div className={styles.cardRows}>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>🔗 Post</span>
+                    <span className={styles.cardRowValue}>
+                      <a href={rec.linkedinUrl} target="_blank" rel="noreferrer" className={styles.urlLink}>
+                        <ExternalLink size={12} /> View Post
+                      </a>
+                    </span>
+                  </div>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>🕐 Date</span>
+                    <span className={styles.cardRowValue}>{fmtDate(rec.createdAt)}</span>
+                  </div>
+                </div>
+                <div className={styles.cardActions}>
+                  <button
+                    className={`${styles.btn} ${styles.verifyBtn}`}
+                    onClick={() => act(rec, 'verify')}
+                    disabled={busyId === rec._id || rec.status === 'approved'}
+                    style={{ flex: 1 }}
+                  >
+                    {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <CheckCircle2 size={14} />}
+                    Verify
+                  </button>
+                  <button
+                    className={`${styles.btn} ${styles.rejectBtn}`}
+                    onClick={() => act(rec, 'unverify')}
+                    disabled={busyId === rec._id || rec.status === 'rejected'}
+                    style={{ flex: 1 }}
+                  >
+                    {busyId === rec._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <XCircle size={14} />}
+                    Unverify
+                  </button>
+                </div>
+                {actionMsg?.id === rec._id && (
+                  <p className={`${styles.actionFeedback} ${actionMsg.ok ? styles.feedbackOk : styles.feedbackErr}`}>
+                    {actionMsg.msg}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

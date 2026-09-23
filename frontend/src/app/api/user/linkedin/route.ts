@@ -91,6 +91,12 @@ export async function POST(req: Request) {
             <div style="margin-top:24px;padding:12px 16px;background:#e8f4fd;border-left:4px solid #0077b5;border-radius:4px;font-size:14px;color:#333;">
               Please review and approve/reject this request in the <strong>admin panel</strong>.
             </div>
+            <div style="margin-top:16px;text-align:center;">
+              <a href="https://skillinf-backend.onrender.com/admin/linkedin-verify"
+                 style="display:inline-block;background:#0077b5;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+                Verify in Admin Panel →
+              </a>
+            </div>
           </div>
           <div style="padding:12px 24px;background:#f0f0f0;font-size:12px;color:#888;text-align:center;">
             Skillinf — Automated Notification System

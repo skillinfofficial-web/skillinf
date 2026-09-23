@@ -140,66 +140,99 @@ export default function ApplicationsPage() {
 
       {/* ── Table ──────────────────────────────────── */}
       {!loading && !error && records.length > 0 && (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th className={styles.thStudent}>Student</th>
-                <th className={styles.thDomain}>Domain</th>
-                <th className={styles.thJoined}>Joined</th>
-                <th className={styles.thProgress}>Progress</th>
-                {/* 7 step headers */}
-                {STEPS.map((s, i) => (
-                  <th key={s.key} className={styles.thCheck}>
-                    <span className={styles.stepLabel} style={{ whiteSpace: 'pre-line' }}>{s.label}</span>
-                    <span className={`${styles.stepNum} ${i === 0 ? styles.stepNumLi : i < 5 ? styles.stepNumStep : i === 5 ? styles.stepNumEcert : styles.stepNumPhys}`}>
-                      {i === 0 ? 'LI' : i < 5 ? i : i === 5 ? '₹E' : '₹P'}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(u => {
-                const done = progressCount(u);
-                const pct = Math.round((done / 7) * 100);
-                return (
-                  <tr key={u.id} className={styles.row}>
-                    {/* Student */}
-                    <td className={styles.tdStudent}>
-                      <p className={styles.studentName}>{u.name}</p>
-                      <p className={styles.studentEmail}>{u.email}</p>
-                    </td>
-                    {/* Domain */}
-                    <td className={styles.tdDomain}>
-                      <span className={styles.domainBadge}>{u.domain}</span>
-                    </td>
-                    {/* Joined */}
-                    <td className={styles.tdDate}>{fmtDate(u.createdAt)}</td>
-                    {/* Progress bar */}
-                    <td className={styles.tdProgress}>
-                      <div className={styles.progRow}>
-                        <div className={styles.progTrack}>
-                          <div
-                            className={styles.progFill}
-                            style={{ width: `${pct}%`, background: pct === 100 ? '#00b894' : pct >= 70 ? '#7c3aed' : '#3b82f6' }}
-                          />
-                        </div>
-                        <span className={styles.progLabel}>{done}/7</span>
-                      </div>
-                    </td>
-                    {/* 7 checkboxes */}
-                    {STEPS.map((s, i) => (
-                      <td key={s.key} className={styles.tdCheck}>
-                        <ProgressTick done={u[s.key as StepKey] as boolean} index={i} />
+        <>
+          {/* Desktop — table */}
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th className={styles.thStudent}>Student</th>
+                  <th className={styles.thDomain}>Domain</th>
+                  <th className={styles.thJoined}>Joined</th>
+                  <th className={styles.thProgress}>Progress</th>
+                  {STEPS.map((s, i) => (
+                    <th key={s.key} className={styles.thCheck}>
+                      <span className={styles.stepLabel} style={{ whiteSpace: 'pre-line' }}>{s.label}</span>
+                      <span className={`${styles.stepNum} ${i === 0 ? styles.stepNumLi : i < 5 ? styles.stepNumStep : i === 5 ? styles.stepNumEcert : styles.stepNumPhys}`}>
+                        {i === 0 ? 'LI' : i < 5 ? i : i === 5 ? '₹E' : '₹P'}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map(u => {
+                  const done = progressCount(u);
+                  const pct = Math.round((done / 7) * 100);
+                  return (
+                    <tr key={u.id} className={styles.row}>
+                      <td className={styles.tdStudent}>
+                        <p className={styles.studentName}>{u.name}</p>
+                        <p className={styles.studentEmail}>{u.email}</p>
                       </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      <td className={styles.tdDomain}>
+                        <span className={styles.domainBadge}>{u.domain}</span>
+                      </td>
+                      <td className={styles.tdDate}>{fmtDate(u.createdAt)}</td>
+                      <td className={styles.tdProgress}>
+                        <div className={styles.progRow}>
+                          <div className={styles.progTrack}>
+                            <div className={styles.progFill} style={{ width: `${pct}%`, background: pct === 100 ? '#00b894' : pct >= 70 ? '#7c3aed' : '#3b82f6' }} />
+                          </div>
+                          <span className={styles.progLabel}>{done}/7</span>
+                        </div>
+                      </td>
+                      {STEPS.map((s, i) => (
+                        <td key={s.key} className={styles.tdCheck}>
+                          <ProgressTick done={u[s.key as StepKey] as boolean} index={i} />
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile — cards */}
+          <div className={styles.cardList}>
+            {filtered.map(u => {
+              const done = progressCount(u);
+              const pct = Math.round((done / 7) * 100);
+              return (
+                <div key={u.id} className={styles.card}>
+                  <div className={styles.cardTop}>
+                    <div>
+                      <p className={styles.cardName}>{u.name}</p>
+                      <p className={styles.cardEmail}>{u.email}</p>
+                    </div>
+                    <div className={styles.cardMeta}>
+                      <span className={styles.domainBadge}>{u.domain}</span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{fmtDate(u.createdAt)}</span>
+                    </div>
+                  </div>
+                  <div className={styles.cardProgRow}>
+                    <div className={styles.progTrack} style={{ flex: 1 }}>
+                      <div className={styles.progFill} style={{ width: `${pct}%`, background: pct === 100 ? '#00b894' : pct >= 70 ? '#7c3aed' : '#3b82f6' }} />
+                    </div>
+                    <span className={styles.progLabel}>{done}/7</span>
+                  </div>
+                  <div className={styles.cardTicks}>
+                    {STEPS.map((s, i) => {
+                      const isDone = u[s.key as StepKey] as boolean;
+                      return (
+                        <span key={s.key} className={`${styles.cardTick} ${isDone ? styles.cardTickDone : ''}`}>
+                          <ProgressTick done={isDone} index={i} />
+                          {s.label.replace('\n', ' ')}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* ── Legend ─────────────────────────────────── */}

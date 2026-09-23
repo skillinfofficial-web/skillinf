@@ -129,6 +129,39 @@
 .legendItem  { display: flex; align-items: center; gap: 5px; color: var(--secondary-text); }
 .legendDot   { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
-@media (max-width: 640px) {
-  .page { padding: 20px 12px 40px; }
+/* Mobile card layout */
+.cardList { display: none; flex-direction: column; gap: 12px; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(36,49,44,0.05);
+}
+.cardTop {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 10px; gap: 8px;
+}
+.cardName  { font-size: 0.95rem; font-weight: 700; color: var(--main-text); }
+.cardEmail { font-size: 0.78rem; color: var(--secondary-text); margin-top: 2px; }
+.cardMeta  { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+
+.cardProgRow { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+
+.cardTicks {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;
+}
+.cardTick {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.7rem; color: var(--secondary-text);
+  background: var(--admin-bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 8px;
+}
+.cardTickDone { color: var(--main-text); font-weight: 600; }
+
+@media (max-width: 768px) {
+  .page { padding: 16px 12px 40px; }
+  .tableWrap { display: none; }
+  .cardList { display: flex; }
+  .searchWrap { max-width: 100%; }
+  .header { flex-direction: column; align-items: flex-start; }
 }

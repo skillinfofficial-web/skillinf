@@ -100,3 +100,35 @@
   background: #f0f9ff; border: 1px solid #bae6fd;
   border-radius: 6px; padding: 3px 10px;
 }
+
+/* Mobile card layout */
+.cardList { display: none; flex-direction: column; gap: 12px; }
+
+.card {
+  background: #fff; border: 1.5px solid #e2e8f0;
+  border-radius: 16px; padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.cardTop {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 12px; gap: 8px;
+}
+.cardNameVal  { font-size: 0.95rem; font-weight: 700; color: #0f172a; }
+.cardEmailVal { font-size: 0.78rem; color: #6366f1; margin-top: 2px; }
+.cardRows { display: flex; flex-direction: column; gap: 8px; }
+.cardRow  { display: flex; align-items: center; gap: 10px; }
+.cardRowLabel {
+  min-width: 60px; font-size: 0.72rem; font-weight: 700;
+  color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.cardRowValue { flex: 1; }
+
+@media (max-width: 640px) {
+  .page { padding: 16px 12px 40px; }
+  .tableWrap { display: none; }
+  .cardList { display: flex; }
+  .header { flex-direction: column; align-items: flex-start; }
+  .statPills { width: 100%; }
+  .searchRow { margin-bottom: 16px; }
+}
+

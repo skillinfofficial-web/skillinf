@@ -74,63 +74,100 @@ export default function ReferralsPage() {
       ) : filtered.length === 0 ? (
         <div className={styles.center}><Users size={40} color="#cbd5e1"/><p>No referral data found.</p></div>
       ) : (
-        <div className={styles.tableWrap}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Referral Code</th>
-                <th>Referred Count</th>
-                <th>Referred Members</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((r, i) => (
-                <React.Fragment key={r.email}>
-                  <tr className={r.referredCount > 0 ? styles.rowActive : ''}>
-                    <td className={styles.num}>{i + 1}</td>
-                    <td className={styles.name}>{r.name}</td>
-                    <td className={styles.email}>{r.email}</td>
-                    <td>
-                      <span className={styles.codeBadge}>{r.myReferralCode}</span>
-                    </td>
-                    <td>
-                      <span className={`${styles.countBadge} ${r.referredCount > 0 ? styles.countActive : ''}`}>
-                        {r.referredCount}
-                      </span>
-                    </td>
-                    <td>
-                      {r.referredCount > 0 ? (
-                        <button
-                          className={styles.viewBtn}
-                          onClick={() => setExpanded(expanded === r.email ? null : r.email)}
-                        >
-                          {expanded === r.email ? 'Hide' : `View ${r.referredCount}`}
-                        </button>
-                      ) : (
-                        <span className={styles.none}>—</span>
-                      )}
-                    </td>
-                  </tr>
-                  {expanded === r.email && r.referredMembers.length > 0 && (
-                    <tr className={styles.expandedRow}>
-                      <td colSpan={6}>
-                        <div className={styles.membersList}>
-                          <p className={styles.membersTitle}>Members who used <strong>{r.myReferralCode}</strong>:</p>
-                          <ul>
-                            {r.referredMembers.map(m => <li key={m}>{m}</li>)}
-                          </ul>
-                        </div>
+        <>
+          {/* Desktop — table */}
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Referral Code</th>
+                  <th>Referred Count</th>
+                  <th>Referred Members</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((r, i) => (
+                  <React.Fragment key={r.email}>
+                    <tr className={r.referredCount > 0 ? styles.rowActive : ''}>
+                      <td className={styles.num}>{i + 1}</td>
+                      <td className={styles.name}>{r.name}</td>
+                      <td className={styles.email}>{r.email}</td>
+                      <td><span className={styles.codeBadge}>{r.myReferralCode}</span></td>
+                      <td>
+                        <span className={`${styles.countBadge} ${r.referredCount > 0 ? styles.countActive : ''}`}>
+                          {r.referredCount}
+                        </span>
+                      </td>
+                      <td>
+                        {r.referredCount > 0 ? (
+                          <button className={styles.viewBtn} onClick={() => setExpanded(expanded === r.email ? null : r.email)}>
+                            {expanded === r.email ? 'Hide' : `View ${r.referredCount}`}
+                          </button>
+                        ) : (
+                          <span className={styles.none}>—</span>
+                        )}
                       </td>
                     </tr>
+                    {expanded === r.email && r.referredMembers.length > 0 && (
+                      <tr className={styles.expandedRow}>
+                        <td colSpan={6}>
+                          <div className={styles.membersList}>
+                            <p className={styles.membersTitle}>Members who used <strong>{r.myReferralCode}</strong>:</p>
+                            <ul>{r.referredMembers.map(m => <li key={m}>{m}</li>)}</ul>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile — cards */}
+          <div className={styles.cardList}>
+            {filtered.map((r, i) => (
+              <div key={r.email} className={styles.card}>
+                <div className={styles.cardTop}>
+                  <div>
+                    <p className={styles.cardNameVal}>{r.name}</p>
+                    <p className={styles.cardEmailVal}>{r.email}</p>
+                  </div>
+                  <span className={`${styles.countBadge} ${r.referredCount > 0 ? styles.countActive : ''}`}>
+                    {r.referredCount}
+                  </span>
+                </div>
+                <div className={styles.cardRows}>
+                  <div className={styles.cardRow}>
+                    <span className={styles.cardRowLabel}>Code</span>
+                    <span className={styles.cardRowValue}>
+                      <span className={styles.codeBadge}>{r.myReferralCode}</span>
+                    </span>
+                  </div>
+                  {r.referredCount > 0 && (
+                    <div className={styles.cardRow}>
+                      <span className={styles.cardRowLabel}>Members</span>
+                      <span className={styles.cardRowValue}>
+                        <button className={styles.viewBtn} onClick={() => setExpanded(expanded === r.email ? null : r.email)}>
+                          {expanded === r.email ? 'Hide' : `View ${r.referredCount}`}
+                        </button>
+                      </span>
+                    </div>
                   )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                </div>
+                {expanded === r.email && r.referredMembers.length > 0 && (
+                  <div className={styles.membersList} style={{ marginTop: 12 }}>
+                    <p className={styles.membersTitle}>Members who used <strong>{r.myReferralCode}</strong>:</p>
+                    <ul>{r.referredMembers.map(m => <li key={m}>{m}</li>)}</ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
