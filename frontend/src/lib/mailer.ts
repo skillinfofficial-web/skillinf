@@ -8,6 +8,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Verify SMTP connection on first import — logs any auth errors immediately
+transporter.verify((error) => {
+  if (error) {
+    console.error('[Mailer] SMTP connection FAILED:', error.message);
+    console.error('[Mailer] GMAIL_USER:', process.env.GMAIL_USER);
+    console.error('[Mailer] GMAIL_APP_PASSWORD set:', !!process.env.GMAIL_APP_PASSWORD);
+  } else {
+    console.log('[Mailer] SMTP ready — sending from:', process.env.GMAIL_USER);
+  }
+});
+
 export interface MailOptions {
   to: string | string[];
   subject: string;
@@ -15,10 +26,18 @@ export interface MailOptions {
 }
 
 export async function sendMail({ to, subject, html }: MailOptions) {
-  return transporter.sendMail({
-    from: `"Skillinf Notifications" <${process.env.GMAIL_USER}>`,
-    to: Array.isArray(to) ? to.join(', ') : to,
-    subject,
-    html,
-  });
+  try {
+    const result = await transporter.sendMail({
+      from: `"Skillinf Notifications" <${process.env.GMAIL_USER}>`,
+      to: Array.isArray(to) ? to.join(', ') : to,
+      subject,
+      html,
+    });
+    console.log('[Mailer] Email sent:', result.messageId, '→', to);
+    return result;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[Mailer] Send FAILED — to:', to, '| error:', msg);
+    throw err;
+  }
 }
