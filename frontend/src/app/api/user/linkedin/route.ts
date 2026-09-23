@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     });
 
     void sendMail({
-      to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+      to: ['arunkumar.s202006@gmail.com', 'skillinfinternship@gmail.com'],
       subject: `🔔 New LinkedIn Verification Request — ${user.name}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
