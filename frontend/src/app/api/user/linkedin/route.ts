@@ -13,13 +13,14 @@ export async function POST(req: Request) {
     const { url } = await req.json();
     if (!url?.trim()) return NextResponse.json({ success: false, message: 'Please enter a LinkedIn URL.' }, { status: 400 });
 
-    // Accept LinkedIn posts (/posts/) and articles (/pulse/)
+    // Accept LinkedIn posts (/posts/), articles (/pulse/), and short links (lnkd.in/p/)
     const isLinkedinPost    = url.includes('linkedin.com/posts/');
     const isLinkedinArticle = url.includes('linkedin.com/pulse/');
-    if (!isLinkedinPost && !isLinkedinArticle) {
+    const isLinkedinShort   = /https?:\/\/(?:www\.)?lnkd\.in\/p\/[A-Za-z0-9_-]+\/?/.test(url);
+    if (!isLinkedinPost && !isLinkedinArticle && !isLinkedinShort) {
       return NextResponse.json({
         success: false,
-        message: 'Please enter a valid LinkedIn post URL (linkedin.com/posts/…) or article URL (linkedin.com/pulse/…).',
+        message: 'Please enter a valid LinkedIn URL — post (linkedin.com/posts/…), article (linkedin.com/pulse/…), or short link (lnkd.in/p/…).',
       }, { status: 400 });
     }
 
