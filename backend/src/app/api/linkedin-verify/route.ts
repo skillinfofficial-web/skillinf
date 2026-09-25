@@ -53,12 +53,12 @@ export async function PATCH(req: NextRequest) {
         if (action === 'verify') {
           await sendMail({
             to: studentEmail,
-            subject: 'LinkedIn Verification Successful — Skillinf',
+            subject: 'LinkedIn Verification Update — Skillinf',
             html: `
               <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:0;background:#ffffff;">
                 <div style="background:#0a7c3e;padding:28px 32px;text-align:center;">
                   <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">
-                    &#9989; LinkedIn Verification Successful
+                    LinkedIn Verification Successful
                   </h1>
                 </div>
                 <div style="padding:32px 32px 24px;background:#ffffff;border:1px solid #e5e7eb;border-top:none;">
@@ -97,12 +97,12 @@ export async function PATCH(req: NextRequest) {
         } else {
           await sendMail({
             to: studentEmail,
-            subject: 'LinkedIn Verification Failed — Action Required | Skillinf',
+            subject: 'LinkedIn Verification Update — Action Required | Skillinf',
             html: `
               <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:0;background:#ffffff;">
                 <div style="background:#dc2626;padding:28px 32px;text-align:center;">
                   <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;">
-                    &#10060; LinkedIn Verification Failed
+                    LinkedIn Verification Failed
                   </h1>
                 </div>
                 <div style="padding:32px 32px 24px;background:#ffffff;border:1px solid #e5e7eb;border-top:none;">
