@@ -1,25 +1,6 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
-
-// Verify SMTP connection on first import — logs any auth errors immediately
-transporter.verify((error) => {
-  if (error) {
-    console.error('[Mailer] SMTP connection FAILED:', error.message);
-    console.error('[Mailer] GMAIL_USER:', process.env.GMAIL_USER);
-    console.error('[Mailer] GMAIL_APP_PASSWORD set:', !!process.env.GMAIL_APP_PASSWORD);
-  } else {
-    console.log('[Mailer] SMTP ready — sending from:', process.env.GMAIL_USER);
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export interface MailOptions {
   to: string | string[];
@@ -28,18 +9,18 @@ export interface MailOptions {
 }
 
 export async function sendMail({ to, subject, html }: MailOptions) {
-  try {
-    const result = await transporter.sendMail({
-      from: `"Skillinf Notifications" <${process.env.GMAIL_USER}>`,
-      to: Array.isArray(to) ? to.join(', ') : to,
-      subject,
-      html,
-    });
-    console.log('[Mailer] Email sent:', result.messageId, '→', to);
-    return result;
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error('[Mailer] Send FAILED — to:', to, '| error:', msg);
-    throw err;
+  const { data, error } = await resend.emails.send({
+    from: 'Skillinf Notifications <notifications@skillinf.in>',
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    html,
+  });
+
+  if (error) {
+    console.error('[Mailer] Send FAILED — to:', to, '| error:', error.message);
+    throw new Error(error.message);
   }
+
+  console.log('[Mailer] Email sent:', data?.id, '→', to);
+  return data;
 }
