@@ -10,7 +10,7 @@ export interface MailOptions {
 
 export async function sendMail({ to, subject, html }: MailOptions) {
   const { data, error } = await resend.emails.send({
-    from: 'Skillinf Notifications <notifications@skillinf.in>',
+    from: 'Skillinf <onboarding@resend.dev>',  // TODO: switch to notifications@skillinf.in after verifying domain on resend.com/domains
     to: Array.isArray(to) ? to : [to],
     subject,
     html,
