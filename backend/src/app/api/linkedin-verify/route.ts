@@ -47,7 +47,8 @@ export async function PATCH(req: NextRequest) {
       { $set: { status: newStatus, updatedAt: now } }
     );
 
-    // Send email to student
+    // Send email to student — track whether it was actually delivered
+    let mailSent = false;
     if (studentEmail) {
       try {
         if (action === 'verify') {
@@ -93,6 +94,7 @@ export async function PATCH(req: NextRequest) {
               </div>
             `,
           });
+          mailSent = true;
           console.log('[LinkedIn Verify] Approved email sent to:', studentEmail);
         } else {
           await sendMail({
@@ -141,21 +143,27 @@ export async function PATCH(req: NextRequest) {
               </div>
             `,
           });
+          mailSent = true;
           console.log('[LinkedIn Verify] Rejected email sent to:', studentEmail);
         }
       } catch (mailErr) {
-        // Email failure must NOT break the verify action — just log it
+        mailSent = false;
         console.error('[LinkedIn Verify] Email send FAILED for', studentEmail, ':', mailErr);
       }
     } else {
       console.warn('[LinkedIn Verify] No email found for userId:', userId, '— skipping email notification.');
     }
 
+    const baseMsg = action === 'verify'
+      ? 'Verified — Step 1 is now unlocked for this student.'
+      : 'Rejected — student will need to resubmit.';
+    const mailNote = studentEmail
+      ? (mailSent ? ' Mail sent to student.' : ' Mail could not be sent — check server logs.')
+      : ' No email on record — mail not sent.';
+
     return NextResponse.json({
       success: true,
-      message: action === 'verify'
-        ? 'Verified — Step 1 is now unlocked for this student.'
-        : 'Rejected — student will need to resubmit.',
+      message: baseMsg + mailNote,
     });
   } catch (e) {
     console.error('[PATCH /api/linkedin-verify]', e);
