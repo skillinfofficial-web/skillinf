@@ -137,6 +137,15 @@
 .submitBtn:hover:not(:disabled) { background: #007a63; transform: translateY(-1px); }
 .submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* Read-only end date input */
+.inputReadonly {
+  background: #f3f6f4 !important;
+  color: #66736d !important;
+  cursor: not-allowed;
+  border-color: #dce9e3 !important;
+  box-shadow: none !important;
+}
+
 /* Footer link */
 .footer { font-size: 0.85rem; color: #66736d; text-align: center; }
 .link   { color: #00b894; font-weight: 700; text-decoration: none; }

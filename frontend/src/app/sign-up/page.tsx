@@ -26,7 +26,7 @@ export default function SignUpPage() {
 
   const [form, setForm] = useState({
     name: '', email: '', mobileNumber: '', domain: '',
-    referralCode: '', collegeUniversity: '',
+    startDate: '', referralCode: '', collegeUniversity: '',
   });
   const [error,        setError]        = useState('');
   const [loading,      setLoading]      = useState(false);
@@ -68,6 +68,19 @@ export default function SignUpPage() {
 
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(prev => ({ ...prev, [k]: e.target.value }));
+
+  /** Returns yyyy-mm-dd for a date that is `days` after the given date string */
+  const addDays = (dateStr: string, days: number) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split('T')[0];
+  };
+
+  /** Today's date as yyyy-mm-dd (minimum selectable start date) */
+  const todayStr = () => new Date().toISOString().split('T')[0];
+
+  const computedEndDate = addDays(form.startDate, 30);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,6 +197,21 @@ export default function SignUpPage() {
                   </option>
                   {domains.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
+              </div>
+              <div className={styles.dateRow}>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="su-start">Start Date</label>
+                  <input id="su-start" className={styles.input} type="date"
+                    value={form.startDate} onChange={update('startDate')}
+                    min={todayStr()} required />
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="su-end">
+                    End Date <span className={styles.hint}>(auto · 30-day internship)</span>
+                  </label>
+                  <input id="su-end" className={`${styles.input} ${styles.inputReadonly}`} type="date"
+                    value={computedEndDate} readOnly tabIndex={-1} />
+                </div>
               </div>
 
               <div className={styles.field}>

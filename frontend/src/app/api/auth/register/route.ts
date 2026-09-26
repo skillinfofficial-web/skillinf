@@ -16,19 +16,18 @@ function genReferralCode(): string {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, mobileNumber, domain, referralCode, collegeUniversity } = await req.json();
+    const { name, email, mobileNumber, domain, startDate, referralCode, collegeUniversity } = await req.json();
 
-    // Auto-assign internship dates: start = today, end = start + 30 days
-    const today = new Date();
-    const startDate = today.toISOString().split('T')[0]; // yyyy-mm-dd
-    const endObj   = new Date(today);
-    endObj.setDate(endObj.getDate() + 30);
-    const endDate  = endObj.toISOString().split('T')[0];
+    // endDate is always fixed: startDate + 30 days (internship duration)
+    const endDateObj = startDate ? new Date(startDate) : new Date();
+    endDateObj.setDate(endDateObj.getDate() + 30);
+    const endDate = endDateObj.toISOString().split('T')[0];
 
     if (!name?.trim())         return err('Name is required.');
     if (!email?.trim())        return err('Email is required.');
     if (!mobileNumber?.trim()) return err('Mobile number is required.');
     if (!domain)               return err('Please select a domain.');
+    if (!startDate)            return err('Start date is required.');
     if (!/^\d{10}$/.test(mobileNumber.trim())) return err('Enter a valid 10-digit mobile number.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return err('Enter a valid email address.');
 
