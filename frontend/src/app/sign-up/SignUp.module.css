@@ -142,6 +142,23 @@
 .link   { color: #00b894; font-weight: 700; text-decoration: none; }
 .link:hover { text-decoration: underline; }
 
+/* Terms & Privacy consent note */
+.consentNote {
+  font-size: 0.78rem;
+  color: #66736d;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.consentLink {
+  color: #1d6fa4;
+  text-decoration: underline;
+  font-weight: 500;
+}
+.consentLink:hover {
+  color: #0f4f7a;
+}
+
 /* Mobile */
 @media (max-width: 480px) {
   .card    { padding: 28px 20px; }
