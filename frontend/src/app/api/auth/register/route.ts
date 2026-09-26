@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     if (!domain)               return err('Please select a domain.');
     if (!startDate)            return err('Start date is required.');
     if (!endDate)              return err('End date is required.');
+    if (endDate <= startDate)  return err('End date must be after the start date. Same dates are not allowed.');
     if (!/^\d{10}$/.test(mobileNumber.trim())) return err('Enter a valid 10-digit mobile number.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return err('Enter a valid email address.');
 

@@ -69,9 +69,24 @@ export default function SignUpPage() {
   const update = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(prev => ({ ...prev, [k]: e.target.value }));
 
+  /** Returns yyyy-mm-dd for a date that is `days` after the given date string */
+  const addDays = (dateStr: string, days: number) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split('T')[0];
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Client-side date validation
+    if (form.startDate && form.endDate && form.endDate <= form.startDate) {
+      setError('End date must be after the start date. Same dates are not allowed.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res  = await fetch('/api/auth/register', {
@@ -190,12 +205,25 @@ export default function SignUpPage() {
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="su-start">Start Date</label>
                   <input id="su-start" className={styles.input} type="date"
-                    value={form.startDate} onChange={update('startDate')} required />
+                    value={form.startDate}
+                    onChange={e => {
+                      const newStart = e.target.value;
+                      setForm(prev => ({
+                        ...prev,
+                        startDate: newStart,
+                        // Clear end date if it's now invalid (same or before new start)
+                        endDate: prev.endDate && prev.endDate <= newStart ? '' : prev.endDate,
+                      }));
+                    }}
+                    required />
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="su-end">End Date</label>
                   <input id="su-end" className={styles.input} type="date"
-                    value={form.endDate} onChange={update('endDate')} required />
+                    value={form.endDate}
+                    onChange={update('endDate')}
+                    min={addDays(form.startDate, 1)}
+                    required />
                 </div>
               </div>
 
