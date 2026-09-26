@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,15 @@ export default function SignInPage() {
   const [error,   setError]   = useState('');
   const [noAcct,  setNoAcct]  = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Certificate price — fetched from admin config so it stays in sync
+  const [certPrice, setCertPrice] = useState<number | null>(null);
+  useEffect(() => {
+    fetch('/api/admin/payment-config')
+      .then(r => r.json())
+      .then(d => { if (d.eCertPrice) setCertPrice(d.eCertPrice); })
+      .catch(() => {});
+  }, []);
 
   // Multi-domain state
   const [domainOptions, setDomainOptions]   = useState<DomainOption[]>([]);
@@ -170,6 +179,15 @@ export default function SignInPage() {
               <button id="si-submit" className={styles.submitBtn} type="submit" disabled={loading}>
                 {loading ? 'Signing in…' : 'Sign In'}
               </button>
+
+              {/* ── Free course + certificate price note ── */}
+              <p className={styles.freeNote}>
+                🎓 Your course is <strong>completely free</strong>. If you need a{' '}
+                <strong>Certificate of Completion</strong>, you need to pay{' '}
+                <strong>
+                  {certPrice !== null ? `₹${certPrice}` : '…'}
+                </strong>.
+              </p>
             </form>
           )}
 

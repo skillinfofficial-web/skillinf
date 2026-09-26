@@ -22,6 +22,19 @@
 .footer  { font-size: 0.85rem; color: #66736d; text-align: center; margin-top: 20px; }
 .link    { color: #00b894; font-weight: 700; text-decoration: none; }
 .link:hover { text-decoration: underline; }
+
+/* Free course / certificate price note */
+.freeNote {
+  font-size: 0.78rem;
+  color: #065f46;
+  background: linear-gradient(135deg, #e6faf6 0%, #f0fdf8 100%);
+  border: 1px solid #a7f3d0;
+  border-radius: 9px;
+  padding: 10px 14px;
+  line-height: 1.55;
+  text-align: center;
+  margin-top: 2px;
+}
 @media (max-width: 480px) { .card { padding: 28px 20px; } }
 
 /* ── Domain picker ──────────────────────────────────────── */
