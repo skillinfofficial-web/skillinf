@@ -16,11 +16,11 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
 
   // Certificate price — fetched from admin config so it stays in sync
-  const [certPrice, setCertPrice] = useState<number | null>(null);
+  const [certPrice, setCertPrice] = useState<number>(149);
   useEffect(() => {
     fetch('/api/admin/payment-config')
       .then(r => r.json())
-      .then(d => { if (d.eCertPrice) setCertPrice(d.eCertPrice); })
+      .then(d => { if (d.config?.eCertPrice) setCertPrice(d.config.eCertPrice); })
       .catch(() => {});
   }, []);
 
@@ -184,9 +184,7 @@ export default function SignInPage() {
               <p className={styles.freeNote}>
                 🎓 Your course is <strong>completely free</strong>. If you need a{' '}
                 <strong>Certificate of Completion</strong>, you need to pay{' '}
-                <strong>
-                  {certPrice !== null ? `₹${certPrice}` : '…'}
-                </strong>.
+                <strong>₹{certPrice}</strong>.
               </p>
             </form>
           )}
