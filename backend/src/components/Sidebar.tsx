@@ -26,6 +26,7 @@ import {
   Megaphone,
   Gift,
   CalendarDays,
+  Monitor,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -46,6 +47,7 @@ const navSections = [
       { name: 'Company Internships',  path: '/admin/company-internships',  icon: Building2 },
       { name: 'Domains',              path: '/admin/domains',              icon: Tag },
       { name: 'Batches',             path: '/admin/batches',              icon: CalendarDays },
+      { name: 'Platforms',            path: '/admin/platforms',            icon: Monitor },
       { name: 'Announcement Bar',     path: '/admin/announcement',         icon: Megaphone },
     ],
   },
