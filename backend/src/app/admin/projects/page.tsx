@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef, useCallback, DragEvent } from 'react';
 import {
-  FolderKanban, Plus, Trash2, X, Github, AlertCircle,
+  FolderKanban, Plus, Trash2, X, GitBranch, AlertCircle,
   CheckCircle, Loader2, Upload, ExternalLink,
 } from 'lucide-react';
 import styles from './projects.module.css';
@@ -240,7 +240,7 @@ export default function AdminProjectsPage() {
                 GitHub Link <span className={styles.required}>*</span>
               </label>
               <div className={styles.inputIcon}>
-                <Github size={16} className={styles.inputIconIcon} />
+                <GitBranch size={16} className={styles.inputIconIcon} />
                 <input
                   id="proj-github"
                   type="url"
@@ -315,7 +315,7 @@ export default function AdminProjectsPage() {
                   className={styles.githubLink}
                   title="Open GitHub"
                 >
-                  <Github size={13} /> View on GitHub <ExternalLink size={11} />
+                  <GitBranch size={13} /> View on GitHub <ExternalLink size={11} />
                 </a>
               </div>
               <div className={styles.cardFooter}>
