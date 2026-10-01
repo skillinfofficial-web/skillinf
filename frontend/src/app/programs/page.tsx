@@ -3,96 +3,222 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
-import CatalogCard, { CatalogItem } from '@/components/catalog/CatalogCard';
-import TrendingCarousel from '@/components/catalog/TrendingCarousel';
-import FilterSidebar, { Filters, defaultFilters } from '@/components/catalog/FilterSidebar';
 import styles from './ProgramsPage.module.css';
 
-const TYPE = 'program';
+interface Program {
+  _id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  platformName: string;
+  platformImage: string | null;
+  link: string;
+}
+
+/* Derive active / inactive from dates */
+function getStatus(startDate: string, endDate: string): 'active' | 'inactive' {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return now >= start && now <= end ? 'active' : 'inactive';
+}
 
 export default function ProgramsPage() {
-  const [all, setAll] = useState<CatalogItem[]>([]);
-  const [trending, setTrending] = useState<CatalogItem[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
+
+  /* Filters */
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [platformFilter, setPlatformFilter] = useState('all');
 
   useEffect(() => {
-    Promise.all([
-      fetch(`/api/catalog/${TYPE}`).then((r) => r.json()),
-      fetch(`/api/catalog/${TYPE}?trending=true`).then((r) => r.json()),
-    ]).then(([allData, trendData]) => {
-      if (allData.success) setAll(allData.items);
-      else setError(allData.message ?? 'Failed to load programs.');
-      if (trendData.success) setTrending(trendData.items);
-    }).catch(() => setError('Network error — check your connection.')).finally(() => setLoading(false));
+    fetch('/api/programs')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) setPrograms(d.programs);
+        else setError(d.message ?? 'Failed to load programs.');
+      })
+      .catch(() => setError('Network error — check your connection.'))
+      .finally(() => setLoading(false));
   }, []);
 
+  /* Unique platform names for dropdown */
+  const platformOptions = useMemo(() => {
+    const names = Array.from(new Set(programs.map((p) => p.platformName))).sort();
+    return names;
+  }, [programs]);
+
+  /* Filtered list */
   const filtered = useMemo(() => {
-    return all.filter((item) => {
-      if (filters.search && !item.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
-      if (filters.durationMax > 0 && item.duration && item.duration > filters.durationMax) return false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = (item as any).pricing;
-      if (filters.price && p?.type !== filters.price) return false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (filters.mentorship && (item as any).mentorship !== filters.mentorship) return false;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (filters.teaching && (item as any).teachingSection !== filters.teaching) return false;
+    return programs.filter((p) => {
+      const status = getStatus(p.startDate, p.endDate);
+      if (statusFilter !== 'all' && status !== statusFilter) return false;
+      if (platformFilter !== 'all' && p.platformName !== platformFilter) return false;
       return true;
     });
-  }, [all, filters]);
+  }, [programs, statusFilter, platformFilter]);
+
+  const clearFilters = () => { setStatusFilter('all'); setPlatformFilter('all'); };
+  const filtersActive = statusFilter !== 'all' || platformFilter !== 'all';
 
   return (
     <>
       <Navbar />
       <main className={styles.main}>
+
+        {/* ── Hero ── */}
         <section className={styles.hero}>
           <div className="container">
-            <h1 className={styles.heroTitle}>Programs</h1>
-            <p className={styles.heroSub}>Learn practical skills through structured, project-focused programs designed for real-world impact.</p>
+            <div className={styles.heroBadge}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.heroBadgeIcon}>
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              Events &amp; Programs
+            </div>
+            <h1 className={styles.heroTitle}>Explore Programs</h1>
+            <p className={styles.heroSub}>
+              Discover live events and programs across platforms — hover a card to open the event.
+            </p>
           </div>
         </section>
 
         <div className="container">
-          {!loading && trending.length > 0 && (
-            <TrendingCarousel items={trending} type={TYPE} title="Trending Programs" />
+
+          {/* ── Filters ── */}
+          {!loading && programs.length > 0 && (
+            <div className={styles.filterBar}>
+              {/* Status dropdown */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel} htmlFor="filter-status">Status</label>
+                <select
+                  id="filter-status"
+                  className={`${styles.filterSelect} ${statusFilter !== 'all' ? styles.filterSelectActive : ''}`}
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+                >
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              {/* Platform dropdown */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel} htmlFor="filter-platform">Platform</label>
+                <select
+                  id="filter-platform"
+                  className={`${styles.filterSelect} ${platformFilter !== 'all' ? styles.filterSelectActive : ''}`}
+                  value={platformFilter}
+                  onChange={(e) => setPlatformFilter(e.target.value)}
+                >
+                  <option value="all">All Platforms</option>
+                  {platformOptions.map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Clear button */}
+              {filtersActive && (
+                <button className={styles.clearBtn} onClick={clearFilters}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="13" height="13">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                  Clear
+                </button>
+              )}
+
+              <span className={styles.resultCount}>
+                {filtered.length} program{filtered.length !== 1 ? 's' : ''}
+              </span>
+            </div>
           )}
 
-          {error && <div className={styles.errorBanner}>⚠ {error}</div>}
-
-          <div className={styles.contentArea}>
-            <FilterSidebar
-              filters={filters}
-              onChange={setFilters}
-              type={TYPE}
-              totalCount={all.length}
-              filteredCount={filtered.length}
-            />
-            <div className={styles.grid}>
-              <div className={styles.gridHeader}>
-                <h2 className={styles.gridTitle}>All Programs</h2>
-                <div className={styles.gridMeta}>
-                  <span className={styles.count}>{filtered.length} of {all.length}</span>
-                </div>
-              </div>
-
-              {loading && <div className={styles.state}><div className={styles.spinner} /><p>Loading programs…</p></div>}
-              {!loading && filtered.length === 0 && !error && (
-                <div className={styles.state}>
-                  <p className={styles.emptyMsg}>
-                    {all.length === 0 ? 'No programs available yet.' : 'No programs match your filters.'}
-                  </p>
-                  {all.length > 0 && (
-                    <button className={styles.clearBtn} onClick={() => setFilters(defaultFilters)}>Clear Filters</button>
-                  )}
-                </div>
-              )}
-              <div className={styles.cardGrid}>
-                {filtered.map((item) => <CatalogCard key={item._id} item={item} type={TYPE} />)}
-              </div>
+          {/* ── Loading ── */}
+          {loading && (
+            <div className={styles.state}>
+              <div className={styles.spinner} />
+              <p className={styles.stateText}>Loading programs…</p>
             </div>
-          </div>
+          )}
+
+          {/* ── Error ── */}
+          {!loading && error && (
+            <div className={styles.errorBanner}>{error}</div>
+          )}
+
+          {/* ── Empty ── */}
+          {!loading && !error && filtered.length === 0 && (
+            <div className={styles.state}>
+              <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              <p className={styles.emptyMsg}>
+                {programs.length === 0 ? 'No programs available yet.' : 'No programs match your filters.'}
+              </p>
+              {filtersActive && (
+                <button className={styles.clearBtnLg} onClick={clearFilters}>Clear Filters</button>
+              )}
+            </div>
+          )}
+
+          {/* ── Programs Grid ── */}
+          {!loading && !error && filtered.length > 0 && (
+            <div className={styles.cardGrid}>
+              {filtered.map((prog) => {
+                const status = getStatus(prog.startDate, prog.endDate);
+                return (
+                  <a
+                    key={prog._id}
+                    href={prog.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.card}
+                    id={`program-card-${prog._id}`}
+                    aria-label={`Open ${prog.name}`}
+                  >
+                    {/* Platform image */}
+                    <div className={styles.cardImgWrap}>
+                      {prog.platformImage
+                        ? /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={prog.platformImage} alt={prog.platformName} className={styles.cardImg} />
+                        : <div className={styles.cardImgFallback}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="32" height="32">
+                              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                          </div>
+                      }
+
+                      {/* Hover overlay */}
+                      <div className={styles.viewOverlay}>
+                        <span className={styles.viewOverlayBtn}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="15" height="15">
+                            <path d="M7 17L17 7M17 7H7M17 7v10" />
+                          </svg>
+                          Open Event
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Card footer */}
+                    <div className={styles.cardBody}>
+                      <p className={styles.cardName}>{prog.name}</p>
+                      <div className={styles.cardMeta}>
+                        <span className={styles.cardPlatform}>{prog.platformName}</span>
+                        <span className={`${styles.statusBadge} ${status === 'active' ? styles.statusActive : styles.statusInactive}`}>
+                          <span className={styles.statusDot} />
+                          {status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+
+          <div className={styles.bottomSpacer} />
         </div>
       </main>
       <Footer />
