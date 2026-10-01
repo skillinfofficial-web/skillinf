@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState, useRef, useCallback, DragEvent } from 'react';
 import {
-  FolderKanban, Plus, Trash2, X, GitBranch, AlertCircle,
-  CheckCircle, Loader2, Upload, ExternalLink,
+  FolderKanban, Trash2, X, GitBranch, AlertCircle,
+  CheckCircle, Loader2, Upload, ExternalLink, Tag,
 } from 'lucide-react';
 import styles from './projects.module.css';
 
@@ -28,10 +28,9 @@ export default function AdminProjectsPage() {
   const [listError, setListError] = useState('');
 
   /* ── Form ────────────────────────────────────────────────── */
-  const [showForm, setShowForm] = useState(false);
-  const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
   const [image, setImage] = useState<string | null>(null);
+  const [name, setName] = useState('');
   const [githubLink, setGithubLink] = useState('');
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
@@ -55,10 +54,14 @@ export default function AdminProjectsPage() {
   }, []);
 
   useEffect(() => {
-    setDomsLoading(true);
     fetch('/api/domains')
       .then((r) => r.json())
-      .then((d) => { if (d.success) { setDomains(d.domains); if (d.domains.length > 0) setDomain(d.domains[0].name); } })
+      .then((d) => {
+        if (d.success) {
+          setDomains(d.domains);
+          if (d.domains.length > 0) setDomain(d.domains[0].name);
+        }
+      })
       .catch(() => {})
       .finally(() => setDomsLoading(false));
     loadProjects();
@@ -71,21 +74,28 @@ export default function AdminProjectsPage() {
     reader.onload = (e) => { if (e.target?.result) { setImage(e.target.result as string); setFormError(''); } };
     reader.readAsDataURL(file);
   };
-  const onDropZoneDragOver = (e: DragEvent) => { e.preventDefault(); setDragging(true); };
-  const onDropZoneDragLeave = () => setDragging(false);
-  const onDropZoneDrop = (e: DragEvent) => {
+
+  const onDragOver = (e: DragEvent) => { e.preventDefault(); setDragging(true); };
+  const onDragLeave = () => setDragging(false);
+  const onDrop = (e: DragEvent) => {
     e.preventDefault(); setDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) processFile(file);
+  };
+
+  const resetForm = () => {
+    setDomain(domains.length > 0 ? domains[0].name : '');
+    setImage(null); setName(''); setGithubLink('');
+    setFormError(''); setFormSuccess('');
   };
 
   /* ── Submit ──────────────────────────────────────────────── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(''); setFormSuccess('');
-    if (!name.trim()) { setFormError('Project name is required.'); return; }
     if (!domain) { setFormError('Please select a domain.'); return; }
     if (!image) { setFormError('Please upload a WebP image.'); return; }
+    if (!name.trim()) { setFormError('Project name is required.'); return; }
     if (!githubLink.trim()) { setFormError('GitHub link is required.'); return; }
     try { new URL(githubLink); } catch { setFormError('Enter a valid URL (include https://).'); return; }
 
@@ -99,11 +109,12 @@ export default function AdminProjectsPage() {
       const data = await res.json();
       if (data.success) {
         setFormSuccess('Project added successfully!');
-        setName(''); setImage(null); setGithubLink('');
-        if (domains.length > 0) setDomain(domains[0].name);
+        resetForm();
         loadProjects();
-        setTimeout(() => { setFormSuccess(''); setShowForm(false); }, 2000);
-      } else { setFormError(data.message || 'Failed to add project.'); }
+        setTimeout(() => setFormSuccess(''), 3000);
+      } else {
+        setFormError(data.message || 'Failed to add project.');
+      }
     } catch { setFormError('Network error.'); }
     finally { setSubmitting(false); }
   };
@@ -119,8 +130,10 @@ export default function AdminProjectsPage() {
         body: JSON.stringify({ id: deleteTarget._id }),
       });
       const data = await res.json();
-      if (data.success) { setProjects((p) => p.filter((x) => x._id !== deleteTarget._id)); setDeleteTarget(null); }
-      else setDeleteError(data.message || 'Failed to delete.');
+      if (data.success) {
+        setProjects((p) => p.filter((x) => x._id !== deleteTarget._id));
+        setDeleteTarget(null);
+      } else setDeleteError(data.message || 'Failed to delete.');
     } catch { setDeleteError('Network error.'); }
     finally { setDeleting(false); }
   };
@@ -128,155 +141,152 @@ export default function AdminProjectsPage() {
   /* ── Render ──────────────────────────────────────────────── */
   return (
     <div className={styles.page}>
-      {/* ── Header ── */}
+
+      {/* ── Page Header ── */}
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Projects</h1>
-          <p className={styles.desc}>Upload student projects — they appear as cards on the public Projects page.</p>
+          <p className={styles.desc}>
+            Upload student projects — they appear as cards on the public Projects page.
+          </p>
         </div>
-        <div className={styles.headerActions}>
-          <span className={styles.countBadge}>
-            <FolderKanban size={14} />
-            {listLoading ? '…' : `${projects.length} project${projects.length !== 1 ? 's' : ''}`}
-          </span>
-          <button
-            id="add-project-btn"
-            className={styles.addBtn}
-            onClick={() => { setShowForm((p) => !p); setFormError(''); setFormSuccess(''); }}
-          >
-            <Plus size={15} />
-            {showForm ? 'Close Form' : 'Add Project'}
-          </button>
+        <div className={styles.countBadge}>
+          <FolderKanban size={14} />
+          {listLoading ? '…' : `${projects.length} project${projects.length !== 1 ? 's' : ''}`}
         </div>
       </header>
 
-      {/* ── Add Form ── */}
-      {showForm && (
-        <div className={styles.formCard}>
-          <h2 className={styles.formTitle}>New Project</h2>
-          <form onSubmit={handleSubmit} className={styles.form} noValidate>
+      {/* ── Add Project Form (always visible) ── */}
+      <div className={styles.addCard}>
+        <p className={styles.addCardTitle}>Add New Project</p>
+        <form onSubmit={handleSubmit} className={styles.form} noValidate>
 
-            {/* Domain */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label} htmlFor="proj-domain">
-                Domain <span className={styles.required}>*</span>
-              </label>
-              {domsLoading ? (
-                <div className={styles.domsLoading}><Loader2 size={14} className={styles.spin} /> Loading domains…</div>
-              ) : domains.length === 0 ? (
-                <p className={styles.noDoms}>No domains found. Add domains first from the Domains section.</p>
-              ) : (
-                <select
-                  id="proj-domain"
-                  className={styles.select}
-                  value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
-                >
-                  {domains.map((d) => (
-                    <option key={d.name} value={d.name}>{d.name}</option>
-                  ))}
-                </select>
-              )}
+          {/* 1. Domain Name */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label} htmlFor="proj-domain">
+              <Tag size={13} /> Domain Name <span className={styles.required}>*</span>
+            </label>
+            {domsLoading ? (
+              <div className={styles.loadingRow}><Loader2 size={14} className={styles.spin} /> Loading domains…</div>
+            ) : domains.length === 0 ? (
+              <p className={styles.noDoms}>No domains found. Add domains first from the Domains section.</p>
+            ) : (
+              <select
+                id="proj-domain"
+                className={styles.select}
+                value={domain}
+                onChange={(e) => { setDomain(e.target.value); setFormError(''); }}
+              >
+                {domains.map((d) => (
+                  <option key={d.name} value={d.name}>{d.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {/* 2. Upload Image */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              <Upload size={13} /> Upload Image <span className={styles.required}>*</span>
+              <span className={styles.webpBadge}>WebP only</span>
+            </label>
+
+            {/* Size placeholder guide */}
+            <div className={styles.sizeGuide}>
+              <span className={styles.sizeGuideIcon}>📐</span>
+              <span>
+                Upload a <strong>16:9</strong> image for best display across all devices.{' '}
+                Recommended: <strong>800 × 450 px</strong>
+              </span>
             </div>
 
-            {/* Image Upload */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>
-                Project Image <span className={styles.required}>*</span>
-                <span className={styles.formatHint}>WebP only</span>
-              </label>
-              <div className={styles.imageSizeNote}>
-                <span className={styles.imageSizeIcon}>📐</span>
-                <span>Recommended size: <strong>800 × 450 px (16:9)</strong> — fits perfectly on all device screens without cropping or stretching.</span>
-              </div>
-              {!image ? (
-                <div
-                  className={`${styles.dropZone} ${dragging ? styles.dropZoneDragging : ''}`}
-                  onClick={() => inputRef.current?.click()}
-                  onDragOver={onDropZoneDragOver}
-                  onDragLeave={onDropZoneDragLeave}
-                  onDrop={onDropZoneDrop}
-                >
-                  <Upload size={32} className={styles.dropIcon} />
-                  <p className={styles.dropTitle}>Click or drag &amp; drop to upload</p>
-                  <p className={styles.dropHint}>WebP format only · Recommended: 800×450 px</p>
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept=".webp,image/webp"
-                    className={styles.hiddenInput}
-                    onChange={(e) => { const f = e.target.files?.[0]; if (f) processFile(f); }}
-                  />
+            {!image ? (
+              <div
+                className={`${styles.dropZone} ${dragging ? styles.dropZoneDragging : ''}`}
+                onClick={() => inputRef.current?.click()}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+              >
+                {/* Visual 16:9 placeholder skeleton */}
+                <div className={styles.imgPlaceholder}>
+                  <div className={styles.imgPlaceholderInner}>
+                    <Upload size={28} className={styles.uploadIcon} />
+                    <p className={styles.dropTitle}>Click or drag &amp; drop</p>
+                    <p className={styles.dropHint}>WebP · 800 × 450 px (16:9)</p>
+                  </div>
+                  <div className={styles.aspectRatio}>16 : 9</div>
                 </div>
-              ) : (
-                <div className={styles.previewWrap}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={image} alt="preview" className={styles.previewImg} />
-                  <button type="button" className={styles.removeImg} onClick={() => setImage(null)} title="Remove image">
-                    <X size={14} /> Remove
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Project Name */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label} htmlFor="proj-name">
-                Project Name <span className={styles.required}>*</span>
-              </label>
-              <input
-                id="proj-name"
-                type="text"
-                className={styles.input}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. AI Image Classifier"
-              />
-            </div>
-
-            {/* GitHub Link */}
-            <div className={styles.fieldGroup}>
-              <label className={styles.label} htmlFor="proj-github">
-                GitHub Link <span className={styles.required}>*</span>
-              </label>
-              <div className={styles.inputIcon}>
-                <GitBranch size={16} className={styles.inputIconIcon} />
                 <input
-                  id="proj-github"
-                  type="url"
-                  className={styles.inputWithIcon}
-                  value={githubLink}
-                  onChange={(e) => setGithubLink(e.target.value)}
-                  placeholder="https://github.com/username/repo"
+                  ref={inputRef}
+                  type="file"
+                  accept=".webp,image/webp"
+                  className={styles.hiddenInput}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) processFile(f); }}
                 />
               </div>
-            </div>
-
-            {formError && (
-              <p className={styles.formError}><AlertCircle size={14} />{formError}</p>
+            ) : (
+              <div className={styles.previewWrap}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={image} alt="preview" className={styles.previewImg} />
+                <button type="button" className={styles.removeBtn} onClick={() => setImage(null)}>
+                  <X size={13} /> Remove image
+                </button>
+              </div>
             )}
-            {formSuccess && (
-              <p className={styles.formSuccess}><CheckCircle size={14} />{formSuccess}</p>
-            )}
+          </div>
 
-            <div className={styles.formActions}>
-              <button
-                type="button"
-                className={styles.cancelBtn}
-                onClick={() => { setShowForm(false); setFormError(''); setFormSuccess(''); setImage(null); setName(''); setGithubLink(''); }}
-                disabled={submitting}
-              >
-                Cancel
-              </button>
-              <button type="submit" id="submit-project-btn" className={styles.submitBtn} disabled={submitting}>
-                {submitting ? <><Loader2 size={15} className={styles.spin} /> Saving…</> : <><Plus size={15} /> Add Project</>}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+          {/* 3. Project Name */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label} htmlFor="proj-name">
+              Name of the Project <span className={styles.required}>*</span>
+            </label>
+            <input
+              id="proj-name"
+              type="text"
+              className={styles.input}
+              value={name}
+              onChange={(e) => { setName(e.target.value); setFormError(''); }}
+              placeholder="e.g. AI Image Classifier"
+            />
+          </div>
 
-      {/* ── List States ── */}
+          {/* 4. GitHub Link */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label} htmlFor="proj-github">
+              <GitBranch size={13} /> GitHub Link of the Project <span className={styles.required}>*</span>
+            </label>
+            <input
+              id="proj-github"
+              type="url"
+              className={styles.input}
+              value={githubLink}
+              onChange={(e) => { setGithubLink(e.target.value); setFormError(''); }}
+              placeholder="https://github.com/username/repository"
+            />
+          </div>
+
+          {formError && (
+            <p className={styles.formError}><AlertCircle size={14} />{formError}</p>
+          )}
+          {formSuccess && (
+            <p className={styles.formSuccess}><CheckCircle size={14} />{formSuccess}</p>
+          )}
+
+          <div className={styles.formActions}>
+            <button type="button" className={styles.resetBtn} onClick={resetForm} disabled={submitting}>
+              Reset
+            </button>
+            <button type="submit" id="submit-project-btn" className={styles.submitBtn} disabled={submitting}>
+              {submitting
+                ? <><Loader2 size={14} className={styles.spin} /> Saving…</>
+                : 'Submit'}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ── Projects List ── */}
       {listLoading && (
         <div className={styles.stateBox}>
           <Loader2 size={26} className={styles.spin} />
@@ -292,34 +302,37 @@ export default function AdminProjectsPage() {
         <div className={styles.stateBox}>
           <FolderKanban size={36} className={styles.emptyIcon} />
           <p className={styles.emptyTitle}>No projects yet</p>
-          <p className={styles.emptyHint}>Click &ldquo;Add Project&rdquo; above to upload the first one.</p>
+          <p className={styles.emptyHint}>Fill in the form above and click Submit to add your first project.</p>
         </div>
       )}
 
-      {/* ── Projects Grid ── */}
       {!listLoading && !listError && projects.length > 0 && (
-        <div className={styles.grid}>
+        <div className={styles.list}>
           {projects.map((proj, i) => (
-            <div key={proj._id} className={styles.card}>
-              <div className={styles.cardImgWrap}>
+            <div key={proj._id} className={styles.row}>
+              {/* Image */}
+              <div className={styles.rowImgWrap}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={proj.image} alt={proj.name} className={styles.cardImg} />
-                <span className={styles.domainBadge}>{proj.domain}</span>
+                <img src={proj.image} alt={proj.name} className={styles.rowImg} />
               </div>
-              <div className={styles.cardBody}>
-                <p className={styles.cardName}>{proj.name}</p>
+
+              {/* Info */}
+              <div className={styles.rowInfo}>
+                <span className={styles.rowDomain}>{proj.domain}</span>
+                <p className={styles.rowName}>{proj.name}</p>
                 <a
                   href={proj.githubLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={styles.githubLink}
-                  title="Open GitHub"
+                  className={styles.rowGithub}
                 >
-                  <GitBranch size={13} /> View on GitHub <ExternalLink size={11} />
+                  <GitBranch size={12} /> View on GitHub <ExternalLink size={10} />
                 </a>
               </div>
-              <div className={styles.cardFooter}>
-                <span className={styles.cardDate}>
+
+              {/* Date + Delete */}
+              <div className={styles.rowActions}>
+                <span className={styles.rowDate}>
                   {new Date(proj.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                 </span>
                 <button
@@ -336,7 +349,7 @@ export default function AdminProjectsPage() {
         </div>
       )}
 
-      {/* ── Delete Modal ── */}
+      {/* ── Delete Confirm Modal ── */}
       {deleteTarget && (
         <div className={styles.overlay} onClick={() => setDeleteTarget(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -352,14 +365,20 @@ export default function AdminProjectsPage() {
             </div>
             {deleteError && <p className={styles.formError}><AlertCircle size={14} />{deleteError}</p>}
             <div className={styles.modalActions}>
-              <button className={styles.cancelBtn} onClick={() => setDeleteTarget(null)} disabled={deleting}>Cancel</button>
-              <button className={styles.confirmDeleteBtn} onClick={handleDelete} disabled={deleting} id="confirm-delete-project-btn">
+              <button className={styles.resetBtn} onClick={() => setDeleteTarget(null)} disabled={deleting}>Cancel</button>
+              <button
+                className={styles.confirmDeleteBtn}
+                onClick={handleDelete}
+                disabled={deleting}
+                id="confirm-delete-project-btn"
+              >
                 {deleting ? 'Deleting…' : 'Yes, Delete'}
               </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
