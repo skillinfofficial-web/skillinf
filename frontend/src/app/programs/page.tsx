@@ -15,12 +15,12 @@ interface Program {
   link: string;
 }
 
-/* Derive active / inactive from dates */
-function getStatus(startDate: string, endDate: string): 'active' | 'inactive' {
+/* Derive live / completed from dates */
+function getStatus(startDate: string, endDate: string): 'live' | 'completed' {
   const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
-  return now >= start && now <= end ? 'active' : 'inactive';
+  return now >= start && now <= end ? 'live' : 'completed';
 }
 
 export default function ProgramsPage() {
@@ -29,7 +29,7 @@ export default function ProgramsPage() {
   const [error, setError] = useState('');
 
   /* Filters */
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'completed'>('all');
   const [platformFilter, setPlatformFilter] = useState('all');
 
   useEffect(() => {
@@ -95,11 +95,11 @@ export default function ProgramsPage() {
                   id="filter-status"
                   className={`${styles.filterSelect} ${statusFilter !== 'all' ? styles.filterSelectActive : ''}`}
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'live' | 'completed')}
                 >
                   <option value="all">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="live">Live</option>
+                  <option value="completed">Completed</option>
                 </select>
               </div>
 
@@ -206,9 +206,9 @@ export default function ProgramsPage() {
                       <p className={styles.cardName}>{prog.name}</p>
                       <div className={styles.cardMeta}>
                         <span className={styles.cardPlatform}>{prog.platformName}</span>
-                        <span className={`${styles.statusBadge} ${status === 'active' ? styles.statusActive : styles.statusInactive}`}>
+                        <span className={`${styles.statusBadge} ${status === 'live' ? styles.statusLive : styles.statusCompleted}`}>
                           <span className={styles.statusDot} />
-                          {status === 'active' ? 'Active' : 'Inactive'}
+                          {status === 'live' ? 'Live' : 'Completed'}
                         </span>
                       </div>
                     </div>

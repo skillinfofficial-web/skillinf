@@ -176,10 +176,15 @@
 .statusDot {
   width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
 }
-.statusActive  { background: #e8f8f0; color: #1a7a4a; }
-.statusActive  .statusDot { background: #25d366; box-shadow: 0 0 0 2px #b2dfc5; }
-.statusInactive { background: #f3f4f6; color: #6b7280; }
-.statusInactive .statusDot { background: #9ca3af; }
+.statusLive    { background: #e8f8f0; color: #14532d; }
+.statusLive    .statusDot { background: #22c55e; box-shadow: 0 0 0 2px #bbf7d0; animation: pulse 1.8s ease-in-out infinite; }
+.statusCompleted { background: #fef2f2; color: #991b1b; }
+.statusCompleted .statusDot { background: #ef4444; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 2px #bbf7d0; }
+  50%       { box-shadow: 0 0 0 4px #86efac; }
+}
 
 /* ─── States ────────────────────────────────────────────────────────────────── */
 .state {
