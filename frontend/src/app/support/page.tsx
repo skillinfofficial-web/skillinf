@@ -8,8 +8,7 @@ import styles from './SupportPage.module.css';
 
 /* WhatsApp numbers */
 const WA_NUMBERS = [
-  { label: '+91 99946 11054', number: '919994611054' },
-  { label: '+91 93426 37290', number: '919342637290' },
+  { label: '+91 94899 22054', number: '919489922054' },
 ];
 
 function buildWaText(name: string, email: string, mobile: string, query: string) {

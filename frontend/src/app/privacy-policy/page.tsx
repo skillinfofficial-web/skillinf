@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
               <p><strong>Company:</strong> skillinf</p>
               <p><strong>Website:</strong> <a href="https://skillinf.in" target="_blank" rel="noreferrer">skillinf.in</a></p>
               <p><strong>Email:</strong> <a href="mailto:support@skillinf.in">support@skillinf.in</a></p>
-              <p><strong>Phone:</strong> +91 93426 37290 &amp; +91 99946 11054</p>
+              <p><strong>Phone:</strong> +91 94899 22054</p>
               <p><strong>Address:</strong> Remote</p>
             </div>
           </section>

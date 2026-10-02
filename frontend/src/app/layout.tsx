@@ -93,7 +93,7 @@ const organizationSchema = {
   description:
     "skillinf helps students turn academic knowledge into practical, career-ready skills through free virtual internship programs.",
   email: "support@skillinf.in",
-  telephone: "+919342637290",
+  telephone: "+919489922054",
   address: {
     "@type": "PostalAddress",
     addressCountry: "IN",
