@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getDatabase } from '@/lib/mongodb';
+import { istTimestamps } from '@/lib/ist';
 
 const FALLBACK_DOMAINS = [
   'AI & Machine Learning','Data Science','Web Development','Full Stack Development',
@@ -79,6 +80,11 @@ export async function POST(req: Request) {
     }
 
     const now = new Date();
+    const nowISTStr = now.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
     await db.collection('users').insertOne({
       name:                existingUser ? (existingUser.name as string) : name.trim(),
       email:               emailNorm,
@@ -98,7 +104,10 @@ export async function POST(req: Request) {
       paymentDone:         false,
       hasJoinedWhatsapp:   false,
       createdAt:           now,
+      createdAtIST:        nowISTStr,
       updatedAt:           now,
+      updatedAtIST:        nowISTStr,
+      ...istTimestamps('registeredAt'),   // registeredAt + registeredAtIST
     });
 
     const isAdditional = !!existingUser;

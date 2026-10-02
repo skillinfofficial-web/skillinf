@@ -13,7 +13,7 @@ export async function POST() {
     const db = await getDatabase();
     await db.collection('users').updateMany(
       { email: user.email },
-      { $set: { hasJoinedWhatsapp: true, updatedAt: new Date() } }
+      { $set: { hasJoinedWhatsapp: true, updatedAt: new Date(), updatedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) } }
     );
 
     return NextResponse.json({ success: true });

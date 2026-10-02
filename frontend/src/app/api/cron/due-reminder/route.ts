@@ -1,40 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { sendMail } from '@/lib/mailer';
+import { toISTMidnight, addCalendarDays, fmtISTLong } from '@/lib/ist';
 
-/* ─────────────────────────────────────────────────────────────────
-   GET /api/cron/due-reminder
-   Scheduled daily via vercel.json (runs at 08:00 IST = 02:30 UTC).
-   Sends reminder emails to students whose next unsubmitted step is
-   due TOMORROW in IST.
-───────────────────────────────────────────────────────────────── */
 
 const CRON_SECRET = process.env.CRON_SECRET ?? '';
-const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000; // +05:30
 
-/** Return a Date representing midnight IST for a given UTC Date */
-function toISTMidnight(d: Date): Date {
-  const istMs = d.getTime() + IST_OFFSET_MS;
-  const istDate = new Date(istMs);
-  // Zero out time portion while keeping calendar day
-  return new Date(
-    Date.UTC(istDate.getUTCFullYear(), istDate.getUTCMonth(), istDate.getUTCDate())
-  );
-}
-
-function addCalendarDays(base: Date, days: number): Date {
-  const d = new Date(base);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d;
-}
+const istNow = () => new Date().toLocaleString('en-IN', {
+  timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short',
+  year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true,
+});
 
 function fmtIST(d: Date): string {
-  return new Date(d.getTime() + IST_OFFSET_MS).toLocaleDateString('en-IN', {
-    timeZone: 'Asia/Kolkata',
-    day: '2-digit', month: 'long', year: 'numeric',
-  });
+  return fmtISTLong(d);
 }
-
 function buildReminderEmail(
   name: string,
   step: number,
@@ -149,9 +128,19 @@ export async function GET(req: NextRequest) {
       const weeks  = courseMap.get(domain);
       if (!weeks || weeks.length < 4) continue;
 
-      // Registered-at in IST midnight
-      const rawReg     = user.registeredAt ?? user.createdAt ?? new Date();
-      const registeredIST = toISTMidnight(new Date(rawReg as string));
+      // registeredAtIST is stored as "02 Oct 2026, 08:51 AM" — parse just the date part
+      // Fall back to UTC->IST conversion of the raw Date field
+      const rawReg = user.registeredAt ?? user.createdAt ?? new Date();
+      let registeredIST: Date;
+      if (user.registeredAtIST) {
+        // Parse IST date string: e.g. "02 Oct 2026, 08:51 AM" → IST midnight
+        const parsed = new Date(user.registeredAtIST as string);
+        registeredIST = isNaN(parsed.getTime())
+          ? toISTMidnight(new Date(rawReg as string))
+          : toISTMidnight(parsed);
+      } else {
+        registeredIST = toISTMidnight(new Date(rawReg as string));
+      }
 
       // Cumulative due dates (IST midnight of each step's deadline)
       let cumulativeDays = 0;
@@ -186,7 +175,7 @@ export async function GET(req: NextRequest) {
             // Flag so we never send again for this step
             await db.collection('users').updateOne(
               { _id: user._id },
-              { $set: { [reminderKey]: true, updatedAt: new Date() } }
+              { $set: { [reminderKey]: true, updatedAt: new Date(), updatedAtIST: istNow() } }
             );
 
             emailsSent++;

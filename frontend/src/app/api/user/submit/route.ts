@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 import { getDatabase } from '@/lib/mongodb';
 import { getAuthUser } from '@/lib/auth';
+import { istTimestamps } from '@/lib/ist';
 
 export async function POST(req: Request) {
   try {
@@ -46,7 +47,8 @@ export async function POST(req: Request) {
       {
         $set: {
           [`submissions.${stepKey}`]: driveLink.trim(),
-          updatedAt: new Date(),
+          updatedAt:    new Date(),
+          updatedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
         },
       }
     );
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
           driveLink:    driveLink.trim(),
           status:       'pending',
           updatedAt:    new Date(),
+          updatedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
         },
         $setOnInsert: { createdAt: new Date() },
       },

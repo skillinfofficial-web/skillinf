@@ -3,6 +3,11 @@ import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '@/lib/mailer';
 
+const istNow = () => new Date().toLocaleString('en-IN', {
+  timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short',
+  year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true,
+});
+
 // ── GET /api/project-reviews ──────────────────────────────────
 export async function GET() {
   try {
@@ -117,12 +122,12 @@ export async function PATCH(req: NextRequest) {
 
       await db.collection('users').updateOne(
         { _id: userDoc._id },
-        { $set: { [`steps.${stepKey}`]: true, certificateUnlocked: allDone, updatedAt: new Date() } }
+        { $set: { [`steps.${stepKey}`]: true, certificateUnlocked: allDone, updatedAt: new Date(), updatedAtIST: istNow() } }
       );
 
       await db.collection('project_reviews').updateOne(
         { _id: new ObjectId(reviewId) },
-        { $set: { status: 'approved', updatedAt: new Date() } }
+        { $set: { status: 'approved', updatedAt: new Date(), updatedAtIST: istNow() } }
       );
 
       // Send approval email (non-blocking — don't fail the request if email fails)
@@ -148,7 +153,7 @@ export async function PATCH(req: NextRequest) {
     // ── REJECT ─────────────────────────────────────────────────
     await db.collection('project_reviews').updateOne(
       { _id: new ObjectId(reviewId) },
-      { $set: { status: 'rejected', updatedAt: new Date() } }
+      { $set: { status: 'rejected', updatedAt: new Date(), updatedAtIST: istNow() } }
     );
 
     const users2 = await db.collection('users').find({ email: review.email as string }).toArray();
@@ -156,7 +161,7 @@ export async function PATCH(req: NextRequest) {
     if (userDoc2) {
       await db.collection('users').updateOne(
         { _id: userDoc2._id },
-        { $set: { [`submissions.step${review.step}`]: null, updatedAt: new Date() } }
+        { $set: { [`submissions.step${review.step}`]: null, updatedAt: new Date(), updatedAtIST: istNow() } }
       );
     }
 
