@@ -203,7 +203,7 @@ export default function SignUpPage() {
                   <label className={styles.label} htmlFor="su-start">Start Date</label>
                   <input id="su-start" className={styles.input} type="date"
                     value={form.startDate} onChange={update('startDate')}
-                    min={todayStr()} required />
+                    required />
                 </div>
                 <div className={styles.field}>
                   <label className={styles.label} htmlFor="su-end">
