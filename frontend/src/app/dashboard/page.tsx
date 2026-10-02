@@ -802,7 +802,6 @@ export default function DashboardPage() {
                 const done = user.steps[`step${n}` as keyof typeof user.steps];
                 const dueDate = dueDates[idx];
                 const dl = daysLeft(dueDate);
-                const verifying = stepVerifying[idx];
 
                 return (
                   <div key={n} className={`${styles.stepCard} ${done ? styles.stepDone : !available ? styles.stepLocked : styles.stepActive}`}>
