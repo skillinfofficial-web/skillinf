@@ -249,3 +249,105 @@
   .loginCard { padding: 28px 20px; }
   .tab { font-size: 0.8rem; padding: 12px 14px; }
 }
+
+/* ── Email Quota Cards ─────────────────────────────────────────────────────── */
+.emailCard {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.emailCardLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+.emailCardBig {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.emailCardUnit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+.emailCardMeta {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0;
+}
+.emailCardSubBig {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 2px 0 0;
+}
+
+/* Quota progress bar */
+.quotaBar {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 100px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+.quotaBarFill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Type breakdown */
+.emailBreakdownTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 12px;
+}
+.emailBreakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.emailTypeLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  width: 180px;
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+.emailTypeBar {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 100px;
+  overflow: hidden;
+}
+.emailTypeBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #4338ca);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+.emailTypeCount {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e293b;
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}

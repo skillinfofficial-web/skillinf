@@ -139,6 +139,7 @@ export async function PATCH(req: NextRequest) {
           to: review.email as string,
           subject: emailSubject,
           html: buildApprovalEmail(review.name as string, review.step as number, allDone),
+          type: 'project_approval',
         });
       } catch (mailErr) {
         console.warn('[project-reviews] Email send failed (non-fatal):', mailErr);

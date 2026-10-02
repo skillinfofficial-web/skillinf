@@ -31,7 +31,21 @@ export default function AdminPanelPage() {
   const [adminKey, setAdminKey]       = useState('');
   const [authed,   setAuthed]         = useState(false);
   const [authErr,  setAuthErr]        = useState('');
-  const [tab,      setTab]            = useState<'referrals' | 'certs'>('referrals');
+  const [tab,      setTab]            = useState<'referrals' | 'certs' | 'emails'>('referrals');
+
+  // Email stats
+  interface EmailStats {
+    totalAll: number; totalToday: number; totalMonth: number;
+    byType: { type: string; count: number }[];
+    quota: {
+      daily:   { used: number; limit: number; remaining: number };
+      monthly: { used: number; limit: number; remaining: number };
+    };
+    istDate: string; istMonth: string;
+  }
+  const [emailStats,    setEmailStats]    = useState<EmailStats | null>(null);
+  const [emailLoading,  setEmailLoading]  = useState(false);
+  const [emailErr,      setEmailErr]      = useState('');
 
   // Referrals
   const [referrals,    setReferrals]    = useState<ReferralEntry[]>([]);
@@ -73,6 +87,16 @@ export default function AdminPanelPage() {
     fetchReferrals(adminKey);
     fetchCerts();
   };
+  const fetchEmailStats = useCallback(async () => {
+    setEmailLoading(true); setEmailErr('');
+    try {
+      const res  = await fetch('/api/admin/email-stats');
+      const data = await res.json();
+      if (data.success) setEmailStats(data);
+      else setEmailErr(data.message);
+    } catch { setEmailErr('Network error.'); }
+    finally { setEmailLoading(false); }
+  }, []);
 
   useEffect(() => {
     if (authed && tab === 'referrals') fetchReferrals(adminKey);
@@ -130,6 +154,12 @@ export default function AdminPanelPage() {
           onClick={() => setTab('certs')}
         >
           Physical Certificates
+        </button>
+        <button
+          className={`${styles.tab} ${tab === 'emails' ? styles.tabActive : ''}`}
+          onClick={() => { setTab('emails'); if (!emailStats) fetchEmailStats(); }}
+        >
+          📧 Email Quota
         </button>
       </div>
 
@@ -249,6 +279,102 @@ export default function AdminPanelPage() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── Email Stats Tab ── */}
+        {tab === 'emails' && (
+          <div>
+            <div className={styles.sectionHead}>
+              <div>
+                <h2 className={styles.sectionTitle}>Email Quota & Stats</h2>
+                <p className={styles.sectionSub}>Tracks all emails sent via Resend (IST timezone · {emailStats?.istDate ?? '…'})</p>
+              </div>
+              <button className={styles.refreshBtn} onClick={fetchEmailStats} disabled={emailLoading}>
+                {emailLoading ? 'Loading…' : 'Refresh'}
+              </button>
+            </div>
+
+            {emailLoading && <div className={styles.loading}>Loading email stats…</div>}
+            {emailErr && !emailLoading && <div className={styles.empty} style={{ color: '#ef4444' }}>{emailErr}</div>}
+
+            {emailStats && !emailLoading && (() => {
+              const { quota, totalAll, totalToday, totalMonth, byType } = emailStats;
+              const dailyPct   = Math.min(100, Math.round((quota.daily.used   / quota.daily.limit)   * 100));
+              const monthlyPct = Math.min(100, Math.round((quota.monthly.used / quota.monthly.limit) * 100));
+              const dailyColor   = dailyPct   >= 90 ? '#ef4444' : dailyPct   >= 70 ? '#f59e0b' : '#10b981';
+              const monthlyColor = monthlyPct >= 90 ? '#ef4444' : monthlyPct >= 70 ? '#f59e0b' : '#10b981';
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+                  {/* ── Quota meters ── */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 16 }}>
+
+                    {/* Daily */}
+                    <div className={styles.emailCard}>
+                      <p className={styles.emailCardLabel}>Daily Quota (IST day)</p>
+                      <p className={styles.emailCardBig} style={{ color: dailyColor }}>
+                        {quota.daily.remaining} <span className={styles.emailCardUnit}>remaining</span>
+                      </p>
+                      <div className={styles.quotaBar}>
+                        <div className={styles.quotaBarFill} style={{ width: `${dailyPct}%`, background: dailyColor }} />
+                      </div>
+                      <p className={styles.emailCardMeta}>{quota.daily.used} used of {quota.daily.limit}/day</p>
+                    </div>
+
+                    {/* Monthly */}
+                    <div className={styles.emailCard}>
+                      <p className={styles.emailCardLabel}>Monthly Quota (IST month · {emailStats.istMonth})</p>
+                      <p className={styles.emailCardBig} style={{ color: monthlyColor }}>
+                        {quota.monthly.remaining} <span className={styles.emailCardUnit}>remaining</span>
+                      </p>
+                      <div className={styles.quotaBar}>
+                        <div className={styles.quotaBarFill} style={{ width: `${monthlyPct}%`, background: monthlyColor }} />
+                      </div>
+                      <p className={styles.emailCardMeta}>{quota.monthly.used} used of {quota.monthly.limit}/month</p>
+                    </div>
+
+                    {/* All time */}
+                    <div className={styles.emailCard}>
+                      <p className={styles.emailCardLabel}>All-time Sent</p>
+                      <p className={styles.emailCardBig} style={{ color: '#6366f1' }}>{totalAll}</p>
+                      <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
+                        <div>
+                          <p className={styles.emailCardMeta}>Today</p>
+                          <p className={styles.emailCardSubBig}>{totalToday}</p>
+                        </div>
+                        <div>
+                          <p className={styles.emailCardMeta}>This month</p>
+                          <p className={styles.emailCardSubBig}>{totalMonth}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Type breakdown ── */}
+                  {byType.length > 0 && (
+                    <div>
+                      <h3 className={styles.emailBreakdownTitle}>Breakdown by Type</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {byType.map(t => (
+                          <div key={t.type} className={styles.emailBreakdownRow}>
+                            <span className={styles.emailTypeLabel}>{t.type.replace(/_/g, ' ')}</span>
+                            <div className={styles.emailTypeBar}>
+                              <div
+                                className={styles.emailTypeBarFill}
+                                style={{ width: `${Math.round((t.count / totalAll) * 100)}%` }}
+                              />
+                            </div>
+                            <span className={styles.emailTypeCount}>{t.count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+              );
+            })()}
           </div>
         )}
 

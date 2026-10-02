@@ -170,6 +170,7 @@ export async function GET(req: NextRequest) {
               to: email,
               subject: `⏰ Reminder: Your Week ${stepNum} Project is Due Tomorrow! | Skillinf`,
               html: buildReminderEmail(name, stepNum, dueIST, domain),
+              type: 'due_reminder',
             });
 
             // Flag so we never send again for this step
