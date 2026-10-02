@@ -376,6 +376,9 @@
 .projModalDesc {
   font-size: 0.875rem; color: #475569; line-height: 1.65; margin-bottom: 4px;
 }
+.projModalDescMuted {
+  font-size: 0.84rem; color: #94a3b8; font-style: italic; line-height: 1.55; margin-bottom: 4px;
+}
 .projDivider {
   height: 1px; background: #e2e8f0; margin: 18px 0;
 }

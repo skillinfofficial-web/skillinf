@@ -865,7 +865,7 @@ export default function DashboardPage() {
                             disabled={!available || stepLoads[idx]}
                             onClick={() => available && openProjectModal(idx)}
                           >
-                            {stepLoads[idx] ? 'Submitting…' : !available ? '🔒 Locked' : '📤 Submit Project'}
+                            {stepLoads[idx] ? 'Submitting…' : !available ? '🔒 Locked' : 'Submit Project'}
                           </button>
                         </>
                       )}
@@ -1074,17 +1074,21 @@ export default function DashboardPage() {
             <div className={styles.projModal} onClick={e => e.stopPropagation()}>
               <button className={styles.projModalClose} onClick={closeProjectModal}>✕</button>
 
-              {/* Project info */}
-              <h2 className={styles.projModalTitle}>{w.projectTitle || `Week ${projectModal.weekIdx + 1} Project`}</h2>
-              {w.projectDescription && (
+              {/* Project info from admin */}
+              <h2 className={styles.projModalTitle}>
+                {w.projectTitle?.trim() ? w.projectTitle : `Week ${projectModal.weekIdx + 1} — Project Submission`}
+              </h2>
+              {w.projectDescription?.trim() ? (
                 <p className={styles.projModalDesc}>{w.projectDescription}</p>
+              ) : (
+                <p className={styles.projModalDescMuted}>No project description added by admin yet.</p>
               )}
 
               <div className={styles.projDivider} />
 
               {/* Drive link input */}
               <label className={styles.projLabel} htmlFor="proj-drive-link">
-                📎 Your Project / Google Drive Link
+                Your Project / Google Drive Link
               </label>
               <input
                 id="proj-drive-link"
@@ -1111,7 +1115,7 @@ export default function DashboardPage() {
                   disabled={projectSubmitting || !projectDriveLink.trim()}
                   onClick={() => submitStep(projectModal.weekIdx)}
                 >
-                  {projectSubmitting ? 'Submitting…' : '📤 Submit for Review'}
+                  {projectSubmitting ? 'Submitting…' : 'Submit for Review'}
                 </button>
               </div>
             </div>
