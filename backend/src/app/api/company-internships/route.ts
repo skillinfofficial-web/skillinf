@@ -15,6 +15,8 @@ interface WeekPayload {
   tutorialUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
+  projectTitle?: string;
+  projectDescription?: string;
 }
 
 interface CompanyInternshipPayload {
@@ -80,11 +82,13 @@ export async function POST(req: NextRequest) {
     const document = {
       name: data.name.trim(),
       weeks: data.weeks.map((w, i) => ({
-        week: i + 1,
-        deadlineDays: Number(w.deadlineDays),
-        tutorialUrl: w.tutorialUrl.trim(),
-        keyFeatures: w.keyFeatures.map((f) => f.trim()),
-        whatYouLearn: w.whatYouLearn.trim(),
+        week:               i + 1,
+        deadlineDays:       Number(w.deadlineDays),
+        tutorialUrl:        w.tutorialUrl.trim(),
+        keyFeatures:        w.keyFeatures.map((f) => f.trim()),
+        whatYouLearn:       w.whatYouLearn.trim(),
+        projectTitle:       (w.projectTitle ?? '').trim(),
+        projectDescription: (w.projectDescription ?? '').trim(),
       })),
       createdAt: now,
       updatedAt: now,

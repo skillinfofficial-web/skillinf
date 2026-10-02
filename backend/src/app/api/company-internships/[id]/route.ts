@@ -15,6 +15,8 @@ interface WeekPayload {
   tutorialUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
+  projectTitle?: string;
+  projectDescription?: string;
 }
 
 function validateWeek(w: WeekPayload, weekNum: number): string | null {
@@ -80,11 +82,13 @@ export async function PUT(
     const update = {
       name: data.name.trim(),
       weeks: data.weeks.map((w: WeekPayload, i: number) => ({
-        week: i + 1,
-        deadlineDays: Number(w.deadlineDays),
-        tutorialUrl: w.tutorialUrl.trim(),
-        keyFeatures: w.keyFeatures.map((f: string) => f.trim()),
-        whatYouLearn: w.whatYouLearn.trim(),
+        week:               i + 1,
+        deadlineDays:       Number(w.deadlineDays),
+        tutorialUrl:        w.tutorialUrl.trim(),
+        keyFeatures:        w.keyFeatures.map((f: string) => f.trim()),
+        whatYouLearn:       w.whatYouLearn.trim(),
+        projectTitle:       (w.projectTitle ?? '').trim(),
+        projectDescription: (w.projectDescription ?? '').trim(),
       })),
       updatedAt: new Date(),
     };
