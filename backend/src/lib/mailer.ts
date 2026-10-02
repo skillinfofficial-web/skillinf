@@ -6,6 +6,7 @@ export interface MailOptions {
   to: string | string[];
   subject: string;
   html: string;
+  type?: string; // optional label for logging/tracking
 }
 
 export async function sendMail({ to, subject, html }: MailOptions) {
