@@ -111,7 +111,18 @@ export default function LinkedInVerifyPage() {
       });
       const data = await res.json();
       setPrActionMsg({ id: review._id, msg: data.message, ok: data.success });
-      if (data.success) loadPr();
+      if (data.success) {
+        loadPr();
+        // On reject — open WhatsApp with pre-typed message
+        if (action === 'reject' && data.mobileNumber) {
+          const mobile = String(data.mobileNumber).replace(/\D/g, '');
+          const waNumber = mobile.startsWith('91') ? mobile : `91${mobile}`;
+          const waMsg = encodeURIComponent(
+            `Hi ${data.name}, your Week ${data.step} project submission on Skillinf could not be verified — the link you provided is not accessible or invalid. Please re-submit with a valid Google Drive / GitHub link so our mentor can review it. Log in to your dashboard to resubmit: https://skillinf.in/dashboard`
+          );
+          window.open(`https://wa.me/${waNumber}?text=${waMsg}`, '_blank');
+        }
+      }
     } catch { setPrActionMsg({ id: review._id, msg: 'Network error.', ok: false }); }
     finally { setPrBusyId(null); }
   };
