@@ -185,48 +185,50 @@ export default function AdminPanelPage() {
             ) : referrals.length === 0 ? (
               <div className={styles.empty}>No referral data found.</div>
             ) : (
-              <div className={styles.table}>
-                <div className={styles.tableHead}>
-                  <span>Member Name</span>
-                  <span>Email</span>
-                  <span>Referral Code</span>
-                  <span>Domain</span>
-                  <span>Referred</span>
-                </div>
-                {referrals.map(r => (
-                  <div key={r.code}>
-                    <div
-                      className={`${styles.tableRow} ${expanded === r.code ? styles.tableRowOpen : ''}`}
-                      onClick={() => setExpanded(expanded === r.code ? null : r.code)}
-                    >
-                      <span className={styles.name}>{r.name}</span>
-                      <span className={styles.email}>{r.email}</span>
-                      <span className={styles.code}>{r.code}</span>
-                      <span className={styles.domain}>{r.domain}</span>
-                      <span className={`${styles.count} ${r.referredCount > 0 ? styles.countActive : ''}`}>
-                        {r.referredCount} {r.referredCount === 1 ? 'member' : 'members'}
-                      </span>
-                    </div>
-                    {expanded === r.code && r.referredUsers.length > 0 && (
-                      <div className={styles.subTable}>
-                        <div className={styles.subHead}>
-                          <span>Name</span><span>Email</span><span>Domain</span><span>Joined</span>
-                        </div>
-                        {r.referredUsers.map((ru, i) => (
-                          <div key={i} className={styles.subRow}>
-                            <span>{ru.name}</span>
-                            <span className={styles.email}>{ru.email}</span>
-                            <span>{ru.domain}</span>
-                            <span className={styles.date}>{ru.joinedAt ? new Date(ru.joinedAt).toLocaleDateString('en-IN') : '—'}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {expanded === r.code && r.referredUsers.length === 0 && (
-                      <div className={styles.subEmpty}>This member has not referred anyone yet.</div>
-                    )}
+              <div className={styles.tableScroll}>
+                <div className={styles.table}>
+                  <div className={styles.tableHead}>
+                    <span>Member Name</span>
+                    <span>Email</span>
+                    <span>Referral Code</span>
+                    <span>Domain</span>
+                    <span>Referred</span>
                   </div>
-                ))}
+                  {referrals.map(r => (
+                    <div key={r.code}>
+                      <div
+                        className={`${styles.tableRow} ${expanded === r.code ? styles.tableRowOpen : ''}`}
+                        onClick={() => setExpanded(expanded === r.code ? null : r.code)}
+                      >
+                        <span className={styles.name}>{r.name}</span>
+                        <span className={styles.email}>{r.email}</span>
+                        <span className={styles.code}>{r.code}</span>
+                        <span className={styles.domain}>{r.domain}</span>
+                        <span className={`${styles.count} ${r.referredCount > 0 ? styles.countActive : ''}`}>
+                          {r.referredCount} {r.referredCount === 1 ? 'member' : 'members'}
+                        </span>
+                      </div>
+                      {expanded === r.code && r.referredUsers.length > 0 && (
+                        <div className={styles.subTable}>
+                          <div className={styles.subHead}>
+                            <span>Name</span><span>Email</span><span>Domain</span><span>Joined</span>
+                          </div>
+                          {r.referredUsers.map((ru, i) => (
+                            <div key={i} className={styles.subRow}>
+                              <span>{ru.name}</span>
+                              <span className={styles.email}>{ru.email}</span>
+                              <span>{ru.domain}</span>
+                              <span className={styles.date}>{ru.joinedAt ? new Date(ru.joinedAt).toLocaleDateString('en-IN') : '—'}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {expanded === r.code && r.referredUsers.length === 0 && (
+                        <div className={styles.subEmpty}>This member has not referred anyone yet.</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -250,22 +252,24 @@ export default function AdminPanelPage() {
             ) : certs.length === 0 ? (
               <div className={styles.empty}>No physical certificate orders yet.</div>
             ) : (
-              <div className={styles.table}>
-                <div className={`${styles.tableHead} ${styles.tableHeadCerts}`}>
-                  <span>Name</span><span>Email</span><span>Mobile</span>
-                  <span>Address</span><span>District</span><span>Pincode</span><span>Date</span>
-                </div>
-                {certs.map(c => (
-                  <div key={c.id} className={`${styles.tableRow} ${styles.tableRowCerts}`}>
-                    <span className={styles.name}>{c.name}</span>
-                    <span className={styles.email}>{c.email}</span>
-                    <span>{c.mobile}</span>
-                    <span className={styles.addr}>{c.address}</span>
-                    <span>{c.district}</span>
-                    <span>{c.pincode}</span>
-                    <span className={styles.date}>{c.registeredAt ? new Date(c.registeredAt).toLocaleDateString('en-IN') : '—'}</span>
+              <div className={styles.tableScroll}>
+                <div className={styles.table}>
+                  <div className={`${styles.tableHead} ${styles.tableHeadCerts}`}>
+                    <span>Name</span><span>Email</span><span>Mobile</span>
+                    <span>Address</span><span>District</span><span>Pincode</span><span>Date</span>
                   </div>
-                ))}
+                  {certs.map(c => (
+                    <div key={c.id} className={`${styles.tableRow} ${styles.tableRowCerts}`}>
+                      <span className={styles.name}>{c.name}</span>
+                      <span className={styles.email}>{c.email}</span>
+                      <span>{c.mobile}</span>
+                      <span className={styles.addr}>{c.address}</span>
+                      <span>{c.district}</span>
+                      <span>{c.pincode}</span>
+                      <span className={styles.date}>{c.registeredAt ? new Date(c.registeredAt).toLocaleDateString('en-IN') : '—'}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
