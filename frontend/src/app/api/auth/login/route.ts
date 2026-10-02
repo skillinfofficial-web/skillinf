@@ -52,7 +52,11 @@ export async function POST(req: Request) {
     }
 
     const token = signToken({ userId: user._id.toString(), email: user.email as string, name: user.name as string });
-    const res   = NextResponse.json({ success: true, message: 'Signed in successfully.' });
+    const res   = NextResponse.json({
+      success: true,
+      message: 'Signed in successfully.',
+      hasJoinedWhatsapp: user.hasJoinedWhatsapp === true,
+    });
     setAuthCookie(res, token);
     return res;
   } catch (e) {

@@ -96,6 +96,7 @@ export async function POST(req: Request) {
       submissions:         { step1: null as string|null, step2: null as string|null, step3: null as string|null, step4: null as string|null },
       certificateUnlocked: false,
       paymentDone:         false,
+      hasJoinedWhatsapp:   false,
       createdAt:           now,
       updatedAt:           now,
     });

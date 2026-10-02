@@ -49,7 +49,8 @@ export default function SignInPage() {
         setLoading(false);
         return;
       }
-      router.push('/dashboard');
+      // First-time login → show WhatsApp join gate
+      router.push(data.hasJoinedWhatsapp ? '/dashboard' : '/join-whatsapp');
     } catch {
       setError('Something went wrong. Please try again.');
       setLoading(false);
@@ -67,7 +68,7 @@ export default function SignInPage() {
       });
       const data = await res.json();
       if (!data.success) { setError(data.message); setLoading(false); return; }
-      router.push('/dashboard');
+      router.push(data.hasJoinedWhatsapp ? '/dashboard' : '/join-whatsapp');
     } catch {
       setError('Something went wrong. Please try again.');
       setLoading(false);
