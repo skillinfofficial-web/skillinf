@@ -11,6 +11,8 @@ interface WeekData {
   tutorialUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
+  projectTitle: string;
+  projectDescription: string;
 }
 
 interface InitialWeek {
@@ -19,6 +21,8 @@ interface InitialWeek {
   tutorialUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
+  projectTitle?: string;
+  projectDescription?: string;
 }
 
 interface Props {
@@ -39,7 +43,7 @@ const YOUTUBE_REGEX =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)[\w-]{11}|youtu\.be\/[\w-]{11})(?:[?&].*)?$/;
 
 function makeBlankWeek(): WeekData {
-  return { deadlineDays: '7', tutorialUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '' };
+  return { deadlineDays: '7', tutorialUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '' };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
@@ -48,6 +52,8 @@ function weekFromInitial(w: InitialWeek): WeekData {
     tutorialUrl:  w.tutorialUrl,
     keyFeatures:  w.keyFeatures.length >= 4 ? w.keyFeatures : [...w.keyFeatures, ...Array(4 - w.keyFeatures.length).fill('')],
     whatYouLearn: w.whatYouLearn,
+    projectTitle: w.projectTitle ?? '',
+    projectDescription: w.projectDescription ?? '',
   };
 }
 
@@ -88,6 +94,10 @@ function validateStep(week: WeekData, weekNum: number): Record<string, string> {
     errs.whatYouLearn = `What You Learn is required.`;
   else if (week.whatYouLearn.length > 250)
     errs.whatYouLearn = `Must be 250 characters or fewer.`;
+  if (!week.projectTitle.trim())
+    errs.projectTitle = `Project Title is required.`;
+  if (!week.projectDescription.trim())
+    errs.projectDescription = `What You Do on the Project is required.`;
   void weekNum;
   return errs;
 }
@@ -179,11 +189,13 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
       const payload = {
         name: internshipName.trim(),
         weeks: weeks.map((w, i) => ({
-          week:         i + 1,
-          deadlineDays: Number(w.deadlineDays),
-          tutorialUrl:  w.tutorialUrl.trim(),
-          keyFeatures:  w.keyFeatures.map((f) => f.trim()),
-          whatYouLearn: w.whatYouLearn.trim(),
+          week:               i + 1,
+          deadlineDays:       Number(w.deadlineDays),
+          tutorialUrl:        w.tutorialUrl.trim(),
+          keyFeatures:        w.keyFeatures.map((f) => f.trim()),
+          whatYouLearn:       w.whatYouLearn.trim(),
+          projectTitle:       w.projectTitle.trim(),
+          projectDescription: w.projectDescription.trim(),
         })),
       };
 
@@ -358,6 +370,38 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
             {currentWeek.whatYouLearn.length} / 250
           </div>
           {errors.whatYouLearn && <p className={styles.errorText}>{errors.whatYouLearn}</p>}
+        </div>
+
+        {/* Project Title */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label} htmlFor={`proj-title-${step}`}>
+            Project Title <span className={styles.required}>*</span>
+          </label>
+          <input
+            id={`proj-title-${step}`}
+            type="text"
+            className={`${styles.input} ${errors.projectTitle ? styles.inputError : ''}`}
+            value={currentWeek.projectTitle}
+            onChange={(e) => updateWeek('projectTitle', e.target.value)}
+            placeholder="e.g. Library Management System"
+          />
+          {errors.projectTitle && <p className={styles.errorText}>{errors.projectTitle}</p>}
+        </div>
+
+        {/* What You Do on the Project */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label} htmlFor={`proj-desc-${step}`}>
+            What You Do on the Project <span className={styles.required}>*</span>
+          </label>
+          <textarea
+            id={`proj-desc-${step}`}
+            className={`${styles.textarea} ${errors.projectDescription ? styles.inputError : ''}`}
+            value={currentWeek.projectDescription}
+            onChange={(e) => updateWeek('projectDescription', e.target.value)}
+            placeholder="Describe what the student needs to build / do for this project…"
+            rows={3}
+          />
+          {errors.projectDescription && <p className={styles.errorText}>{errors.projectDescription}</p>}
         </div>
 
         {/* Navigation */}

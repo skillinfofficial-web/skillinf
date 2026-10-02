@@ -120,3 +120,73 @@
   .header { flex-direction: column; align-items: flex-start; }
   .counts { width: 100%; }
 }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 4px; margin-bottom: 20px;
+  background: var(--highlight); border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px; width: fit-content;
+}
+.tabBtn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 18px; border-radius: 9px; border: none;
+  background: transparent; color: var(--secondary-text);
+  font-size: 0.84rem; font-weight: 600; cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.tabBtn:hover { color: var(--main-text); }
+.tabActive { background: #fff; color: var(--brand-dark); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.tabBadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; border-radius: 100px;
+  background: var(--main-brand); color: #fff;
+  font-size: 0.68rem; font-weight: 800; padding: 0 5px;
+}
+.tabBadgeOrange { background: #f59e0b; }
+
+/* ── Counts row (reused) ─────────────────────────────────────────────────── */
+.countRejected { background: #fdf3f3; color: var(--error); border-color: #f5c2c2; }
+
+/* ── Project Reviews List ────────────────────────────────────────────────── */
+.prList { display: flex; flex-direction: column; gap: 10px; }
+
+.prCard {
+  border-radius: 14px; border: 1.5px solid var(--border);
+  background: var(--card); overflow: hidden;
+}
+.prPending  { border-left: 4px solid #f59e0b; }
+.prApproved { border-left: 4px solid #10b981; }
+.prRejected { border-left: 4px solid var(--error); }
+
+.prCardHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; cursor: pointer; gap: 12px;
+  transition: background 0.15s;
+}
+.prCardHead:hover { background: var(--highlight); }
+
+.prCardLeft  { display: flex; align-items: center; gap: 12px; }
+.prCardRight { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.prStepBadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--main-brand); color: #fff;
+  font-size: 0.72rem; font-weight: 800; padding: 4px 10px;
+  border-radius: 100px; white-space: nowrap;
+}
+.prName  { font-size: 0.9rem; font-weight: 700; color: var(--main-text); }
+.prEmail { font-size: 0.78rem; color: var(--secondary-text); margin-top: 2px; }
+.prEmail em { font-style: normal; color: var(--brand-dark); }
+.prChevron { font-size: 0.7rem; color: var(--secondary-text); }
+
+.prCardBody {
+  padding: 14px 18px 16px; border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.prRow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.prRowLabel { font-size: 0.78rem; font-weight: 600; color: var(--secondary-text); width: 110px; flex-shrink: 0; }
+.prRowValue { font-size: 0.84rem; color: var(--main-text); }
+.prLinkText { font-size: 0.72rem; color: var(--secondary-text); word-break: break-all; margin-top: -6px; }
+
+.prActions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+

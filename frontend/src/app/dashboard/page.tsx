@@ -28,7 +28,7 @@ interface UserDoc {
     registeredAt?: string;
   } | null;
 }
-interface Week { week: number; deadlineDays: number; tutorialUrl: string; keyFeatures: string[]; whatYouLearn: string; }
+interface Week { week: number; deadlineDays: number; tutorialUrl: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; }
 
 /* ── Helpers ───────────────────────────────────────────────────────────── */
 function addDays(dateStr: string, days: number) {
@@ -274,8 +274,19 @@ export default function DashboardPage() {
   const [stepLinks, setStepLinks] = useState(['', '', '', '']);
   const [stepMsgs, setStepMsgs] = useState(['', '', '', '']);
   const [stepLoads, setStepLoads] = useState([false, false, false, false]);
-  const [stepVerifying, setStepVerifying] = useState([false, false, false, false]);
-  const [verifyCountdowns, setVerifyCountdowns] = useState([0, 0, 0, 0]); // seconds remaining per step
+
+  // Project submit modal
+  const [projectModal, setProjectModal] = useState<{ open: boolean; weekIdx: number } | null>(null);
+  const [projectDriveLink, setProjectDriveLink] = useState('');
+  const [projectSubmitMsg, setProjectSubmitMsg] = useState('');
+  const [projectSubmitting, setProjectSubmitting] = useState(false);
+
+  const openProjectModal = (weekIdx: number) => {
+    setProjectModal({ open: true, weekIdx });
+    setProjectDriveLink('');
+    setProjectSubmitMsg('');
+  };
+  const closeProjectModal = () => { setProjectModal(null); setProjectDriveLink(''); setProjectSubmitMsg(''); };
 
   // Payment prices
   const [eCertPrice, setECertPrice] = useState(149);
@@ -489,37 +500,26 @@ export default function DashboardPage() {
     finally { setLiLoad(false); }
   };
 
-  const submitStep = async (idx: number) => {
-    const n = idx + 1;
-    const L = [...stepLoads]; L[idx] = true; setStepLoads(L);
-    const M = [...stepMsgs];
+  const submitStep = async (weekIdx: number) => {
+    if (!projectModal) return;
+    const step = weekIdx + 1;
+    setProjectSubmitting(true); setProjectSubmitMsg('');
     try {
-      const res = await fetch('/api/user/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ step: n, driveLink: stepLinks[idx] }) });
+      const res = await fetch('/api/user/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ step, driveLink: projectDriveLink }),
+      });
       const data = await res.json();
       if (data.success) {
-        const V = [...stepVerifying]; V[idx] = true; setStepVerifying(V);
-        M[idx] = ''; setStepMsgs(M);
-        // Random AI verification delay: 60–180 seconds
-        const delaySecs = Math.floor(Math.random() * 121) + 60; // 60 to 180
-        const C = [...verifyCountdowns]; C[idx] = delaySecs; setVerifyCountdowns(C);
-        // Countdown ticker
-        const interval = setInterval(() => {
-          setVerifyCountdowns(prev => {
-            const next = [...prev];
-            next[idx] = Math.max(0, next[idx] - 1);
-            return next;
-          });
-        }, 1000);
-        // After delay: mark done
-        setTimeout(() => {
-          clearInterval(interval);
-          setStepVerifying(prev => { const v = [...prev]; v[idx] = false; return v; });
-          setVerifyCountdowns(prev => { const c = [...prev]; c[idx] = 0; return c; });
-          loadData();
-        }, delaySecs * 1000);
-      } else { M[idx] = data.message; setStepMsgs(M); }
-    } catch { M[idx] = 'Something went wrong.'; setStepMsgs(M); }
-    finally { const L2 = [...stepLoads]; L2[idx] = false; setStepLoads(L2); }
+        setProjectSubmitMsg('✅ ' + data.message);
+        await loadData();
+        setTimeout(closeProjectModal, 2000);
+      } else {
+        setProjectSubmitMsg(data.message || 'Something went wrong.');
+      }
+    } catch { setProjectSubmitMsg('Network error.'); }
+    finally { setProjectSubmitting(false); }
   };
 
   /* Loading */
@@ -841,38 +841,32 @@ export default function DashboardPage() {
                     <div className={styles.scBottom}>
                       {done ? (
                         <div className={styles.doneRow}>
-                          <span className={styles.doneIcon}>✓</span> Work submitted
+                          <span className={styles.doneIcon}>✓</span> Work submitted &amp; verified
                           {user.submissions[`step${n}` as keyof typeof user.submissions] && (
                             <a href={user.submissions[`step${n}` as keyof typeof user.submissions]!}
                               target="_blank" rel="noreferrer" className={styles.viewLink}>· View</a>
                           )}
                         </div>
-                      ) : verifying ? (
+                      ) : user.submissions[`step${n}` as keyof typeof user.submissions] ? (
+                        /* Submitted but pending admin review */
                         <div className={styles.verifyingRow}>
                           <span className={styles.verifyingDot} />
                           <div>
-                            <p className={styles.verifyingTitle}>Review in Progress…</p>
-                            <p className={styles.verifyingText}>Your project is being reviewed. This takes 2–3 minutes.</p>
-                            {verifyCountdowns[idx] > 0 && (
-                              <p className={styles.verifyingTimer}>
-                                Estimated time: {Math.floor(verifyCountdowns[idx] / 60)}m {verifyCountdowns[idx] % 60}s
-                              </p>
-                            )}
+                            <p className={styles.verifyingTitle}>Submitted — Under Review</p>
+                            <p className={styles.verifyingText}>Admin will verify your project and unlock the next step.</p>
+                            <a href={user.submissions[`step${n}` as keyof typeof user.submissions]!}
+                              target="_blank" rel="noreferrer" className={styles.viewLink} style={{marginTop:4,display:'inline-block'}}>View submitted link →</a>
                           </div>
                         </div>
                       ) : (
                         <>
-                          {available && (
-                            <input className={styles.driveInput} type="url"
-                              placeholder="Paste Google Drive / project link…"
-                              value={stepLinks[idx]}
-                              onChange={e => { const l = [...stepLinks]; l[idx] = e.target.value; setStepLinks(l); }} />
-                          )}
                           {stepMsgs[idx] && <p className={styles.stepErrMsg}>{stepMsgs[idx]}</p>}
-                          <button className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
-                            disabled={!available || stepLoads[idx] || !stepLinks[idx]?.trim()}
-                            onClick={() => submitStep(idx)}>
-                            {stepLoads[idx] ? 'Submitting…' : !available ? '🔒 Locked' : 'Submit Work'}
+                          <button
+                            className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
+                            disabled={!available || stepLoads[idx]}
+                            onClick={() => available && openProjectModal(idx)}
+                          >
+                            {stepLoads[idx] ? 'Submitting…' : !available ? '🔒 Locked' : '📤 Submit Project'}
                           </button>
                         </>
                       )}
@@ -1072,6 +1066,60 @@ export default function DashboardPage() {
         )}
 
       </div>
+
+      {/* ══ PROJECT SUBMIT MODAL ════════════════════════════════════════ */}
+      {projectModal?.open && (() => {
+        const w = weeks[projectModal.weekIdx];
+        return (
+          <div className={styles.projOverlay} onClick={closeProjectModal}>
+            <div className={styles.projModal} onClick={e => e.stopPropagation()}>
+              <button className={styles.projModalClose} onClick={closeProjectModal}>✕</button>
+
+              {/* Project info */}
+              <h2 className={styles.projModalTitle}>{w.projectTitle || `Week ${projectModal.weekIdx + 1} Project`}</h2>
+              {w.projectDescription && (
+                <p className={styles.projModalDesc}>{w.projectDescription}</p>
+              )}
+
+              <div className={styles.projDivider} />
+
+              {/* Drive link input */}
+              <label className={styles.projLabel} htmlFor="proj-drive-link">
+                📎 Your Project / Google Drive Link
+              </label>
+              <input
+                id="proj-drive-link"
+                type="url"
+                className={styles.projInput}
+                placeholder="Paste Google Drive / project link…"
+                value={projectDriveLink}
+                onChange={e => { setProjectDriveLink(e.target.value); setProjectSubmitMsg(''); }}
+              />
+
+              {projectSubmitMsg && (
+                <p className={projectSubmitMsg.startsWith('✅') ? styles.projSuccess : styles.projError}>
+                  {projectSubmitMsg}
+                </p>
+              )}
+
+              <div className={styles.projActions}>
+                <button className={styles.projCancelBtn} onClick={closeProjectModal} disabled={projectSubmitting}>
+                  Cancel
+                </button>
+                <button
+                  id="submit-project-for-review-btn"
+                  className={styles.projSubmitBtn}
+                  disabled={projectSubmitting || !projectDriveLink.trim()}
+                  onClick={() => submitStep(projectModal.weekIdx)}
+                >
+                  {projectSubmitting ? 'Submitting…' : '📤 Submit for Review'}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
     </div>
   );
 }

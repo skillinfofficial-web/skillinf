@@ -14,19 +14,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Invalid step number.' }, { status: 400 });
     }
     if (!driveLink?.trim()) {
-      return NextResponse.json({ success: false, message: 'Please paste your Google Drive link.' }, { status: 400 });
+      return NextResponse.json({ success: false, message: 'Please paste your Google Drive / project link.' }, { status: 400 });
     }
-    // Basic URL check
     try { new URL(driveLink.trim()); } catch {
       return NextResponse.json({ success: false, message: 'Please enter a valid URL.' }, { status: 400 });
     }
 
-    const stepKey  = `step${step}` as 'step1' | 'step2' | 'step3' | 'step4';
-    const db       = await getDatabase();
-    const user     = await db.collection('users').findOne({ _id: new ObjectId(auth.userId) });
+    const stepKey = `step${step}` as 'step1' | 'step2' | 'step3' | 'step4';
+    const db      = await getDatabase();
+    const user    = await db.collection('users').findOne({ _id: new ObjectId(auth.userId) });
     if (!user) return NextResponse.json({ success: false, message: 'User not found.' }, { status: 404 });
 
-    // Ensure previous step is done (step 1 requires linkedinVerified === true)
+    // Gate checks
     if (step === 1 && user.linkedinVerified !== true) {
       return NextResponse.json({ success: false, message: 'Complete LinkedIn verification first.' }, { status: 403 });
     }
@@ -36,27 +35,44 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, message: `Complete Step ${step - 1} first.` }, { status: 403 });
       }
     }
+    // Already submitted and pending or done
+    if (user.steps?.[stepKey]) {
+      return NextResponse.json({ success: false, message: `Step ${step} is already completed.` }, { status: 400 });
+    }
 
-    // Check if all steps will be complete after this submission
-    const updatedSteps    = { ...user.steps, [stepKey]: true };
-    const allDone         = updatedSteps.step1 && updatedSteps.step2 && updatedSteps.step3 && updatedSteps.step4;
-
+    // Save drive link as pending submission (step NOT marked true yet — admin must verify)
     await db.collection('users').updateOne(
       { _id: new ObjectId(auth.userId) },
       {
         $set: {
-          [`steps.${stepKey}`]:       true,
           [`submissions.${stepKey}`]: driveLink.trim(),
-          certificateUnlocked:        allDone,
-          updatedAt:                  new Date(),
+          updatedAt: new Date(),
         },
       }
     );
 
+    // Insert into project_reviews collection for admin review
+    await db.collection('project_reviews').updateOne(
+      { userId: auth.userId, step: Number(step) },
+      {
+        $set: {
+          userId:    auth.userId,
+          name:      user.name as string,
+          email:     user.email as string,
+          domain:    user.domain as string,
+          step:      Number(step),
+          driveLink: driveLink.trim(),
+          status:    'pending',
+          updatedAt: new Date(),
+        },
+        $setOnInsert: { createdAt: new Date() },
+      },
+      { upsert: true }
+    );
+
     return NextResponse.json({
       success: true,
-      message: `Step ${step} submitted successfully!${allDone ? ' 🎉 All steps complete — your certificate is unlocked!' : ''}`,
-      certificateUnlocked: allDone,
+      message: `Step ${step} submitted for review! Admin will verify and unlock your next step.`,
     });
   } catch (e) {
     console.error('[POST /api/user/submit]', e);
