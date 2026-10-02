@@ -1088,7 +1088,7 @@ export default function DashboardPage() {
 
               {/* Drive link input */}
               <label className={styles.projLabel} htmlFor="proj-drive-link">
-                Your Project / Google Drive Link
+                Upload your project Git / Drive link
               </label>
               <input
                 id="proj-drive-link"
