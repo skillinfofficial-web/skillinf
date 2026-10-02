@@ -190,3 +190,73 @@
 
 .prActions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
+/* ── Person card (grouped by email) ─────────────────────────────────────── */
+.personCard {
+  border-radius: 16px; border: 1.5px solid var(--border);
+  background: var(--card); overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.personCardPending { border-color: #f59e0b; }
+
+.personHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; cursor: pointer; gap: 12px;
+  transition: background 0.15s;
+}
+.personHead:hover { background: var(--highlight); }
+
+.personHeadLeft  { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.personHeadRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.personAvatar {
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--main-brand) 0%, var(--brand-dark) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800; color: #fff; letter-spacing: -0.02em;
+}
+.personName { font-size: 0.95rem; font-weight: 700; color: var(--main-text); }
+.personMeta {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  font-size: 0.78rem; color: var(--secondary-text); margin-top: 3px;
+}
+.personDot   { color: var(--border); }
+.personDomain { color: var(--brand-dark); font-weight: 600; }
+.personMobile {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--secondary-text); font-size: 0.78rem;
+}
+
+.personPendingBadge {
+  background: #fef3c7; color: #b45309;
+  border: 1px solid #fde68a; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 800; padding: 3px 10px; white-space: nowrap;
+}
+.personStepCount {
+  font-size: 0.75rem; color: var(--secondary-text); font-weight: 500;
+  background: var(--highlight); border: 1px solid var(--border);
+  border-radius: 100px; padding: 3px 10px;
+}
+
+/* ── Step rows inside person card ──────────────────────────────────────── */
+.personBody { border-top: 1px solid var(--border); }
+
+.stepRow { border-bottom: 1px solid var(--border); }
+.stepRow:last-child { border-bottom: none; }
+.stepRowPending  { border-left: 4px solid #f59e0b; }
+.stepRowApproved { border-left: 4px solid #10b981; }
+.stepRowRejected { border-left: 4px solid var(--error); }
+
+.stepRowHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; cursor: pointer; gap: 12px;
+  transition: background 0.15s;
+}
+.stepRowHead:hover { background: var(--highlight); }
+
+.stepRowLeft { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stepRowDate { font-size: 0.74rem; color: var(--secondary-text); }
+
+.stepRowBody {
+  padding: 12px 20px 16px; background: var(--highlight);
+  display: flex; flex-direction: column; gap: 8px;
+}

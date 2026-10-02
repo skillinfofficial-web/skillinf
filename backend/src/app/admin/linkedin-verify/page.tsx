@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen } from 'lucide-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Phone } from 'lucide-react';
 import styles from './LinkedInVerify.module.css';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -12,9 +12,14 @@ interface LinkedInRecord {
 }
 interface ProjectReview {
   _id: string; userId: string; name: string; email: string;
-  domain: string; step: number; driveLink: string;
+  mobileNumber?: string; domain: string; step: number; driveLink: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string; updatedAt: string;
+}
+interface PersonGroup {
+  email: string; name: string; mobileNumber: string; domain: string;
+  reviews: ProjectReview[];
+  pendingCount: number;
 }
 
 const liStatusLabel = { pending: 'Pending', approved: 'Approved', rejected: 'Rejected' };
@@ -38,7 +43,9 @@ export default function LinkedInVerifyPage() {
   const [prError,   setPrError]   = useState('');
   const [prActionMsg, setPrActionMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [prBusyId,  setPrBusyId]  = useState<string | null>(null);
-  const [expanded,  setExpanded]  = useState<string | null>(null);
+  // expanded: which person containers + which step rows are open
+  const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
+  const [expandedStep,   setExpandedStep]   = useState<string | null>(null);
 
   /* ── Loaders ── */
   const loadLi = () => {
@@ -59,6 +66,25 @@ export default function LinkedInVerifyPage() {
   };
 
   useEffect(() => { loadLi(); loadPr(); }, []);
+
+  /* ── Group reviews by email ── */
+  const personGroups = useMemo<PersonGroup[]>(() => {
+    const map = new Map<string, PersonGroup>();
+    reviews.forEach(r => {
+      if (!map.has(r.email)) {
+        map.set(r.email, {
+          email: r.email, name: r.name,
+          mobileNumber: r.mobileNumber ?? '',
+          domain: r.domain, reviews: [], pendingCount: 0,
+        });
+      }
+      const g = map.get(r.email)!;
+      g.reviews.push(r);
+      if (r.status === 'pending') g.pendingCount++;
+    });
+    // Sort: groups with pending first, then by name
+    return Array.from(map.values()).sort((a, b) => b.pendingCount - a.pendingCount || a.name.localeCompare(b.name));
+  }, [reviews]);
 
   /* ── LinkedIn action ── */
   const liAct = async (record: LinkedInRecord, action: 'verify' | 'unverify') => {
@@ -221,11 +247,12 @@ export default function LinkedInVerifyPage() {
             <span className={styles.countPill}>{reviews.filter(r => r.status === 'pending').length} Pending</span>
             <span className={`${styles.countPill} ${styles.countApproved}`}>{reviews.filter(r => r.status === 'approved').length} Approved</span>
             <span className={`${styles.countPill} ${styles.countRejected}`}>{reviews.filter(r => r.status === 'rejected').length} Rejected</span>
+            <span className={styles.countPill} style={{ marginLeft: 'auto' }}>{personGroups.length} {personGroups.length === 1 ? 'Student' : 'Students'}</span>
           </div>
 
           {prLoading && <div className={styles.stateBox}><Loader2 size={26} className={styles.spinner} /><p>Loading…</p></div>}
           {prError && !prLoading && <div className={`${styles.stateBox} ${styles.errorBox}`}><AlertCircle size={22} /><p>{prError}</p></div>}
-          {!prLoading && !prError && reviews.length === 0 && (
+          {!prLoading && !prError && personGroups.length === 0 && (
             <div className={styles.stateBox}>
               <FolderOpen size={40} className={styles.emptyIcon} />
               <p className={styles.emptyTitle}>No project submissions yet</p>
@@ -233,72 +260,125 @@ export default function LinkedInVerifyPage() {
             </div>
           )}
 
-          {!prLoading && !prError && reviews.length > 0 && (
+          {/* ── One container per person ── */}
+          {!prLoading && !prError && personGroups.length > 0 && (
             <div className={styles.prList}>
-              {reviews.map(rev => {
-                const isOpen = expanded === rev._id;
+              {personGroups.map(person => {
+                const isPersonOpen = expandedPerson === person.email;
                 return (
-                  <div key={rev._id} className={`${styles.prCard} ${rev.status === 'pending' ? styles.prPending : rev.status === 'approved' ? styles.prApproved : styles.prRejected}`}>
-                    {/* Header row — always visible */}
-                    <div className={styles.prCardHead} onClick={() => setExpanded(isOpen ? null : rev._id)}>
-                      <div className={styles.prCardLeft}>
-                        <span className={styles.prStepBadge}>Step {rev.step}</span>
+                  <div key={person.email} className={`${styles.personCard} ${person.pendingCount > 0 ? styles.personCardPending : ''}`}>
+
+                    {/* ── Person header ── */}
+                    <div
+                      className={styles.personHead}
+                      onClick={() => setExpandedPerson(isPersonOpen ? null : person.email)}
+                    >
+                      <div className={styles.personHeadLeft}>
+                        {/* Avatar initials */}
+                        <div className={styles.personAvatar}>
+                          {person.name.trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()}
+                        </div>
                         <div>
-                          <p className={styles.prName}>{rev.name}</p>
-                          <p className={styles.prEmail}>{rev.email} · <em>{rev.domain}</em></p>
+                          <p className={styles.personName}>{person.name}</p>
+                          <div className={styles.personMeta}>
+                            <span>{person.email}</span>
+                            <span className={styles.personDot}>·</span>
+                            <span className={styles.personDomain}>{person.domain}</span>
+                            {person.mobileNumber && (
+                              <>
+                                <span className={styles.personDot}>·</span>
+                                <span className={styles.personMobile}>
+                                  <Phone size={11} /> {person.mobileNumber}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className={styles.prCardRight}>
-                        <span className={`${styles.statusBadge} ${styles[prStatusClass[rev.status]]}`}>{prStatusLabel[rev.status]}</span>
-                        <span className={styles.prChevron}>{isOpen ? '▲' : '▼'}</span>
+                      <div className={styles.personHeadRight}>
+                        {person.pendingCount > 0 && (
+                          <span className={styles.personPendingBadge}>{person.pendingCount} pending</span>
+                        )}
+                        <span className={styles.personStepCount}>{person.reviews.length} step{person.reviews.length !== 1 ? 's' : ''}</span>
+                        {isPersonOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                       </div>
                     </div>
 
-                    {/* Expandable body */}
-                    {isOpen && (
-                      <div className={styles.prCardBody}>
-                        <div className={styles.prRow}>
-                          <span className={styles.prRowLabel}>📅 Submitted</span>
-                          <span className={styles.prRowValue}>{fmtDate(rev.updatedAt)}</span>
-                        </div>
-                        <div className={styles.prRow}>
-                          <span className={styles.prRowLabel}>📎 Project Link</span>
-                          <a href={rev.driveLink} target="_blank" rel="noreferrer" className={styles.urlLink}>
-                            <ExternalLink size={12} /> Open Project
-                          </a>
-                        </div>
-                        <p className={styles.prLinkText}>{rev.driveLink}</p>
-
-                        {prActionMsg?.id === rev._id && (
-                          <p className={`${styles.actionFeedback} ${prActionMsg.ok ? styles.feedbackOk : styles.feedbackErr}`}>
-                            {prActionMsg.msg}
-                          </p>
-                        )}
-
-                        {rev.status !== 'approved' && (
-                          <div className={styles.prActions}>
-                            <button
-                              id={`approve-project-${rev._id}`}
-                              className={`${styles.btn} ${styles.verifyBtn}`}
-                              onClick={() => prAct(rev, 'approve')}
-                              disabled={prBusyId === rev._id}
-                            >
-                              {prBusyId === rev._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <CheckCircle2 size={14} />}
-                              Approve &amp; Unlock Next Step
-                            </button>
-                            {rev.status !== 'rejected' && (
-                              <button
-                                id={`reject-project-${rev._id}`}
-                                className={`${styles.btn} ${styles.rejectBtn}`}
-                                onClick={() => prAct(rev, 'reject')}
-                                disabled={prBusyId === rev._id}
+                    {/* ── Step rows (expanded) ── */}
+                    {isPersonOpen && (
+                      <div className={styles.personBody}>
+                        {person.reviews
+                          .slice()
+                          .sort((a, b) => a.step - b.step)
+                          .map(rev => {
+                            const stepKey = `${person.email}-${rev.step}`;
+                            const isStepOpen = expandedStep === stepKey;
+                            return (
+                              <div
+                                key={rev._id}
+                                className={`${styles.stepRow} ${rev.status === 'pending' ? styles.stepRowPending : rev.status === 'approved' ? styles.stepRowApproved : styles.stepRowRejected}`}
                               >
-                                {prBusyId === rev._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <XCircle size={14} />}
-                                Reject
-                              </button>
-                            )}
-                          </div>
-                        )}
+                                {/* Step row header */}
+                                <div
+                                  className={styles.stepRowHead}
+                                  onClick={() => setExpandedStep(isStepOpen ? null : stepKey)}
+                                >
+                                  <div className={styles.stepRowLeft}>
+                                    <span className={styles.prStepBadge}>Step {rev.step}</span>
+                                    <span className={`${styles.statusBadge} ${styles[prStatusClass[rev.status]]}`}>
+                                      {prStatusLabel[rev.status]}
+                                    </span>
+                                    <span className={styles.stepRowDate}>{fmtDate(rev.updatedAt)}</span>
+                                  </div>
+                                  <span className={styles.prChevron}>{isStepOpen ? '▲' : '▼'}</span>
+                                </div>
+
+                                {/* Step row body */}
+                                {isStepOpen && (
+                                  <div className={styles.stepRowBody}>
+                                    <div className={styles.prRow}>
+                                      <span className={styles.prRowLabel}>📎 Project Link</span>
+                                      <a href={rev.driveLink} target="_blank" rel="noreferrer" className={styles.urlLink}>
+                                        <ExternalLink size={12} /> Open Project
+                                      </a>
+                                    </div>
+                                    <p className={styles.prLinkText}>{rev.driveLink}</p>
+
+                                    {prActionMsg?.id === rev._id && (
+                                      <p className={`${styles.actionFeedback} ${prActionMsg.ok ? styles.feedbackOk : styles.feedbackErr}`}>
+                                        {prActionMsg.msg}
+                                      </p>
+                                    )}
+
+                                    {rev.status !== 'approved' && (
+                                      <div className={styles.prActions}>
+                                        <button
+                                          id={`approve-project-${rev._id}`}
+                                          className={`${styles.btn} ${styles.verifyBtn}`}
+                                          onClick={() => prAct(rev, 'approve')}
+                                          disabled={prBusyId === rev._id}
+                                        >
+                                          {prBusyId === rev._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <CheckCircle2 size={14} />}
+                                          Approve &amp; Unlock Next Step
+                                        </button>
+                                        {rev.status !== 'rejected' && (
+                                          <button
+                                            id={`reject-project-${rev._id}`}
+                                            className={`${styles.btn} ${styles.rejectBtn}`}
+                                            onClick={() => prAct(rev, 'reject')}
+                                            disabled={prBusyId === rev._id}
+                                          >
+                                            {prBusyId === rev._id ? <Loader2 size={14} className={styles.btnSpinner} /> : <XCircle size={14} />}
+                                            Reject
+                                          </button>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                       </div>
                     )}
                   </div>
