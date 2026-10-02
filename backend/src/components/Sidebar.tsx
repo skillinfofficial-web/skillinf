@@ -27,6 +27,7 @@ import {
   Gift,
   CalendarDays,
   Monitor,
+  Mail,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -60,6 +61,7 @@ const navSections = [
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
       { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
       { name: 'Referrals',             path: '/admin/referrals',             icon: Gift },
+      { name: 'Email Status',          path: '/admin/email-status',          icon: Mail },
     ],
   },
   {
