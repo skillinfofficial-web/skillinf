@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -122,14 +122,7 @@ export default function TutorialPage() {
                   allowFullScreen
                 />
               </div>
-              {watchUrl && (
-                <div className={styles.videoFooter}>
-                  <span className={styles.videoLabel}>Week {weekNum} Tutorial</span>
-                  <a href={watchUrl} target="_blank" rel="noreferrer" className={styles.openYt}>
-                    Open in YouTube
-                  </a>
-                </div>
-              )}
+
             </div>
           ) : watchUrl ? (
             <div className={styles.fallback}>
@@ -160,12 +153,7 @@ export default function TutorialPage() {
           </section>
         )}
 
-        {/* Dashboard button */}
-        <div className={styles.bottomRow}>
-          <button onClick={() => router.push('/dashboard')} className={styles.dashBtn}>
-            Back to Dashboard
-          </button>
-        </div>
+
 
       </main>
     </div>
