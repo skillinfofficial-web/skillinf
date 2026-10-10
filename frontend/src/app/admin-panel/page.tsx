@@ -40,12 +40,25 @@ interface EmailStats {
   istMonth: string;
 }
 
+interface OfferCode {
+  _id: string;
+  code: string;
+  discountPercent: number;
+  limitType: 'time' | 'count';
+  active: boolean;
+  usedCount: number;
+  createdAt: string;
+  startTime?: string;
+  endTime?: string;
+  maxCount?: number;
+}
+
 // ─── Admin Panel ──────────────────────────────────────────────────────────────
 export default function AdminPanelPage() {
   const [adminKey, setAdminKey] = useState('');
   const [authed,   setAuthed]   = useState(false);
   const [authErr,  setAuthErr]  = useState('');
-  const [tab,      setTab]      = useState<'referrals' | 'certs' | 'emails'>('referrals');
+  const [tab,      setTab]      = useState<'referrals' | 'certs' | 'emails' | 'offers'>('referrals');
 
   // Referrals
   const [referrals,    setReferrals]    = useState<ReferralEntry[]>([]);
@@ -60,6 +73,18 @@ export default function AdminPanelPage() {
   const [emailStats,   setEmailStats]   = useState<EmailStats | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
   const [emailErr,     setEmailErr]     = useState('');
+
+  // Offer codes
+  const [offerCodes,       setOfferCodes]       = useState<OfferCode[]>([]);
+  const [offerLoading,     setOfferLoading]     = useState(false);
+  const [offerErr,         setOfferErr]         = useState('');
+  const [offerSuccess,     setOfferSuccess]     = useState('');
+  const [offerDiscount,    setOfferDiscount]    = useState('');
+  const [offerLimitType,   setOfferLimitType]   = useState<'time' | 'count'>('time');
+  const [offerEndDate,     setOfferEndDate]     = useState('');
+  const [offerCount,       setOfferCount]       = useState('');
+  const [generatedCode,    setGeneratedCode]    = useState('');
+  const [offerCreating,    setOfferCreating]    = useState(false);
 
   const fetchReferrals = useCallback(async (key: string) => {
     setRefLoading(true);
@@ -98,6 +123,70 @@ export default function AdminPanelPage() {
     }
   }, []);
 
+  const fetchOfferCodes = useCallback(async (key: string) => {
+    setOfferLoading(true);
+    setOfferErr('');
+    try {
+      const res  = await fetch('/api/admin/offer-codes', { headers: { 'x-admin-key': key } });
+      const data = await res.json();
+      if (data.success) setOfferCodes(data.data);
+      else setOfferErr(data.message ?? 'Failed to load.');
+    } catch {
+      setOfferErr('Network error.');
+    } finally {
+      setOfferLoading(false);
+    }
+  }, []);
+
+  const createOfferCode = async () => {
+    setOfferErr('');
+    setOfferSuccess('');
+    setGeneratedCode('');
+    const pct = Number(offerDiscount);
+    if (!pct || pct < 1 || pct > 100) { setOfferErr('Discount must be 1–100%.'); return; }
+    if (offerLimitType === 'time' && !offerEndDate) { setOfferErr('Please select an end date & time.'); return; }
+    if (offerLimitType === 'count' && (!offerCount || Number(offerCount) < 1)) { setOfferErr('Enter a valid usage count (min 1).'); return; }
+
+    setOfferCreating(true);
+    try {
+      const body = {
+        discountPercent: pct,
+        limitType: offerLimitType,
+        limitValue: offerLimitType === 'time' ? offerEndDate : Number(offerCount),
+      };
+      const res  = await fetch('/api/admin/offer-codes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGeneratedCode(data.code);
+        setOfferSuccess('Offer code created successfully!');
+        setOfferDiscount('');
+        setOfferEndDate('');
+        setOfferCount('');
+        fetchOfferCodes(adminKey);
+      } else {
+        setOfferErr(data.message ?? 'Failed to create code.');
+      }
+    } catch {
+      setOfferErr('Network error.');
+    } finally {
+      setOfferCreating(false);
+    }
+  };
+
+  const deactivateCode = async (id: string) => {
+    try {
+      await fetch(`/api/admin/offer-codes?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-key': adminKey },
+      });
+      fetchOfferCodes(adminKey);
+    } catch { /* ignore */ }
+  };
+
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
     if (!adminKey.trim()) { setAuthErr('Enter admin key.'); return; }
@@ -111,6 +200,7 @@ export default function AdminPanelPage() {
     if (authed && tab === 'referrals') fetchReferrals(adminKey);
     if (authed && tab === 'certs')     fetchCerts();
     if (authed && tab === 'emails')    fetchEmailStats();
+    if (authed && tab === 'offers')    fetchOfferCodes(adminKey);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
@@ -162,6 +252,9 @@ export default function AdminPanelPage() {
         </button>
         <button className={`${styles.tab} ${tab === 'emails' ? styles.tabActive : ''}`} onClick={() => setTab('emails')}>
           📧 Email Quota
+        </button>
+        <button className={`${styles.tab} ${tab === 'offers' ? styles.tabActive : ''}`} onClick={() => setTab('offers')}>
+          🏷️ Offer Codes
         </button>
       </div>
 
@@ -417,6 +510,190 @@ export default function AdminPanelPage() {
                 </div>
               );
             })()}
+          </div>
+        )}
+
+        {/* ── Offer Codes Tab ── */}
+        {tab === 'offers' && (
+          <div>
+            <div className={styles.sectionHead}>
+              <div>
+                <h2 className={styles.sectionTitle}>🏷️ Offer Code Management</h2>
+                <p className={styles.sectionSub}>Create discount offer codes with time-based or count-based expiry.</p>
+              </div>
+              <button className={styles.refreshBtn} onClick={() => fetchOfferCodes(adminKey)} disabled={offerLoading}>
+                {offerLoading ? 'Loading…' : '↻ Refresh'}
+              </button>
+            </div>
+
+            {/* ── Create form ── */}
+            <div className={styles.offerForm}>
+              <h3 className={styles.offerFormTitle}>✨ Create New Offer Code</h3>
+
+              {/* Row 1: Discount % */}
+              <div className={styles.offerRow}>
+                <label className={styles.offerLabel}>Discount Percentage</label>
+                <div className={styles.offerInputWrap}>
+                  <input
+                    id="offer-discount"
+                    type="number"
+                    min={1} max={100}
+                    className={styles.offerInput}
+                    placeholder="e.g. 20"
+                    value={offerDiscount}
+                    onChange={e => setOfferDiscount(e.target.value)}
+                  />
+                  <span className={styles.offerInputSuffix}>%</span>
+                </div>
+              </div>
+
+              {/* Row 2: Limit type dropdown */}
+              <div className={styles.offerRow}>
+                <label className={styles.offerLabel}>Expiry Type</label>
+                <select
+                  id="offer-limit-type"
+                  className={styles.offerSelect}
+                  value={offerLimitType}
+                  onChange={e => setOfferLimitType(e.target.value as 'time' | 'count')}
+                >
+                  <option value="time">⏰ Time-based (expires at a date & time)</option>
+                  <option value="count">🔢 Count-based (expires after N uses)</option>
+                </select>
+              </div>
+
+              {/* Row 3: Time OR Count input */}
+              {offerLimitType === 'time' ? (
+                <div className={styles.offerRow}>
+                  <label className={styles.offerLabel}>End Date &amp; Time</label>
+                  <input
+                    id="offer-end-date"
+                    type="datetime-local"
+                    className={styles.offerInput}
+                    value={offerEndDate}
+                    onChange={e => setOfferEndDate(e.target.value)}
+                    min={new Date().toISOString().slice(0, 16)}
+                  />
+                  {offerEndDate && (
+                    <div className={styles.offerTimePreview}>
+                      <span className={styles.offerTimeChip}>🟢 Starts: <strong>Now</strong></span>
+                      <span className={styles.offerTimeArrow}>→</span>
+                      <span className={styles.offerTimeChip}>🔴 Expires: <strong>{new Date(offerEndDate).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</strong></span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className={styles.offerRow}>
+                  <label className={styles.offerLabel}>Maximum Usage Count</label>
+                  <div className={styles.offerInputWrap}>
+                    <input
+                      id="offer-max-count"
+                      type="number"
+                      min={1}
+                      className={styles.offerInput}
+                      placeholder="e.g. 50"
+                      value={offerCount}
+                      onChange={e => setOfferCount(e.target.value)}
+                    />
+                    <span className={styles.offerInputSuffix}>uses</span>
+                  </div>
+                  <p className={styles.offerHint}>Code will auto-deactivate after this many successful uses.</p>
+                </div>
+              )}
+
+              {/* Errors & success */}
+              {offerErr     && <p className={styles.offerErr}>{offerErr}</p>}
+              {offerSuccess && !generatedCode && <p className={styles.offerSuccessMsg}>{offerSuccess}</p>}
+
+              {/* Generated code display */}
+              {generatedCode && (
+                <div className={styles.codeReveal}>
+                  <span className={styles.codeRevealLabel}>🎉 Your new offer code</span>
+                  <span className={styles.codeRevealCode}>{generatedCode}</span>
+                  <button
+                    className={styles.codeCopyBtn}
+                    onClick={() => { navigator.clipboard.writeText(generatedCode); }}
+                  >
+                    Copy
+                  </button>
+                </div>
+              )}
+
+              {/* Submit button */}
+              <button
+                id="offer-create-btn"
+                className={styles.offerCreateBtn}
+                onClick={createOfferCode}
+                disabled={offerCreating}
+              >
+                {offerCreating ? 'Creating…' : '✨ Create Offer Code'}
+              </button>
+            </div>
+
+            {/* ── Active codes list ── */}
+            <div style={{ marginTop: 32 }}>
+              <h3 className={styles.offerListTitle}>Active &amp; Past Offer Codes</h3>
+              {offerLoading ? (
+                <div className={styles.loading}>Loading offer codes…</div>
+              ) : offerCodes.length === 0 ? (
+                <div className={styles.empty}>No offer codes created yet.</div>
+              ) : (
+                <div className={styles.offerList}>
+                  {offerCodes.map(oc => {
+                    const isExpiredByTime = oc.limitType === 'time' && oc.endTime && new Date(oc.endTime) < new Date();
+                    const isExpiredByCount = oc.limitType === 'count' && oc.maxCount !== undefined && oc.usedCount >= oc.maxCount;
+                    const expired = isExpiredByTime || isExpiredByCount || !oc.active;
+                    return (
+                      <div key={oc._id} className={`${styles.offerCard} ${expired ? styles.offerCardExpired : ''}`}>
+                        <div className={styles.offerCardTop}>
+                          <div className={styles.offerCodeBadge}>{oc.code}</div>
+                          <div className={styles.offerCardMeta}>
+                            <span className={styles.offerDiscount}>{oc.discountPercent}% OFF</span>
+                            <span className={`${styles.offerStatus} ${expired ? styles.offerStatusOff : styles.offerStatusOn}`}>
+                              {expired ? '⛔ Inactive' : '✅ Active'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className={styles.offerCardBody}>
+                          {oc.limitType === 'time' && oc.endTime && (
+                            <div className={styles.offerCardDetail}>
+                              <span>⏰ <strong>Time-based</strong></span>
+                              <span className={styles.offerCardDetailSub}>
+                                Expires: {new Date(oc.endTime).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
+                              </span>
+                            </div>
+                          )}
+                          {oc.limitType === 'count' && oc.maxCount !== undefined && (
+                            <div className={styles.offerCardDetail}>
+                              <span>🔢 <strong>Count-based</strong></span>
+                              <span className={styles.offerCardDetailSub}>
+                                {oc.usedCount} / {oc.maxCount} uses
+                              </span>
+                              <div className={styles.offerUsageBar}>
+                                <div
+                                  className={styles.offerUsageBarFill}
+                                  style={{ width: `${Math.min(100, Math.round((oc.usedCount / oc.maxCount) * 100))}%` }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <div className={styles.offerCardFooter}>
+                            <span className={styles.offerCreatedAt}>Created: {new Date(oc.createdAt).toLocaleDateString('en-IN')}</span>
+                            {oc.active && !isExpiredByTime && !isExpiredByCount && (
+                              <button
+                                className={styles.offerDeactivateBtn}
+                                onClick={() => deactivateCode(oc._id)}
+                              >
+                                Deactivate
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
