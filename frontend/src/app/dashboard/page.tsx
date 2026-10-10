@@ -865,9 +865,11 @@ export default function DashboardPage() {
 
                     <h3 className={styles.scTitle}>{user.domain} — Week {n}</h3>
 
-                    <a href={week.embedUrl?.trim() ? week.embedUrl.trim() : week.tutorialUrl} target="_blank" rel="noreferrer"
+                    <a
+                      href={`/tutorial/${encodeURIComponent(user.domain)}/${n}`}
                       className={`${styles.ytBtn} ${!available ? styles.ytDisabled : ''}`}
-                      onClick={e => !available && e.preventDefault()}>
+                      onClick={e => !available && e.preventDefault()}
+                    >
                       <span className={styles.ytPlay}>▶</span> Watch Task Tutorial
                     </a>
 
