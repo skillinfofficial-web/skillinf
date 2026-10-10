@@ -13,6 +13,7 @@ interface WeekPayload {
   week: number;
   deadlineDays: number;
   tutorialUrl: string;
+  embedUrl?: string;
   keyFeatures: string[];
   whatYouLearn: string;
   projectTitle?: string;
@@ -85,6 +86,7 @@ export async function POST(req: NextRequest) {
         week:               i + 1,
         deadlineDays:       Number(w.deadlineDays),
         tutorialUrl:        w.tutorialUrl.trim(),
+        embedUrl:           (w.embedUrl ?? '').trim(),
         keyFeatures:        w.keyFeatures.map((f) => f.trim()),
         whatYouLearn:       w.whatYouLearn.trim(),
         projectTitle:       (w.projectTitle ?? '').trim(),

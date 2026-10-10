@@ -135,6 +135,14 @@
 }
 
 .required { color: var(--error); margin-left: 2px; }
+.optionalBadge {
+  display: inline-block; margin-left: 6px;
+  font-size: 0.68rem; font-weight: 700; color: #64748b;
+  background: #f1f5f9; border: 1px solid #e2e8f0;
+  border-radius: 100px; padding: 1px 8px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  vertical-align: middle;
+}
 
 .helperText {
   font-size: 0.78rem;

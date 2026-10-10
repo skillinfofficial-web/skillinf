@@ -10,6 +10,7 @@ interface WeekData {
   week: number;
   deadlineDays: number;
   tutorialUrl: string;
+  embedUrl?: string;
   keyFeatures: string[];
   whatYouLearn: string;
 }

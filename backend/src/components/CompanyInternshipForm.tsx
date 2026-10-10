@@ -9,6 +9,7 @@ import styles from './CompanyInternshipForm.module.css';
 interface WeekData {
   deadlineDays: string;
   tutorialUrl: string;
+  embedUrl: string;
   keyFeatures: string[];
   whatYouLearn: string;
   projectTitle: string;
@@ -19,6 +20,7 @@ interface InitialWeek {
   week: number;
   deadlineDays: number;
   tutorialUrl: string;
+  embedUrl?: string;
   keyFeatures: string[];
   whatYouLearn: string;
   projectTitle?: string;
@@ -43,13 +45,14 @@ const YOUTUBE_REGEX =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)[\w-]{11}|youtu\.be\/[\w-]{11})(?:[?&].*)?$/;
 
 function makeBlankWeek(): WeekData {
-  return { deadlineDays: '7', tutorialUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '' };
+  return { deadlineDays: '7', tutorialUrl: '', embedUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '' };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
   return {
     deadlineDays: String(w.deadlineDays),
     tutorialUrl:  w.tutorialUrl,
+    embedUrl:     w.embedUrl ?? '',
     keyFeatures:  w.keyFeatures.length >= 4 ? w.keyFeatures : [...w.keyFeatures, ...Array(4 - w.keyFeatures.length).fill('')],
     whatYouLearn: w.whatYouLearn,
     projectTitle: w.projectTitle ?? '',
@@ -192,6 +195,7 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
           week:               i + 1,
           deadlineDays:       Number(w.deadlineDays),
           tutorialUrl:        w.tutorialUrl.trim(),
+          embedUrl:           w.embedUrl.trim(),
           keyFeatures:        w.keyFeatures.map((f) => f.trim()),
           whatYouLearn:       w.whatYouLearn.trim(),
           projectTitle:       w.projectTitle.trim(),
@@ -298,7 +302,7 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
         {/* Tutorial URL */}
         <div className={styles.fieldGroup}>
           <label className={styles.label} htmlFor={`tutorial-${step}`}>
-            What You Do <span className={styles.required}>*</span>
+            YouTube Link <span className={styles.required}>*</span>
           </label>
           <input
             id={`tutorial-${step}`}
@@ -310,6 +314,25 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
           />
           <p className={styles.helperText}>YouTube tutorial URL (supports watch, shorts, and youtu.be links).</p>
           {errors.tutorialUrl && <p className={styles.errorText}>{errors.tutorialUrl}</p>}
+        </div>
+
+        {/* Embed URL (optional) */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label} htmlFor={`embed-${step}`}>
+            YouTube Embedded Link <span className={styles.optionalBadge}>optional</span>
+          </label>
+          <input
+            id={`embed-${step}`}
+            type="url"
+            className={styles.input}
+            value={currentWeek.embedUrl}
+            onChange={(e) => updateWeek('embedUrl', e.target.value)}
+            placeholder="https://www.youtube.com/embed/VIDEO_ID"
+          />
+          <p className={styles.helperText}>
+            If provided, this embed link will be prioritised in the user dashboard instead of the regular YouTube URL.
+            Format: <code>https://www.youtube.com/embed/VIDEO_ID</code>
+          </p>
         </div>
 
         {/* Key Features */}

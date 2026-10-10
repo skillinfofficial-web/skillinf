@@ -28,7 +28,7 @@ interface UserDoc {
     registeredAt?: string;
   } | null;
 }
-interface Week { week: number; deadlineDays: number; tutorialUrl: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; }
+interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; }
 
 /* ── Helpers ───────────────────────────────────────────────────────────── */
 function addDays(dateStr: string, days: number) {
@@ -865,7 +865,7 @@ export default function DashboardPage() {
 
                     <h3 className={styles.scTitle}>{user.domain} — Week {n}</h3>
 
-                    <a href={week.tutorialUrl} target="_blank" rel="noreferrer"
+                    <a href={week.embedUrl?.trim() ? week.embedUrl.trim() : week.tutorialUrl} target="_blank" rel="noreferrer"
                       className={`${styles.ytBtn} ${!available ? styles.ytDisabled : ''}`}
                       onClick={e => !available && e.preventDefault()}>
                       <span className={styles.ytPlay}>▶</span> Watch Task Tutorial
