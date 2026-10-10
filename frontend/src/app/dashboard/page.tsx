@@ -304,6 +304,14 @@ export default function DashboardPage() {
   const [physicalPayMsg, setPhysicalPayMsg] = useState('');
   const [physicalSuccess, setPhysicalSuccess] = useState(false);
 
+  // Offer code
+  const [offerCode,           setOfferCode]           = useState('');
+  const [offerApplying,       setOfferApplying]        = useState(false);
+  const [offerMsg,            setOfferMsg]             = useState('');
+  const [offerMsgType,        setOfferMsgType]         = useState<'error' | 'success'>('error');
+  const [appliedDiscount,     setAppliedDiscount]      = useState(0);   // 0 = no discount applied
+  const [appliedOfferCode,    setAppliedOfferCode]     = useState('');
+
   // Lock tooltip
   const [showLockMsg, setShowLockMsg] = useState(false);
 
@@ -382,21 +390,56 @@ export default function DashboardPage() {
     }
   };
 
+  const applyOfferCode = async () => {
+    setOfferMsg('');
+    if (!offerCode.trim()) { setOfferMsg('Please enter an offer code.'); setOfferMsgType('error'); return; }
+    setOfferApplying(true);
+    try {
+      const res  = await fetch('/api/offer-code/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: offerCode.trim().toUpperCase() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAppliedDiscount(data.discountPercent);
+        setAppliedOfferCode(offerCode.trim().toUpperCase());
+        setOfferMsg(data.message);
+        setOfferMsgType('success');
+      } else {
+        setAppliedDiscount(0);
+        setAppliedOfferCode('');
+        setOfferMsg(data.message || 'Invalid offer code.');
+        setOfferMsgType('error');
+      }
+    } catch {
+      setOfferMsg('Network error. Please try again.');
+      setOfferMsgType('error');
+    } finally {
+      setOfferApplying(false);
+    }
+  };
+
   /* ── E-Certificate payment ──────────────────────────────────────────── */
   const handleCertificatePayment = async () => {
     if (!user) return;
     setPayLoad(true); setPayMsg('');
+    // Calculate final price after offer discount
+    const finalPrice = appliedDiscount > 0
+      ? Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))
+      : eCertPrice;
     try {
       const orderRes = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: eCertPrice,
+          amount: finalPrice,
           itemName: user.domain,
           itemType: 'certificate',
           customerName: user.name,
           customerEmail: user.email,
-          customerPhone: user.mobileNumber || '',  // real mobile; empty string falls back to CF's validation
+          customerPhone: user.mobileNumber || '',
+          offerCode: appliedOfferCode || undefined,
         }),
       });
       const orderData = await orderRes.json();
@@ -903,7 +946,7 @@ export default function DashboardPage() {
             {eCertPaid
               ? '⬇️ Download Certificate'
               : allDone
-                ? `💳 Pay ₹${eCertPrice} & Get Certificate`
+                ? '🎓 Get Certificate'
                 : '🔒 Complete all steps first'}
           </button>
         </div>
@@ -912,24 +955,78 @@ export default function DashboardPage() {
         {showPayModal && (
           <div className={styles.payOverlay} onClick={() => { if (!payLoad) setShowPayModal(false); }}>
             <div className={styles.payCard} onClick={e => e.stopPropagation()}>
-              <button className={styles.payClose} onClick={() => { if (!payLoad) { setShowPayModal(false); setPayMsg(''); } }}>✕</button>
+              <button className={styles.payClose} onClick={() => { if (!payLoad) { setShowPayModal(false); setPayMsg(''); setOfferCode(''); setOfferMsg(''); setAppliedDiscount(0); setAppliedOfferCode(''); } }}>✕</button>
               <div className={styles.payIcon}>🎓</div>
               <h2 className={styles.payTitle}>Unlock Your Certificate</h2>
               <p className={styles.paySub}>One-time payment for your <strong>{user.domain}</strong> internship certificate</p>
+
+              {/* Price box — shows original or discounted price */}
               <div className={styles.payPriceBox}>
-                <span className={styles.payAmount}>₹{eCertPrice}</span>
-                <span className={styles.payPriceNote}>One-time · All inclusive</span>
+                {appliedDiscount > 0 ? (
+                  <>
+                    <span className={styles.payAmountStrike}>₹{eCertPrice}</span>
+                    <span className={styles.payAmount}>₹{Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))}</span>
+                    <span className={styles.payPriceNote}>{appliedDiscount}% off applied · One-time</span>
+                  </>
+                ) : (
+                  <>
+                    <span className={styles.payAmount}>₹{eCertPrice}</span>
+                    <span className={styles.payPriceNote}>One-time · All inclusive</span>
+                  </>
+                )}
               </div>
+
               <ul className={styles.payFeatures}>
                 <li>✅ Verified Digital Certificate</li>
                 <li>✅ LinkedIn-shareable credential</li>
                 <li>✅ Instant download after payment</li>
                 <li>✅ skillinf MSME-registered seal</li>
               </ul>
+
+              {/* Offer code input */}
+              <div className={styles.offerRow}>
+                <input
+                  id="offer-code-input"
+                  className={styles.offerInput}
+                  type="text"
+                  placeholder="Enter your offer code"
+                  value={offerCode}
+                  onChange={e => { setOfferCode(e.target.value.toUpperCase()); setOfferMsg(''); }}
+                  disabled={payLoad || appliedDiscount > 0}
+                />
+              </div>
+              {offerMsg && (
+                <p className={appliedDiscount > 0 ? styles.offerMsgSuccess : styles.offerMsgError}>
+                  {offerMsg}
+                </p>
+              )}
+
               {payMsg && <p className={styles.payMsg}>{payMsg}</p>}
-              <button className={styles.payBtn} disabled={payLoad} onClick={handleCertificatePayment}>
-                {payLoad ? 'Processing…' : `Pay ₹${eCertPrice} with Cashfree`}
-              </button>
+
+              {/* Apply + Pay buttons */}
+              <div className={styles.payBtnRow}>
+                <button
+                  id="offer-apply-btn"
+                  className={styles.offerApplyBtn}
+                  onClick={appliedDiscount > 0 ? () => { setAppliedDiscount(0); setAppliedOfferCode(''); setOfferCode(''); setOfferMsg(''); } : applyOfferCode}
+                  disabled={payLoad || offerApplying}
+                >
+                  {offerApplying ? '…' : appliedDiscount > 0 ? '✕ Remove' : 'Apply'}
+                </button>
+                <button
+                  id="pay-btn"
+                  className={styles.payBtn}
+                  style={{ margin: 0, flex: 1 }}
+                  disabled={payLoad}
+                  onClick={handleCertificatePayment}
+                >
+                  {payLoad
+                    ? 'Processing…'
+                    : appliedDiscount > 0
+                      ? `Pay ₹${Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))} with Cashfree`
+                      : `Pay ₹${eCertPrice} with Cashfree`}
+                </button>
+              </div>
               <p className={styles.payFooter}>🔒 Secured by Cashfree · UPI · Cards · Net Banking</p>
             </div>
           </div>
