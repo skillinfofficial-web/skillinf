@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import styles from './Tutorial.module.css';
 
 interface WeekData {
@@ -16,33 +15,33 @@ interface WeekData {
   projectDescription?: string;
 }
 
-function extractVideoId(url: string): string | null {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes('youtube.com') && u.searchParams.get('v')) return u.searchParams.get('v');
-    if (u.hostname === 'youtu.be') return u.pathname.slice(1).split(/[?&]/)[0];
-    if (u.pathname.startsWith('/embed/')) return u.pathname.split('/')[2];
-    if (u.pathname.startsWith('/shorts/')) return u.pathname.split('/')[2];
-  } catch {
-    const m = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
-    if (m) return m[1];
+function buildEmbedSrc(week: WeekData): string | null {
+  // Try embedUrl first — it may be a raw <iframe> HTML string or a direct URL
+  const raw = week.embedUrl?.trim();
+  if (raw) {
+    // Extract src from iframe HTML: src="..." or src='...'
+    const m = raw.match(/src=["']([^"']+)["']/);
+    if (m?.[1]) return m[1];
+    // Already a bare embed URL
+    if (raw.startsWith('http')) {
+      // Convert watch URL -> embed URL if needed
+      const vidMatch = raw.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (vidMatch) return `https://www.youtube.com/embed/${vidMatch[1]}`;
+      if (raw.includes('youtube.com/embed/')) return raw;
+    }
+  }
+  // Fallback to tutorialUrl
+  const tu = week.tutorialUrl?.trim();
+  if (tu) {
+    const vidMatch = tu.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (vidMatch) return `https://www.youtube.com/embed/${vidMatch[1]}`;
+    if (tu.includes('youtube.com/embed/')) return tu;
   }
   return null;
 }
 
-function buildEmbedSrc(week: WeekData): string | null {
-  if (week.embedUrl?.trim()) {
-    const srcMatch = week.embedUrl.match(/src=["']([^"']+)["']/);
-    if (srcMatch) return srcMatch[1];
-    if (week.embedUrl.includes('youtube.com/embed/')) return week.embedUrl.trim();
-    const vid = extractVideoId(week.embedUrl);
-    if (vid) return `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`;
-  }
-  if (week.tutorialUrl?.trim()) {
-    const vid = extractVideoId(week.tutorialUrl);
-    if (vid) return `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`;
-  }
-  return null;
+function getYouTubeWatchUrl(week: WeekData): string {
+  return week.tutorialUrl?.trim() || week.embedUrl?.trim() || '';
 }
 
 export default function TutorialPage() {
@@ -51,10 +50,9 @@ export default function TutorialPage() {
   const domain  = decodeURIComponent(params.domain as string);
   const weekNum = parseInt(params.week as string, 10);
 
-  const [week,     setWeek]     = useState<WeekData | null>(null);
-  const [allWeeks, setAllWeeks] = useState<WeekData[]>([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState('');
+  const [week,    setWeek]    = useState<WeekData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState('');
 
   useEffect(() => {
     if (!domain || isNaN(weekNum)) { setError('Invalid tutorial link.'); setLoading(false); return; }
@@ -62,38 +60,38 @@ export default function TutorialPage() {
       .then(r => r.json())
       .then(d => {
         if (!d.success) { setError(d.message || 'Course not found.'); return; }
-        const weeks = (d.weeks as WeekData[]) ?? [];
-        setAllWeeks(weeks);
-        const found = weeks.find(w => w.week === weekNum);
-        if (!found) { setError(`Week ${weekNum} not found for this course.`); return; }
+        const found = (d.weeks as WeekData[])?.find(w => w.week === weekNum);
+        if (!found) { setError(`Week ${weekNum} not found.`); return; }
         setWeek(found);
       })
-      .catch(() => setError('Failed to load tutorial. Please try again.'))
+      .catch(() => setError('Failed to load. Please try again.'))
       .finally(() => setLoading(false));
   }, [domain, weekNum]);
 
-  const embedSrc = week ? buildEmbedSrc(week) : null;
-  const icons = ['🎯', '⚡', '🔧', '💡', '🚀', '✅'];
+  const embedSrc   = week ? buildEmbedSrc(week) : null;
+  const watchUrl   = week ? getYouTubeWatchUrl(week) : '';
+  const keyFeats   = week?.keyFeatures?.filter(Boolean) ?? [];
 
+  /* ── Loading ── */
   if (loading) {
     return (
       <div className={styles.shell}>
-        <div className={styles.centerBox}>
+        <div className={styles.center}>
           <div className={styles.spinner} />
-          <p className={styles.centerText}>Loading tutorial...</p>
+          <p className={styles.centerTxt}>Loading tutorial...</p>
         </div>
       </div>
     );
   }
 
+  /* ── Error ── */
   if (error || !week) {
     return (
       <div className={styles.shell}>
-        <div className={styles.centerBox}>
-          <div className={styles.errIcon}>⚠️</div>
+        <div className={styles.center}>
           <h2 className={styles.errTitle}>Tutorial not available</h2>
           <p className={styles.errMsg}>{error || 'Week not found.'}</p>
-          <button onClick={() => router.back()} className={styles.backBtn}>← Go back</button>
+          <button onClick={() => router.back()} className={styles.dashBtn}>Back to Dashboard</button>
         </div>
       </div>
     );
@@ -102,43 +100,16 @@ export default function TutorialPage() {
   return (
     <div className={styles.shell}>
 
+      {/* Top bar */}
       <header className={styles.topbar}>
-        <button onClick={() => router.back()} className={styles.topBackBtn}>← Back</button>
-        <div className={styles.topMeta}>
-          <span className={styles.topDomain}>{domain}</span>
-          <span className={styles.topSep}>·</span>
-          <span className={styles.topWeekLabel}>Week {weekNum}</span>
-        </div>
-        <Link href="/dashboard" className={styles.topDashLink}>🏠 Dashboard</Link>
+        <button onClick={() => router.back()} className={styles.topBack}>Back</button>
+        <span className={styles.topTitle}>{domain} — Week {weekNum}</span>
+        <button onClick={() => router.push('/dashboard')} className={styles.topDash}>Dashboard</button>
       </header>
 
       <main className={styles.body}>
 
-        {allWeeks.length > 1 && (
-          <nav className={styles.weekNav}>
-            {allWeeks.map(w => (
-              <Link
-                key={w.week}
-                href={`/tutorial/${encodeURIComponent(domain)}/${w.week}`}
-                className={`${styles.weekPill} ${w.week === weekNum ? styles.weekPillActive : ''}`}
-              >
-                Week {w.week}
-              </Link>
-            ))}
-          </nav>
-        )}
-
-        <section className={styles.hero}>
-          <div className={styles.heroBadgeRow}>
-            <span className={styles.heroChip}>📹 Tutorial</span>
-            {week.deadlineDays && (
-              <span className={styles.heroChip2}>⏱ {week.deadlineDays}d to complete</span>
-            )}
-          </div>
-          <h1 className={styles.heroTitle}>Week {weekNum} — Task Tutorial</h1>
-          {week.whatYouLearn && <p className={styles.heroDesc}>{week.whatYouLearn}</p>}
-        </section>
-
+        {/* Video */}
         <section className={styles.videoSection}>
           {embedSrc ? (
             <div className={styles.videoCard}>
@@ -151,74 +122,49 @@ export default function TutorialPage() {
                   allowFullScreen
                 />
               </div>
-              <div className={styles.videoFooter}>
-                <span className={styles.videoFooterLabel}>▶ Watch this tutorial to complete Week {weekNum}</span>
-                {week.tutorialUrl?.trim() && (
-                  <a href={week.tutorialUrl} target="_blank" rel="noreferrer" className={styles.openYt}>
-                    Open in YouTube ↗
+              {watchUrl && (
+                <div className={styles.videoFooter}>
+                  <span className={styles.videoLabel}>Week {weekNum} Tutorial</span>
+                  <a href={watchUrl} target="_blank" rel="noreferrer" className={styles.openYt}>
+                    Open in YouTube
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          ) : week.tutorialUrl?.trim() ? (
-            <div className={styles.videoFallback}>
-              <div className={styles.vfIcon}>▶</div>
-              <h3 className={styles.vfTitle}>Watch Tutorial on YouTube</h3>
-              <p className={styles.vfDesc}>Click below to open the tutorial</p>
-              <a href={week.tutorialUrl} target="_blank" rel="noreferrer" className={styles.vfBtn}>
-                Open on YouTube ↗
+          ) : watchUrl ? (
+            <div className={styles.fallback}>
+              <h3 className={styles.fallbackTitle}>Watch Tutorial on YouTube</h3>
+              <a href={watchUrl} target="_blank" rel="noreferrer" className={styles.fallbackBtn}>
+                Open Tutorial on YouTube
               </a>
             </div>
           ) : (
-            <div className={styles.videoFallback}>
-              <div className={styles.vfIcon}>🎓</div>
-              <h3 className={styles.vfTitle}>Tutorial coming soon</h3>
-              <p className={styles.vfDesc}>This week&apos;s tutorial has not been uploaded yet. Check back soon!</p>
+            <div className={styles.fallback}>
+              <h3 className={styles.fallbackTitle}>Tutorial coming soon</h3>
+              <p className={styles.fallbackDesc}>This week&apos;s tutorial has not been uploaded yet.</p>
             </div>
           )}
         </section>
 
-        {week.keyFeatures?.filter(Boolean).length > 0 && (
+        {/* Key Features */}
+        {keyFeats.length > 0 && (
           <section className={styles.featSection}>
-            <div className={styles.featHeader}>
-              <span className={styles.featEyebrow}>✨ Key Features</span>
-              <h2 className={styles.featTitle}>What you&apos;ll cover this week</h2>
-              <p className={styles.featSub}>Complete all tasks listed below to finish Week {weekNum}.</p>
-            </div>
+            <h2 className={styles.featHeading}>Key Features</h2>
             <div className={styles.featGrid}>
-              {week.keyFeatures.filter(Boolean).map((f, i) => (
+              {keyFeats.map((f, i) => (
                 <div key={i} className={styles.featCard}>
-                  <span className={styles.featCardIcon}>{icons[i % icons.length]}</span>
-                  <p className={styles.featCardText}>{f}</p>
+                  <p className={styles.featText}>{f}</p>
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {(week.projectTitle || week.projectDescription) && (
-          <section className={styles.projectSection}>
-            <div className={styles.projectCard}>
-              <span className={styles.projectChip}>📌 Project Task</span>
-              {week.projectTitle && <h2 className={styles.projectTitle}>{week.projectTitle}</h2>}
-              {week.projectDescription && <p className={styles.projectDesc}>{week.projectDescription}</p>}
-              <button onClick={() => router.back()} className={styles.projectBtn}>← Back to Dashboard to Submit</button>
-            </div>
-          </section>
-        )}
-
-        <div className={styles.bottomNav}>
-          {weekNum > 1 && (
-            <Link href={`/tutorial/${encodeURIComponent(domain)}/${weekNum - 1}`} className={styles.navPrev}>
-              ← Week {weekNum - 1}
-            </Link>
-          )}
-          <button onClick={() => router.back()} className={styles.navDash}>🏠 Dashboard</button>
-          {weekNum < allWeeks.length && (
-            <Link href={`/tutorial/${encodeURIComponent(domain)}/${weekNum + 1}`} className={styles.navNext}>
-              Week {weekNum + 1} →
-            </Link>
-          )}
+        {/* Dashboard button */}
+        <div className={styles.bottomRow}>
+          <button onClick={() => router.push('/dashboard')} className={styles.dashBtn}>
+            Back to Dashboard
+          </button>
         </div>
 
       </main>
