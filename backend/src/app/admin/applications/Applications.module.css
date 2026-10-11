@@ -210,16 +210,44 @@
 .emptyTitle { font-size: 1rem; font-weight: 600; color: var(--main-text); }
 .emptyHint  { font-size: 0.875rem; }
 
-@media (max-width: 768px) {
-  .page { padding: 16px 12px 40px; }
-  .tableWrap { display: none; }
-  .cardList { display: flex; }
-  .searchWrap { max-width: 100%; flex: 1; }
-  .header { flex-direction: column; align-items: flex-start; }
-  .clusterHead { padding: 12px 14px; }
-  .clusterMonth { font-size: 0.85rem; }
-  .clusterBadge, .clusterBadgeGreen { display: none; }
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .actionsRow { width: 100%; justify-content: space-between; }
+  .downloadGroup { flex: 1; justify-content: flex-end; }
 }
+
+@media (max-width: 768px) {
+  .page          { padding: 14px 12px 40px; }
+  .tableWrap     { display: none; }
+  .cardList      { display: flex; }
+  .searchWrap    { max-width: 100%; flex: 1; }
+  .header        { flex-direction: column; align-items: flex-start; }
+  .clusterHead   { padding: 12px 14px; }
+  .clusterMonth  { font-size: 0.85rem; }
+  .clusterBadge, .clusterBadgeGreen { display: none; }
+
+  /* Filter panel on mobile */
+  .filterPanel   { padding: 12px 14px; }
+  .filterGrid    { gap: 6px; }
+  .filterChip    { padding: 5px 10px; font-size: 0.76rem; }
+
+  /* Search row stacks vertically */
+  .searchRow     { flex-direction: column; align-items: stretch; gap: 10px; }
+  .actionsRow    { justify-content: space-between; }
+  .clusterControls { gap: 6px; }
+  .ctrlBtn       { font-size: 0.73rem; padding: 6px 10px; }
+
+  /* Download buttons */
+  .dlBtn         { font-size: 0.73rem; padding: 6px 12px; }
+}
+
+@media (max-width: 480px) {
+  .filterChip    { padding: 5px 9px; font-size: 0.73rem; gap: 5px; }
+  .filterCheckbox { width: 13px; height: 13px; }
+  .downloadGroup { gap: 4px; }
+  .dlBtn         { padding: 6px 10px; }
+}
+
 
 
 /* Table */

@@ -36,14 +36,15 @@ const STEPS = [
 
 type StepKey = (typeof STEPS)[number]['key'];
 
-const FILTER_OPTIONS: { key: StepKey; label: string }[] = [
-  { key: 'linkedinVerified', label: 'LinkedIn Verified' },
-  { key: 'step1',            label: 'Step 1 Completed' },
-  { key: 'step2',            label: 'Step 2 Completed' },
-  { key: 'step3',            label: 'Step 3 Completed' },
-  { key: 'step4',            label: 'Step 4 Completed' },
-  { key: 'eCertPaid',        label: 'E-Certificate' },
-  { key: 'physicalCertPaid', label: 'Physical Certificate' },
+// Each filter = users AT that exact stage only (milestone done, next milestone NOT done)
+const FILTER_OPTIONS: { key: StepKey; label: string; notKey?: StepKey }[] = [
+  { key: 'linkedinVerified', label: 'LinkedIn Verified',    notKey: 'step1'            },
+  { key: 'step1',            label: 'Step 1 Only',          notKey: 'step2'            },
+  { key: 'step2',            label: 'Step 2 Only',          notKey: 'step3'            },
+  { key: 'step3',            label: 'Step 3 Only',          notKey: 'step4'            },
+  { key: 'step4',            label: 'Step 4 Only',          notKey: 'eCertPaid'        },
+  { key: 'eCertPaid',        label: 'E-Certificate Only',   notKey: 'physicalCertPaid' },
+  { key: 'physicalCertPaid', label: 'Physical Certificate'                             },
 ];
 
 const STEP_COLORS = ['#0a66c2', '#7c3aed', '#7c3aed', '#7c3aed', '#7c3aed', '#00b894', '#f59e0b'];
@@ -168,7 +169,7 @@ export default function ApplicationsPage() {
 
   const clearFilters = () => setActiveFilters(new Set());
 
-  // Apply search + checkbox filters
+  // Apply search + checkbox stage filters
   const filtered = useMemo(() => {
     let r = records;
     // Search
@@ -181,9 +182,16 @@ export default function ApplicationsPage() {
         (u.college ?? '').toLowerCase().includes(q),
       );
     }
-    // Checkbox: user must have ALL checked filters true
+    // Stage filter: show users who are AT one of the selected stages (OR across selections)
+    // A user is "at stage X" if X is done AND the next milestone is NOT done
     if (activeFilters.size > 0) {
-      r = r.filter(u => [...activeFilters].every(k => u[k as StepKey]));
+      r = r.filter(u =>
+        FILTER_OPTIONS.some(opt =>
+          activeFilters.has(opt.key) &&
+          u[opt.key] === true &&
+          (opt.notKey ? u[opt.notKey] === false : true),
+        ),
+      );
     }
     return r;
   }, [records, search, activeFilters]);
