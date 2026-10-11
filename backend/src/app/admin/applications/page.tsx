@@ -1,13 +1,17 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { FileText, Loader2, AlertCircle, Search, Users, ChevronDown, ChevronRight, Calendar } from 'lucide-react';
+import {
+  FileText, Loader2, AlertCircle, Search, Users,
+  ChevronDown, ChevronRight, Calendar, Download,
+} from 'lucide-react';
 import styles from './Applications.module.css';
 
 interface UserRecord {
   id: string;
   name: string;
   email: string;
+  mobile: string;
   domain: string;
   college: string | null;
   linkedinVerified: boolean;
@@ -32,6 +36,16 @@ const STEPS = [
 
 type StepKey = (typeof STEPS)[number]['key'];
 
+const FILTER_OPTIONS: { key: StepKey; label: string }[] = [
+  { key: 'linkedinVerified', label: 'LinkedIn Verified' },
+  { key: 'step1',            label: 'Step 1 Completed' },
+  { key: 'step2',            label: 'Step 2 Completed' },
+  { key: 'step3',            label: 'Step 3 Completed' },
+  { key: 'step4',            label: 'Step 4 Completed' },
+  { key: 'eCertPaid',        label: 'E-Certificate' },
+  { key: 'physicalCertPaid', label: 'Physical Certificate' },
+];
+
 const STEP_COLORS = ['#0a66c2', '#7c3aed', '#7c3aed', '#7c3aed', '#7c3aed', '#00b894', '#f59e0b'];
 
 function ProgressTick({ done, index }: { done: boolean; index: number }) {
@@ -54,7 +68,6 @@ function progressCount(u: UserRecord) {
   return STEPS.filter(s => u[s.key as StepKey]).length;
 }
 
-// Format createdAt → "October 2026" cluster key
 function getMonthKey(dateStr: string | null): string {
   if (!dateStr) return 'Unknown';
   const d = new Date(dateStr);
@@ -62,7 +75,6 @@ function getMonthKey(dateStr: string | null): string {
   return d.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
 }
 
-// Sort month keys newest-first
 function sortMonthKeys(keys: string[]): string[] {
   return keys.sort((a, b) => {
     if (a === 'Unknown') return 1;
@@ -71,13 +83,61 @@ function sortMonthKeys(keys: string[]): string[] {
   });
 }
 
+/* ── CSV / Excel download helpers ─────────────────────────────── */
+function escCsv(v: string) {
+  if (/[",\n]/.test(v)) return `"${v.replace(/"/g, '""')}"`;
+  return v;
+}
+
+function downloadCSV(users: UserRecord[]) {
+  const header = ['Name', 'Email', 'Mobile Number'];
+  const rows   = users.map(u => [u.name, u.email, u.mobile || '']);
+  const csv    = [header, ...rows].map(r => r.map(escCsv).join(',')).join('\r\n');
+  const blob   = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement('a');
+  a.href = url; a.download = 'skillinf_applicants.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadExcel(users: UserRecord[]) {
+  // Build minimal XLSX-compatible XML (SpreadsheetML) — no external library needed
+  const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const cell = (v: string) => `<Cell><Data ss:Type="String">${esc(v)}</Data></Cell>`;
+  const row  = (cols: string[]) => `<Row>${cols.map(cell).join('')}</Row>`;
+
+  const header = ['Name', 'Email', 'Mobile Number'];
+  const dataRows = users.map(u => row([u.name, u.email, u.mobile || '']));
+  const xml = `<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Worksheet ss:Name="Applicants">
+    <Table>
+      ${row(header)}
+      ${dataRows.join('\n      ')}
+    </Table>
+  </Worksheet>
+</Workbook>`;
+
+  const blob = new Blob([xml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'skillinf_applicants.xls'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+══════════════════════════════════════════════════════════════ */
 export default function ApplicationsPage() {
-  const [records, setRecords]   = useState<UserRecord[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [error,   setError]     = useState('');
-  const [search,  setSearch]    = useState('');
-  // Track which month clusters are open — start all open
+  const [records,    setRecords]    = useState<UserRecord[]>([]);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState('');
+  const [search,     setSearch]     = useState('');
   const [openMonths, setOpenMonths] = useState<Set<string>>(new Set());
+
+  // Checkbox filters — set of active StepKeys
+  const [activeFilters, setActiveFilters] = useState<Set<StepKey>>(new Set());
 
   const load = () => {
     setLoading(true); setError('');
@@ -86,7 +146,6 @@ export default function ApplicationsPage() {
       .then(d => {
         if (d.success) {
           setRecords(d.users);
-          // Open all clusters by default
           const keys = new Set<string>(d.users.map((u: UserRecord) => getMonthKey(u.createdAt)));
           setOpenMonths(keys);
         } else {
@@ -99,17 +158,36 @@ export default function ApplicationsPage() {
 
   useEffect(load, []);
 
-  const filtered = useMemo(() =>
-    search.trim()
-      ? records.filter(r =>
-          r.name.toLowerCase().includes(search.toLowerCase()) ||
-          r.email.toLowerCase().includes(search.toLowerCase()) ||
-          r.domain.toLowerCase().includes(search.toLowerCase()) ||
-          (r.college ?? '').toLowerCase().includes(search.toLowerCase()))
-      : records,
-    [records, search]);
+  const toggleFilter = (key: StepKey) => {
+    setActiveFilters(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
 
-  // Group filtered records by month
+  const clearFilters = () => setActiveFilters(new Set());
+
+  // Apply search + checkbox filters
+  const filtered = useMemo(() => {
+    let r = records;
+    // Search
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      r = r.filter(u =>
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.domain.toLowerCase().includes(q) ||
+        (u.college ?? '').toLowerCase().includes(q),
+      );
+    }
+    // Checkbox: user must have ALL checked filters true
+    if (activeFilters.size > 0) {
+      r = r.filter(u => [...activeFilters].every(k => u[k as StepKey]));
+    }
+    return r;
+  }, [records, search, activeFilters]);
+
   const grouped = useMemo(() => {
     const map = new Map<string, UserRecord[]>();
     for (const u of filtered) {
@@ -117,34 +195,30 @@ export default function ApplicationsPage() {
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(u);
     }
-    // Sort keys newest-first
     const sortedKeys = sortMonthKeys([...map.keys()]);
     return sortedKeys.map(k => ({ month: k, users: map.get(k)! }));
   }, [filtered]);
 
-  const toggleMonth = (month: string) => {
-    setOpenMonths(prev => {
-      const next = new Set(prev);
-      if (next.has(month)) next.delete(month);
-      else next.add(month);
-      return next;
-    });
-  };
-
-  const expandAll   = () => setOpenMonths(new Set(grouped.map(g => g.month)));
-  const collapseAll = () => setOpenMonths(new Set());
+  const toggleMonth   = (month: string) => setOpenMonths(prev => {
+    const next = new Set(prev);
+    if (next.has(month)) next.delete(month); else next.add(month);
+    return next;
+  });
+  const expandAll     = () => setOpenMonths(new Set(grouped.map(g => g.month)));
+  const collapseAll   = () => setOpenMonths(new Set());
 
   const fmtDate = (d: string | null) =>
     d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
   return (
     <div className={styles.page}>
-      {/* ── Header ─────────────────────────────────── */}
+
+      {/* ── Header ── */}
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Applications</h1>
           <p className={styles.description}>
-            Applicants grouped by registration month. Click a month cluster to expand / collapse.
+            Filter applicants by milestone. Download the filtered list as CSV or Excel.
           </p>
         </div>
         <div className={styles.countPill}>
@@ -153,7 +227,35 @@ export default function ApplicationsPage() {
         </div>
       </header>
 
-      {/* ── Search + Controls ───────────────────────── */}
+      {/* ── Checkbox Filters ── */}
+      <div className={styles.filterPanel}>
+        <div className={styles.filterTop}>
+          <span className={styles.filterLabel}>Filter by milestone:</span>
+          {activeFilters.size > 0 && (
+            <button className={styles.clearBtn} onClick={clearFilters}>
+              Clear filters ({activeFilters.size})
+            </button>
+          )}
+        </div>
+        <div className={styles.filterGrid}>
+          {FILTER_OPTIONS.map(opt => {
+            const checked = activeFilters.has(opt.key);
+            return (
+              <label key={opt.key} className={`${styles.filterChip} ${checked ? styles.filterChipOn : ''}`}>
+                <input
+                  type="checkbox"
+                  className={styles.filterCheckbox}
+                  checked={checked}
+                  onChange={() => toggleFilter(opt.key)}
+                />
+                <span className={styles.filterChipLabel}>{opt.label}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Search + Controls + Download ── */}
       <div className={styles.searchRow}>
         <div className={styles.searchWrap}>
           <Search size={15} className={styles.searchIcon} />
@@ -164,15 +266,37 @@ export default function ApplicationsPage() {
             onChange={e => setSearch(e.target.value)}
           />
         </div>
-        {!loading && records.length > 0 && (
-          <div className={styles.clusterControls}>
-            <button className={styles.ctrlBtn} onClick={expandAll}>Expand all</button>
-            <button className={styles.ctrlBtn} onClick={collapseAll}>Collapse all</button>
-          </div>
-        )}
+        <div className={styles.actionsRow}>
+          {!loading && records.length > 0 && (
+            <div className={styles.clusterControls}>
+              <button className={styles.ctrlBtn} onClick={expandAll}>Expand all</button>
+              <button className={styles.ctrlBtn} onClick={collapseAll}>Collapse all</button>
+            </div>
+          )}
+          {!loading && filtered.length > 0 && (
+            <div className={styles.downloadGroup}>
+              <button
+                className={styles.dlBtn}
+                onClick={() => downloadCSV(filtered)}
+                title={`Download ${filtered.length} records as CSV`}
+              >
+                <Download size={14} />
+                CSV
+              </button>
+              <button
+                className={`${styles.dlBtn} ${styles.dlBtnExcel}`}
+                onClick={() => downloadExcel(filtered)}
+                title={`Download ${filtered.length} records as Excel`}
+              >
+                <Download size={14} />
+                Excel
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Loading / Error / Empty ─────────────────── */}
+      {/* ── States ── */}
       {loading && (
         <div className={styles.stateBox}>
           <Loader2 size={26} className={styles.spinner} />
@@ -191,19 +315,25 @@ export default function ApplicationsPage() {
           <p className={styles.emptyHint}>Registered interns will appear here.</p>
         </div>
       )}
+      {!loading && !error && records.length > 0 && filtered.length === 0 && (
+        <div className={styles.stateBox}>
+          <FileText size={30} className={styles.emptyIcon} />
+          <p className={styles.emptyTitle}>No results match the selected filters</p>
+          <button className={styles.clearBtn} onClick={clearFilters} style={{ marginTop: 8 }}>
+            Clear filters
+          </button>
+        </div>
+      )}
 
-      {/* ── Month Clusters ─────────────────────────── */}
+      {/* ── Month Clusters ── */}
       {!loading && !error && grouped.length > 0 && (
         <div className={styles.clusters}>
           {grouped.map(({ month, users }) => {
             const isOpen = openMonths.has(month);
-            const totalInCluster = users.length;
             const completedInCluster = users.filter(u => progressCount(u) === 7).length;
 
             return (
               <div key={month} className={styles.cluster}>
-
-                {/* Cluster header — click to toggle */}
                 <button
                   className={`${styles.clusterHead} ${isOpen ? styles.clusterHeadOpen : ''}`}
                   onClick={() => toggleMonth(month)}
@@ -216,20 +346,16 @@ export default function ApplicationsPage() {
                     <span className={styles.clusterMonth}>{month}</span>
                   </div>
                   <div className={styles.clusterHeadRight}>
-                    <span className={styles.clusterBadge}>{totalInCluster} applicant{totalInCluster !== 1 ? 's' : ''}</span>
+                    <span className={styles.clusterBadge}>{users.length} applicant{users.length !== 1 ? 's' : ''}</span>
                     {completedInCluster > 0 && (
-                      <span className={styles.clusterBadgeGreen}>
-                        {completedInCluster} completed
-                      </span>
+                      <span className={styles.clusterBadgeGreen}>{completedInCluster} completed</span>
                     )}
                   </div>
                 </button>
 
-                {/* Cluster body */}
                 {isOpen && (
                   <div className={styles.clusterBody}>
-
-                    {/* Desktop — table */}
+                    {/* Desktop table */}
                     <div className={styles.tableWrap}>
                       <table className={styles.table}>
                         <thead>
@@ -258,6 +384,7 @@ export default function ApplicationsPage() {
                                 <td className={styles.tdStudent}>
                                   <p className={styles.studentName}>{u.name}</p>
                                   <p className={styles.studentEmail}>{u.email}</p>
+                                  {u.mobile && <p className={styles.studentMobile}>{u.mobile}</p>}
                                 </td>
                                 <td className={styles.tdDomain}>
                                   <span className={styles.domainBadge}>{u.domain}</span>
@@ -291,7 +418,7 @@ export default function ApplicationsPage() {
                       </table>
                     </div>
 
-                    {/* Mobile — cards */}
+                    {/* Mobile cards */}
                     <div className={styles.cardList}>
                       {users.map(u => {
                         const done = progressCount(u);
@@ -302,10 +429,11 @@ export default function ApplicationsPage() {
                               <div>
                                 <p className={styles.cardName}>{u.name}</p>
                                 <p className={styles.cardEmail}>{u.email}</p>
+                                {u.mobile && <p className={styles.studentMobile}>{u.mobile}</p>}
                               </div>
                               <div className={styles.cardMeta}>
                                 <span className={styles.domainBadge}>{u.domain}</span>
-                                {u.college && <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>🎓 {u.college}</span>}
+                                {u.college && <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{u.college}</span>}
                                 <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{fmtDate(u.createdAt)}</span>
                               </div>
                             </div>
@@ -333,7 +461,6 @@ export default function ApplicationsPage() {
                         );
                       })}
                     </div>
-
                   </div>
                 )}
               </div>
@@ -342,7 +469,7 @@ export default function ApplicationsPage() {
         </div>
       )}
 
-      {/* ── Legend ─────────────────────────────────── */}
+      {/* ── Legend ── */}
       {!loading && records.length > 0 && (
         <div className={styles.legend}>
           <span className={styles.legendTitle}>Legend:</span>

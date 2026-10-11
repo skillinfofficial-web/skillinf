@@ -9,6 +9,7 @@ export async function GET() {
       .find({})
       .project({
         name: 1, email: 1, domain: 1,
+        mobileNumber: 1,
         linkedinVerified: 1,
         steps: 1,
         paymentDone: 1,
@@ -25,6 +26,7 @@ export async function GET() {
         id:               u._id.toString(),
         name:             u.name ?? '—',
         email:            u.email ?? '—',
+        mobile:           u.mobileNumber ?? '',
         domain:           u.domain ?? '—',
         college:          u.collegeUniversity ?? null,
         linkedinVerified: u.linkedinVerified === true,

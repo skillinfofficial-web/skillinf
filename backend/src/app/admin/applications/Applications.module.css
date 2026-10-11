@@ -20,6 +20,7 @@
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+.actionsRow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .clusterControls { display: flex; gap: 8px; }
 .ctrlBtn {
   background: var(--card);
@@ -34,6 +35,66 @@
   white-space: nowrap;
 }
 .ctrlBtn:hover { background: var(--highlight); color: var(--brand-dark); }
+
+/* Filter panel */
+.filterPanel {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+}
+.filterTop {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.filterLabel { font-size: 0.82rem; font-weight: 700; color: var(--main-text); }
+.clearBtn {
+  font-size: 0.78rem; font-weight: 700;
+  color: #ef4444; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 8px;
+  padding: 4px 12px; cursor: pointer;
+  transition: background 0.15s;
+}
+.clearBtn:hover { background: #fee2e2; }
+.filterGrid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.filterChip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  background: var(--highlight);
+  font-size: 0.8rem; font-weight: 600; color: var(--secondary-text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  user-select: none;
+}
+.filterChip:hover { border-color: var(--main-brand); color: var(--brand-dark); }
+.filterChipOn {
+  border-color: var(--main-brand);
+  background: var(--soft-accent);
+  color: var(--brand-dark);
+}
+.filterCheckbox { accent-color: var(--main-brand); width: 14px; height: 14px; cursor: pointer; }
+.filterChipLabel { white-space: nowrap; }
+
+/* Download buttons */
+.downloadGroup { display: flex; gap: 6px; }
+.dlBtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: var(--main-brand); color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  white-space: nowrap;
+}
+.dlBtn:hover { background: var(--brand-dark); transform: translateY(-1px); }
+.dlBtnExcel { background: #16a34a; }
+.dlBtnExcel:hover { background: #15803d; }
 
 /* Search input */
 .searchWrap {
@@ -203,6 +264,8 @@
 .tdStudent   { min-width: 180px; }
 .studentName  { font-weight: 700; color: var(--main-text); margin-bottom: 2px; font-size: 0.875rem; }
 .studentEmail { font-size: 0.75rem; color: var(--secondary-text); }
+.studentMobile { font-size: 0.72rem; color: var(--secondary-text); margin-top: 1px; }
+
 
 .tdDomain { }
 .domainBadge {
