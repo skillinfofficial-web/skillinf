@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Ticket, Loader2, AlertCircle, CheckCircle2,
-  Clock, Hash, PlusCircle, XCircle, Copy, Check,
+  Clock, Hash, PlusCircle, XCircle, Copy, Check, Power, PowerOff,
 } from 'lucide-react';
 import styles from './OfferCodes.module.css';
 
@@ -96,13 +96,23 @@ export default function OfferCodesPage() {
     }
   };
 
-  // ── Deactivate ───────────────────────────────────────────────────────────
-  const handleDeactivate = async (id: string) => {
+  // ── Toggle active (activate / deactivate) ────────────────────────────────
+  const [toggling, setToggling] = useState<string | null>(null);
+
+  const handleToggle = async (id: string, newActive: boolean) => {
+    setToggling(id);
     try {
-      await fetch(`/api/offer-codes?id=${id}`, { method: 'DELETE' });
+      await fetch(`/api/offer-codes?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: newActive }),
+      });
       fetchCodes();
-    } catch { /* ignore */ }
+    } catch { /* ignore */ } finally {
+      setToggling(null);
+    }
   };
+
 
   // ── Copy to clipboard ────────────────────────────────────────────────────
   const handleCopy = (code: string) => {
@@ -339,12 +349,22 @@ export default function OfferCodesPage() {
                       </td>
                       <td className={styles.dateCell}>{new Date(oc.createdAt).toLocaleDateString('en-IN')}</td>
                       <td>
-                        {!expired ? (
-                          <button className={styles.deactivateBtn} onClick={() => handleDeactivate(oc._id)}>
-                            Deactivate
+                        {toggling === oc._id ? (
+                          <span className={styles.noneText}><Loader2 size={14} className={styles.spin} /></span>
+                        ) : oc.active ? (
+                          <button
+                            className={styles.deactivateBtn}
+                            onClick={() => handleToggle(oc._id, false)}
+                          >
+                            <PowerOff size={13} /> Deactivate
                           </button>
                         ) : (
-                          <span className={styles.noneText}>—</span>
+                          <button
+                            className={styles.activateBtn}
+                            onClick={() => handleToggle(oc._id, true)}
+                          >
+                            <Power size={13} /> Activate
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -392,9 +412,25 @@ export default function OfferCodesPage() {
                       <span>{new Date(oc.createdAt).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>
-                  {!expired && (
-                    <button className={styles.deactivateBtn} style={{ marginTop: 10, width: '100%' }} onClick={() => handleDeactivate(oc._id)}>
-                      Deactivate
+                  {toggling === oc._id ? (
+                    <div className={styles.cardActionRow}>
+                      <Loader2 size={14} className={styles.spin} />
+                    </div>
+                  ) : oc.active ? (
+                    <button
+                      className={styles.deactivateBtn}
+                      style={{ marginTop: 10, width: '100%' }}
+                      onClick={() => handleToggle(oc._id, false)}
+                    >
+                      <PowerOff size={13} /> Deactivate
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.activateBtn}
+                      style={{ marginTop: 10, width: '100%' }}
+                      onClick={() => handleToggle(oc._id, true)}
+                    >
+                      <Power size={13} /> Activate
                     </button>
                   )}
                 </div>

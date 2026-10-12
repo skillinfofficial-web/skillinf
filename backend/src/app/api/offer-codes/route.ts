@@ -86,6 +86,31 @@ export async function POST(req: Request) {
   }
 }
 
+// ─── PATCH — toggle active status (activate / deactivate) ───────────────────
+export async function PATCH(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id)
+      return NextResponse.json({ success: false, message: 'id is required.' }, { status: 400 });
+
+    const body = await req.json();
+    const { active } = body;
+    if (typeof active !== 'boolean')
+      return NextResponse.json({ success: false, message: 'active (boolean) is required.' }, { status: 400 });
+
+    const db = await getDatabase();
+    await db.collection('offerCodes').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { active } }
+    );
+    return NextResponse.json({ success: true, active });
+  } catch (e) {
+    console.error('[PATCH /api/offer-codes]', e);
+    return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
+  }
+}
+
 // ─── DELETE — deactivate an offer code ──────────────────────────────────────
 export async function DELETE(req: Request) {
   try {

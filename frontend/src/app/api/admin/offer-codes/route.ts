@@ -124,3 +124,31 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
   }
 }
+
+// ─── PATCH — toggle active status (activate / deactivate) ───────────────────
+export async function PATCH(req: Request) {
+  if (!isAdmin(req))
+    return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id)
+      return NextResponse.json({ success: false, message: 'id is required.' }, { status: 400 });
+
+    const body = await req.json();
+    const { active } = body;
+    if (typeof active !== 'boolean')
+      return NextResponse.json({ success: false, message: 'active (boolean) is required.' }, { status: 400 });
+
+    const db = await getDatabase();
+    await db.collection('offerCodes').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { active } }
+    );
+    return NextResponse.json({ success: true, active });
+  } catch (e) {
+    console.error('[PATCH /api/admin/offer-codes]', e);
+    return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
+  }
+}
