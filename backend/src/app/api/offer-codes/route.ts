@@ -32,7 +32,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { discountPercent, limitType, limitValue } = body;
+    const { discountPercent, limitType, limitValue, label } = body;
 
     if (!discountPercent || discountPercent < 1 || discountPercent > 100)
       return NextResponse.json({ success: false, message: 'Discount must be 1–100%.' }, { status: 400 });
@@ -68,6 +68,7 @@ export async function POST(req: Request) {
     const now = new Date();
     const doc = {
       code,
+      ...(label && typeof label === 'string' && label.trim() ? { label: label.trim() } : {}),
       discountPercent: Number(discountPercent),
       limitType,
       active: true,

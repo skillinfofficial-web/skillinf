@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Unauthorized.' }, { status: 401 });
     }
 
-    const { orderId } = await req.json();
+    const { orderId, offerCode } = await req.json();
     if (!orderId) {
       return NextResponse.json({ success: false, message: 'orderId required.' }, { status: 400 });
     }
@@ -52,12 +52,21 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3 — Mark user: paymentDone=true, certificateUnlocked=true
     const db = await getDatabase();
+
+    // 3 — Mark user: paymentDone=true, certificateUnlocked=true
     await db.collection('users').updateOne(
       { _id: new ObjectId(auth.userId) },
       { $set: { paymentDone: true, certificateUnlocked: true } },
     );
+
+    // 4 — Increment usedCount on the offer code (only after confirmed payment)
+    if (offerCode && typeof offerCode === 'string' && offerCode.trim()) {
+      await db.collection('offerCodes').updateOne(
+        { code: offerCode.trim().toUpperCase() },
+        { $inc: { usedCount: 1 } },
+      );
+    }
 
     return NextResponse.json({ success: true, message: 'Payment verified. Certificate unlocked!' });
   } catch (e) {

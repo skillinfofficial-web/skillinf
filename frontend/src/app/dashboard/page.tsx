@@ -459,7 +459,7 @@ export default function DashboardPage() {
         const verRes = await fetch('/api/payment/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderId }),
+          body: JSON.stringify({ orderId, offerCode: appliedOfferCode || undefined }),
         });
         const verData = await verRes.json();
         if (verData.success) { setPayMsg(''); setShowPayModal(false); await loadData(); }

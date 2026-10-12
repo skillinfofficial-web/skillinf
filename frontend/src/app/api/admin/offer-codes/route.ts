@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { discountPercent, limitType, limitValue } = body;
+    const { discountPercent, limitType, limitValue, label } = body;
 
     // Validate
     if (!discountPercent || discountPercent < 1 || discountPercent > 100)
@@ -83,6 +83,7 @@ export async function POST(req: Request) {
     const now = new Date();
     const doc = {
       code,
+      ...(label && typeof label === 'string' && label.trim() ? { label: label.trim() } : {}),
       discountPercent: Number(discountPercent),
       limitType,
       active: true,

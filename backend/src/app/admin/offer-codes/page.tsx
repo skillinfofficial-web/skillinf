@@ -10,6 +10,7 @@ import styles from './OfferCodes.module.css';
 interface OfferCode {
   _id: string;
   code: string;
+  label?: string;
   discountPercent: number;
   limitType: 'time' | 'count';
   active: boolean;
@@ -27,6 +28,7 @@ export default function OfferCodesPage() {
   const [error,   setError]   = useState('');
 
   // ── Form state ──────────────────────────────────────────────────────────
+  const [label,      setLabel]      = useState('');
   const [discount,   setDiscount]   = useState('');
   const [limitType,  setLimitType]  = useState<'time' | 'count'>('time');
   const [endDate,    setEndDate]    = useState('');
@@ -74,6 +76,7 @@ export default function OfferCodesPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          label: label.trim() || undefined,
           discountPercent: pct,
           limitType,
           limitValue: limitType === 'time' ? endDate : Number(maxCount),
@@ -82,6 +85,7 @@ export default function OfferCodesPage() {
       const data = await res.json();
       if (data.success) {
         setNewCode(data.code);
+        setLabel('');
         setDiscount('');
         setEndDate('');
         setMaxCount('');
@@ -164,6 +168,21 @@ export default function OfferCodesPage() {
         </div>
 
         <div className={styles.formGrid}>
+          {/* Label (purpose) — full width */}
+          <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
+            <label className={styles.label}>Label / Purpose <span className={styles.optionalTag}>(optional)</span></label>
+            <input
+              id="offer-label"
+              type="text"
+              className={styles.input}
+              placeholder="e.g. Diwali offer, College batch discount, Referral promo…"
+              value={label}
+              onChange={e => setLabel(e.target.value)}
+              maxLength={100}
+            />
+            <p className={styles.hint}>Helps you remember what this coupon code is for.</p>
+          </div>
+
           {/* Discount % */}
           <div className={styles.field}>
             <label className={styles.label}>Discount Percentage</label>
@@ -291,6 +310,7 @@ export default function OfferCodesPage() {
                 <tr>
                   <th>#</th>
                   <th>Code</th>
+                  <th>Label</th>
                   <th>Discount</th>
                   <th>Type</th>
                   <th>Expiry / Limit</th>
@@ -314,6 +334,7 @@ export default function OfferCodesPage() {
                           </button>
                         </div>
                       </td>
+                      <td className={styles.labelCell}>{oc.label || <span className={styles.noneText}>—</span>}</td>
                       <td><span className={styles.discountBadge}>{oc.discountPercent}% OFF</span></td>
                       <td>
                         <span className={oc.limitType === 'time' ? styles.typeBadgeTime : styles.typeBadgeCount}>
@@ -391,6 +412,12 @@ export default function OfferCodesPage() {
                     </div>
                   </div>
                   <div className={styles.cardRows}>
+                    {oc.label && (
+                      <div className={styles.cardRow}>
+                        <span className={styles.cardLabel}>Label</span>
+                        <span className={styles.cardLabelValue}>{oc.label}</span>
+                      </div>
+                    )}
                     <div className={styles.cardRow}>
                       <span className={styles.cardLabel}>Type</span>
                       <span>{oc.limitType === 'time' ? '⏰ Time-based' : '🔢 Count-based'}</span>
