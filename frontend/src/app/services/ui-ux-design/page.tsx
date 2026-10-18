@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import PageClient from "./page-client";
 
 const BASE_URL = "https://www.skillinf.in";
@@ -116,17 +115,13 @@ const breadcrumbSchema = {
 export default function Page() {
   return (
     <>
-      <Script
-        id="uiux-service-jsonld"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-        strategy="beforeInteractive"
       />
-      <Script
-        id="uiux-breadcrumb-jsonld"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        strategy="beforeInteractive"
       />
       <PageClient />
     </>
