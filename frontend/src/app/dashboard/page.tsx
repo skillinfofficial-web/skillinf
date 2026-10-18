@@ -913,7 +913,7 @@ export default function DashboardPage() {
                               rel="noreferrer"
                               className={styles.guidanceLink}
                             >
-                              📋 Project Guidance → View
+                              Project Guidance Details &rarr; View
                             </a>
                           )}
                           <button
