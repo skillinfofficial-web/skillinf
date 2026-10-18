@@ -11,18 +11,19 @@ const WA_NUMBERS = [
   { label: '+91 94899 22054', number: '919489922054' },
 ];
 
-function buildWaText(name: string, email: string, mobile: string, query: string) {
+function buildWaText(name: string, email: string, mobile: string, userType: string, query: string) {
   return encodeURIComponent(
     `*skillinf Support Query*\n\n` +
     `*Name:* ${name}\n` +
     `*Email:* ${email}\n` +
-    `*Mobile:* ${mobile}\n\n` +
+    `*Mobile:* ${mobile}\n` +
+    `*User Type:* ${userType}\n\n` +
     `*Query / Complaint:*\n${query}`
   );
 }
 
 export default function SupportPage() {
-  const [form, setForm] = useState({ name: '', email: '', mobile: '', query: '' });
+  const [form, setForm] = useState({ name: '', email: '', mobile: '', userType: '', query: '' });
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
 
@@ -34,13 +35,9 @@ export default function SupportPage() {
     e.preventDefault();
     setSending(true);
 
-    const text = buildWaText(form.name, form.email, form.mobile, form.query);
+    const text = buildWaText(form.name, form.email, form.mobile, form.userType || 'Not specified', form.query);
 
-    /* Open WhatsApp for both numbers sequentially (slight delay for second) */
     window.open(`https://wa.me/${WA_NUMBERS[0].number}?text=${text}`, '_blank');
-    setTimeout(() => {
-      window.open(`https://wa.me/${WA_NUMBERS[1].number}?text=${text}`, '_blank');
-    }, 800);
 
     setTimeout(() => {
       setSending(false);
@@ -49,7 +46,7 @@ export default function SupportPage() {
   }
 
   function handleReset() {
-    setForm({ name: '', email: '', mobile: '', query: '' });
+    setForm({ name: '', email: '', mobile: '', userType: '', query: '' });
     setSubmitted(false);
   }
 
@@ -153,6 +150,25 @@ export default function SupportPage() {
                           onChange={handleChange}
                           required
                         />
+                      </div>
+
+                      {/* User Type */}
+                      <div className={styles.field}>
+                        <label className={styles.label} htmlFor="support-user-type">
+                          I am a<span className={styles.required}>*</span>
+                        </label>
+                        <select
+                          id="support-user-type"
+                          name="userType"
+                          className={styles.input}
+                          value={form.userType}
+                          onChange={e => setForm(prev => ({ ...prev, userType: e.target.value }))}
+                          required
+                        >
+                          <option value="" disabled>Select user type…</option>
+                          <option value="Student">Student</option>
+                          <option value="Client">Client</option>
+                        </select>
                       </div>
 
                       {/* Query */}

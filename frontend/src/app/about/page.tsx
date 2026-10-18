@@ -17,6 +17,10 @@ import {
   TrendingUp,
   ArrowRight,
   CheckCircle,
+  Globe,
+  Bot,
+  Paintbrush,
+  Box,
 } from "lucide-react";
 import styles from "./AboutPage.module.css";
 
@@ -80,6 +84,37 @@ const offers = [
     text: "Explore practical projects built around real-world problems and technology use cases — work to understand, learn from, and showcase.",
     href: "/projects",
     cta: "Explore Projects",
+  },
+];
+
+const digitalServices = [
+  {
+    icon: <Globe size={24} className={styles.offerIcon} />,
+    title: "Website Services",
+    text: "From stunning landing pages to full-stack SaaS platforms — we design and build fast, secure, SEO-optimised websites that grow your business.",
+    href: "/services/website",
+    cta: "Explore Website Services",
+  },
+  {
+    icon: <Bot size={24} className={styles.offerIcon} />,
+    title: "AI Automation",
+    text: "Save hundreds of manual hours every month. We build custom AI agents and smart workflows that automate your sales, support, and operations.",
+    href: "/services/ai-automation",
+    cta: "Explore AI Automation",
+  },
+  {
+    icon: <Paintbrush size={24} className={styles.offerIcon} />,
+    title: "UI/UX Design",
+    text: "Pixel-perfect, intuitive interfaces for websites, mobile apps, dashboards, and SaaS products that keep users coming back.",
+    href: "/services/ui-ux-design",
+    cta: "Explore UI/UX Design",
+  },
+  {
+    icon: <Box size={24} className={styles.offerIcon} />,
+    title: "3D Design",
+    text: "Photorealistic 3D renders for architecture, construction, products, and animations — from floor-plans to full walkthroughs.",
+    href: "/services/3d-design",
+    cta: "Explore 3D Design",
   },
 ];
 
@@ -272,6 +307,33 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* ── Our Digital Services ── */}
+        <section className={styles.sectionAlt}>
+          <div className="container">
+            <div className={styles.sectionHeader}>
+              <span className={styles.label}>What We Build</span>
+              <h2 className={styles.sectionTitle}>Our Digital Services</h2>
+              <p className={styles.sectionSub}>
+                Beyond education, skillinf also builds digital products that bring your business ideas to life —
+                from websites and automation to stunning design and 3D visualisations.
+              </p>
+            </div>
+
+            <div className={styles.offerGrid}>
+              {digitalServices.map((svc) => (
+                <div key={svc.title} className={styles.offerCard}>
+                  <div className={styles.offerIconWrap}>{svc.icon}</div>
+                  <h3 className={styles.offerTitle}>{svc.title}</h3>
+                  <p className={styles.offerText}>{svc.text}</p>
+                  <Link href={svc.href} className={styles.offerLink}>
+                    {svc.cta} <ArrowRight size={15} />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── What Makes Us Different ── */}
         <section className={styles.sectionAlt}>
           <div className="container">
@@ -358,6 +420,9 @@ export default function AboutPage() {
             <div className={styles.ctaButtons}>
               <Link href="/sign-up" className={styles.ctaPrimary} id="about-cta-internships">
                 Explore Internships
+              </Link>
+              <Link href="/services" className={styles.ctaPrimary} id="about-cta-services">
+                Explore Services
               </Link>
               <Link href="/programs" className={styles.ctaSecondary} id="about-cta-programs">
                 Explore Programs

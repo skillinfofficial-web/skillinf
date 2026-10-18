@@ -57,32 +57,33 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Internships column */}
+          {/* Our Services column */}
           <div className={styles.linksCol}>
-            <h4 className={styles.colTitle}>Internships</h4>
-            <Link href="/sign-up" className={styles.link}>AI &amp; Machine Learning</Link>
-            <Link href="/sign-up" className={styles.link}>Full-Stack Web Dev</Link>
-            <Link href="/sign-up" className={styles.link}>Data Science &amp; Analytics</Link>
-            <Link href="/sign-up" className={styles.link}>Cybersecurity</Link>
+            <h4 className={styles.colTitle}>Our Services</h4>
+            <Link href="/services/website"       className={styles.link}>Website Services</Link>
+            <Link href="/services/ai-automation" className={styles.link}>AI Automation</Link>
+            <Link href="/services/ui-ux-design"  className={styles.link}>UI/UX Design</Link>
+            <Link href="/services/3d-design"     className={styles.link}>3D Design</Link>
+            <Link href="/sign-up"                className={styles.link}>Internships</Link>
           </div>
 
           {/* Resources column */}
           <div className={styles.linksCol}>
             <h4 className={styles.colTitle}>Resources</h4>
-            <Link href="/projects" className={styles.link}>Project Showcase</Link>
-            <Link href="/sign-up" className={styles.link}>Student Success</Link>
+            <Link href="/projects"          className={styles.link}>Project Showcase</Link>
+            <Link href="/sign-up"           className={styles.link}>Student Success</Link>
             <Link href="/verify-certificate" className={styles.link}>Certificate Verification</Link>
-            <Link href="/sign-up" className={styles.link}>Blog</Link>
+            <Link href="/sign-up"           className={styles.link}>Blog</Link>
           </div>
 
           {/* Company column */}
           <div className={styles.linksCol}>
             <h4 className={styles.colTitle}>Company</h4>
-            <Link href="/about" className={styles.link}>About Us</Link>
-            <Link href="/sign-up" className={styles.link}>Careers</Link>
-            <Link href="/support" className={styles.link}>Customer Support</Link>
+            <Link href="/about"         className={styles.link}>About Us</Link>
+            <Link href="/sign-up"       className={styles.link}>Careers</Link>
+            <Link href="/support"       className={styles.link}>Customer Support</Link>
             <Link href="/privacy-policy" className={styles.link}>Privacy Policy</Link>
-            <Link href="/terms" className={styles.link}>Terms &amp; Conditions</Link>
+            <Link href="/terms"         className={styles.link}>Terms &amp; Conditions</Link>
           </div>
 
         </div>

@@ -170,6 +170,107 @@
 }
 .mobileSignUp:hover { background: var(--hp-accent-dark); }
 
+/* ── Services dropdown ──────────────────────────────────────────────────── */
+.servicesDropdownWrap {
+  position: relative;
+}
+
+.servicesBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.servicesChevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.servicesChevronOpen {
+  transform: rotate(180deg);
+}
+
+.servicesDropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 210px;
+  background: #ffffff;
+  border: 1.5px solid #dce8f0;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(6, 16, 32, 0.12);
+  overflow: hidden;
+  z-index: 100;
+  animation: dropdownIn 0.18s ease;
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+.servicesDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #3a4a52;
+  text-decoration: none;
+  transition: background 0.14s, color 0.14s;
+  border-bottom: 1px solid #f0f5f8;
+}
+
+.servicesDropdownItem:last-child { border-bottom: none; }
+.servicesDropdownItem:hover      { background: var(--hp-accent-bg); color: var(--hp-accent); }
+.servicesDropdownItemActive      { color: var(--hp-accent-dark); background: var(--hp-accent-bg); }
+
+.servicesDropdownIcon { font-size: 1.1rem; }
+
+/* ── Mobile services accordion ──────────────────────────────────────────── */
+.mobileServicesBtn {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.mobileServicesPanel {
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 2px solid #e8f0f5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.mobileServiceLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5a62;
+  padding: 9px 0;
+  text-decoration: none;
+  transition: color 0.14s;
+}
+
+.mobileServiceLink:hover        { color: var(--hp-accent); }
+.mobileServiceLinkActive        { color: var(--hp-accent-dark); }
+
 /* ── Responsive breakpoints ──────────────────────────────────────────────── */
 
 /* Small tablet → show desktop nav at 860px */
