@@ -81,8 +81,12 @@ export default function GuidancePage() {
           <p className={styles.projectTitle}>{week.projectTitle}</p>
         )}
 
-        {/* Content card */}
-        <div className={styles.contentCard}>
+        {/* Content card — copy disabled */}
+        <div
+          className={styles.contentCard}
+          onCopy={e => e.preventDefault()}
+          onContextMenu={e => e.preventDefault()}
+        >
           {paragraphs.length > 0 ? (
             <div className={styles.guidanceText}>
               {paragraphs.map((para, i) => {
