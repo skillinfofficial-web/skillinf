@@ -551,3 +551,40 @@ p {
 @media (max-width: 400px) {
   .services-grid { grid-template-columns: 1fr; }
 }
+
+/* ── CSS Animation Utilities (replaces framer-motion) ────────────────────── */
+@keyframes svcFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes svcFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pricingPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%       { transform: scale(1.05); opacity: 1; }
+}
+
+.svc-fade-up {
+  animation: svcFadeUp 0.5s ease both;
+}
+
+.svc-fade-in {
+  animation: svcFadeIn 0.4s ease both;
+}
+
+.svc-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.svc-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.pricing-pulse {
+  animation: pricingPulse 2s ease-in-out infinite;
+  display: inline-block;
+}

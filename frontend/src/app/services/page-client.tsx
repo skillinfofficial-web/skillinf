@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 const services = [
   {
@@ -34,29 +33,19 @@ export default function ServicesHomeClient() {
   return (
     <div className="services-overview-page">
       <div className="services-hero">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="services-title"
-        >
+        <h1 className="services-title svc-fade-up">
           All Our <span className="services-gradient-text">Services</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="services-subtitle"
-        >
+        </h1>
+        <p className="services-subtitle svc-fade-up svc-delay-1">
           Premium digital services by skillinf to take your business to the next level — all in one place.
-        </motion.p>
+        </p>
       </div>
       <div className="services-overview-grid">
         {services.map((service, idx) => (
-          <motion.div
+          <div
             key={service.href}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
+            className="svc-fade-up"
+            style={{ animationDelay: `${idx * 0.1}s` }}
           >
             <Link href={service.href} className="services-overview-card">
               <span className="services-overview-emoji">{service.emoji}</span>
@@ -64,7 +53,7 @@ export default function ServicesHomeClient() {
               <p className="services-overview-card-desc">{service.desc}</p>
               <span className="services-overview-arrow">View Pricing &amp; Details →</span>
             </Link>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
