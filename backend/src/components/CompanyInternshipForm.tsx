@@ -14,6 +14,7 @@ interface WeekData {
   whatYouLearn: string;
   projectTitle: string;
   projectDescription: string;
+  projectGuidance: string;
 }
 
 interface InitialWeek {
@@ -25,6 +26,7 @@ interface InitialWeek {
   whatYouLearn: string;
   projectTitle?: string;
   projectDescription?: string;
+  projectGuidance?: string;
 }
 
 interface Props {
@@ -45,7 +47,7 @@ const YOUTUBE_REGEX =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)[\w-]{11}|youtu\.be\/[\w-]{11})(?:[?&].*)?$/;
 
 function makeBlankWeek(): WeekData {
-  return { deadlineDays: '7', tutorialUrl: '', embedUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '' };
+  return { deadlineDays: '7', tutorialUrl: '', embedUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '', projectGuidance: '' };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
@@ -57,6 +59,7 @@ function weekFromInitial(w: InitialWeek): WeekData {
     whatYouLearn: w.whatYouLearn,
     projectTitle: w.projectTitle ?? '',
     projectDescription: w.projectDescription ?? '',
+    projectGuidance: w.projectGuidance ?? '',
   };
 }
 
@@ -101,6 +104,8 @@ function validateStep(week: WeekData, weekNum: number): Record<string, string> {
     errs.projectTitle = `Project Title is required.`;
   if (!week.projectDescription.trim())
     errs.projectDescription = `What You Do on the Project is required.`;
+  if (!week.projectGuidance.trim())
+    errs.projectGuidance = `Project Guidance is required.`;
   void weekNum;
   return errs;
 }
@@ -200,6 +205,7 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
           whatYouLearn:       w.whatYouLearn.trim(),
           projectTitle:       w.projectTitle.trim(),
           projectDescription: w.projectDescription.trim(),
+          projectGuidance:    w.projectGuidance.trim(),
         })),
       };
 
@@ -425,6 +431,22 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
             rows={3}
           />
           {errors.projectDescription && <p className={styles.errorText}>{errors.projectDescription}</p>}
+        </div>
+
+        {/* Project Guidance */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label} htmlFor={`proj-guidance-${step}`}>
+            Project Guidance <span className={styles.required}>*</span>
+          </label>
+          <textarea
+            id={`proj-guidance-${step}`}
+            className={`${styles.textarea} ${errors.projectGuidance ? styles.inputError : ''}`}
+            value={currentWeek.projectGuidance}
+            onChange={(e) => updateWeek('projectGuidance', e.target.value)}
+            placeholder="Provide step-by-step guidance or hints to help the student complete the project…"
+            rows={4}
+          />
+          {errors.projectGuidance && <p className={styles.errorText}>{errors.projectGuidance}</p>}
         </div>
 
         {/* Navigation */}

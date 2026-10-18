@@ -18,6 +18,7 @@ interface WeekPayload {
   whatYouLearn: string;
   projectTitle?: string;
   projectDescription?: string;
+  projectGuidance?: string;
 }
 
 interface CompanyInternshipPayload {
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
         whatYouLearn:       w.whatYouLearn.trim(),
         projectTitle:       (w.projectTitle ?? '').trim(),
         projectDescription: (w.projectDescription ?? '').trim(),
+        projectGuidance:    (w.projectGuidance ?? '').trim(),
       })),
       createdAt: now,
       updatedAt: now,

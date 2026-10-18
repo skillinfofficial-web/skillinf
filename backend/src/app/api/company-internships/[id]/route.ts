@@ -18,6 +18,7 @@ interface WeekPayload {
   whatYouLearn: string;
   projectTitle?: string;
   projectDescription?: string;
+  projectGuidance?: string;
 }
 
 function validateWeek(w: WeekPayload, weekNum: number): string | null {
@@ -91,6 +92,7 @@ export async function PUT(
         whatYouLearn:       w.whatYouLearn.trim(),
         projectTitle:       (w.projectTitle ?? '').trim(),
         projectDescription: (w.projectDescription ?? '').trim(),
+        projectGuidance:    (w.projectGuidance ?? '').trim(),
       })),
       updatedAt: new Date(),
     };

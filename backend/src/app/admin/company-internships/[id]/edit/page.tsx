@@ -13,6 +13,7 @@ interface WeekData {
   embedUrl?: string;
   keyFeatures: string[];
   whatYouLearn: string;
+  projectGuidance?: string;
 }
 
 interface InternshipData {
