@@ -28,7 +28,7 @@ interface UserDoc {
     registeredAt?: string;
   } | null;
 }
-interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; }
+interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; projectGuidance?: string; }
 
 /* ── Helpers ───────────────────────────────────────────────────────────── */
 function addDays(dateStr: string, days: number) {
@@ -905,6 +905,17 @@ export default function DashboardPage() {
                       ) : (
                         <>
                           {stepMsgs[idx] && <p className={styles.stepErrMsg}>{stepMsgs[idx]}</p>}
+                          {/* Project Guidance link — shown when step is available and guidance exists */}
+                          {available && week.projectGuidance?.trim() && (
+                            <a
+                              href={`/guidance/${encodeURIComponent(user.domain)}/${n}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={styles.guidanceLink}
+                            >
+                              📋 Project Guidance → View
+                            </a>
+                          )}
                           <button
                             className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
                             disabled={!available || stepLoads[idx]}
