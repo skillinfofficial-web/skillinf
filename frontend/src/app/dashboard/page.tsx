@@ -924,8 +924,21 @@ export default function DashboardPage() {
                             disabled={!available || stepLoads[idx]}
                             onClick={() => available && openProjectModal(idx)}
                           >
-                            {stepLoads[idx] ? 'Submitting…' : !available ? '🔒 Locked' : 'Submit Project'}
+                            {stepLoads[idx] ? 'Submitting\u2026' : !available ? '\uD83D\uDD12 Locked' : 'Submit Project'}
                           </button>
+                          {/* WhatsApp mentor button — only shown when step is available */}
+                          {available && (
+                            <a
+                              href={`https://wa.me/919342637290?text=${encodeURIComponent(`Hi, I am ${user.name} (${user.domain} Internship)\n\nI have a doubt regarding:\nWeek ${n} — ${week.projectTitle?.trim() || `Week ${n} Project`}\n\nPlease help me clarify my doubt.`)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={styles.mentorWaBtn}
+                              id={`mentor-wa-btn-step-${n}`}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.738 5.476 2.027 7.789L0 32l8.438-2.012A15.93 15.93 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 0 1-6.773-1.854l-.485-.288-5.012 1.195 1.234-4.883-.317-.5A13.28 13.28 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.293-9.907c-.4-.2-2.364-1.165-2.73-1.299-.367-.133-.633-.2-.9.2-.266.4-1.032 1.299-1.266 1.565-.233.267-.466.3-.866.1-.4-.2-1.688-.623-3.216-1.984-1.188-1.06-1.99-2.37-2.224-2.77-.233-.4-.025-.616.175-.815.18-.18.4-.467.6-.7.2-.234.267-.4.4-.666.133-.267.067-.5-.033-.7-.1-.2-.9-2.168-1.233-2.967-.326-.78-.656-.674-.9-.686l-.766-.013c-.267 0-.7.1-1.067.5-.367.4-1.4 1.368-1.4 3.335s1.433 3.868 1.633 4.135c.2.266 2.82 4.303 6.832 6.034.955.412 1.7.658 2.28.842.958.305 1.83.262 2.52.159.769-.115 2.364-.966 2.697-1.9.333-.934.333-1.734.233-1.9-.1-.167-.367-.267-.767-.467z"/></svg>
+                              Connect &amp; clarify your doubts with domain mentor
+                            </a>
+                          )}
                         </>
                       )}
                     </div>
@@ -1258,6 +1271,25 @@ export default function DashboardPage() {
                 value={projectDriveLink}
                 onChange={e => { setProjectDriveLink(e.target.value); setProjectSubmitMsg(''); }}
               />
+
+              {/* WhatsApp Mentor Button — inside submission modal */}
+              {(() => {
+                const weekNum  = projectModal.weekIdx + 1;
+                const projName = w.projectTitle?.trim() || `Week ${weekNum} Project`;
+                const waMsg    = `Hi, I am ${user.name} (${user.domain} Internship)\n\nI have a doubt regarding:\nWeek ${weekNum} — ${projName}\n\nPlease help me clarify my doubt.`;
+                return (
+                  <a
+                    href={`https://wa.me/919342637290?text=${encodeURIComponent(waMsg)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.mentorWaBtnModal}
+                    id="mentor-wa-btn-modal"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.738 5.476 2.027 7.789L0 32l8.438-2.012A15.93 15.93 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 0 1-6.773-1.854l-.485-.288-5.012 1.195 1.234-4.883-.317-.5A13.28 13.28 0 0 1 2.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.293-9.907c-.4-.2-2.364-1.165-2.73-1.299-.367-.133-.633-.2-.9.2-.266.4-1.032 1.299-1.266 1.565-.233.267-.466.3-.866.1-.4-.2-1.688-.623-3.216-1.984-1.188-1.06-1.99-2.37-2.224-2.77-.233-.4-.025-.616.175-.815.18-.18.4-.467.6-.7.2-.234.267-.4.4-.666.133-.267.067-.5-.033-.7-.1-.2-.9-2.168-1.233-2.967-.326-.78-.656-.674-.9-.686l-.766-.013c-.267 0-.7.1-1.067.5-.367.4-1.4 1.368-1.4 3.335s1.433 3.868 1.633 4.135c.2.266 2.82 4.303 6.832 6.034.955.412 1.7.658 2.28.842.958.305 1.83.262 2.52.159.769-.115 2.364-.966 2.697-1.9.333-.934.333-1.734.233-1.9-.1-.167-.367-.267-.767-.467z"/></svg>
+                    Connect &amp; clarify your doubts with domain mentor
+                  </a>
+                );
+              })()}
 
               {projectSubmitMsg && (
                 <p className={projectSubmitMsg.startsWith('✅') ? styles.projSuccess : styles.projError}>
