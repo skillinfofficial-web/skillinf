@@ -51,6 +51,7 @@ export default function LinkedInVerifyPage() {
   const [prError,   setPrError]   = useState('');
   const [prActionMsg, setPrActionMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [prBusyId,  setPrBusyId]  = useState<string | null>(null);
+  const [prSearch,  setPrSearch]  = useState('');
   // expanded: which person containers + which step rows are open
   const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
   const [expandedStep,   setExpandedStep]   = useState<string | null>(null);
@@ -90,9 +91,31 @@ export default function LinkedInVerifyPage() {
       g.reviews.push(r);
       if (r.status === 'pending') g.pendingCount++;
     });
-    // Sort: groups with pending first, then by name
-    return Array.from(map.values()).sort((a, b) => b.pendingCount - a.pendingCount || a.name.localeCompare(b.name));
+    const latestTime = (g: PersonGroup, statusFilter?: string) => {
+      const filtered = statusFilter ? g.reviews.filter(r => r.status === statusFilter) : g.reviews;
+      if (!filtered.length) return 0;
+      return Math.max(...filtered.map(r => new Date(r.submittedAt ?? r.createdAt).getTime()));
+    };
+    // Sort: most recent PENDING first, then most recent any submission, then alphabetical
+    return Array.from(map.values()).sort((a, b) => {
+      if (a.pendingCount !== b.pendingCount) return b.pendingCount - a.pendingCount;
+      const tA = latestTime(a, 'pending') || latestTime(a);
+      const tB = latestTime(b, 'pending') || latestTime(b);
+      if (tB !== tA) return tB - tA;
+      return a.name.localeCompare(b.name);
+    });
   }, [reviews]);
+
+  /* ── Project reviews search filter ── */
+  const filteredPersonGroups = useMemo(() => {
+    if (!prSearch.trim()) return personGroups;
+    const q = prSearch.toLowerCase();
+    return personGroups.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.email.toLowerCase().includes(q) ||
+      p.domain.toLowerCase().includes(q)
+    );
+  }, [personGroups, prSearch]);
 
   /* ── LinkedIn action ── */
   const liAct = async (record: LinkedInRecord, action: 'verify' | 'unverify') => {
@@ -319,11 +342,32 @@ export default function LinkedInVerifyPage() {
       {/* ══════════════════ PROJECT REVIEWS TAB ══════════════════ */}
       {tab === 'projects' && (
         <>
+          {/* Search bar */}
+          <div className={styles.liSearchRow}>
+            <div className={styles.liSearchWrap}>
+              <Search size={15} className={styles.liSearchIcon} />
+              <input
+                type="text"
+                id="pr-search"
+                className={styles.liSearchInput}
+                placeholder="Search by name, email or domain…"
+                value={prSearch}
+                onChange={e => setPrSearch(e.target.value)}
+              />
+              {prSearch && (
+                <button className={styles.liSearchClear} onClick={() => setPrSearch('')}>✕</button>
+              )}
+            </div>
+          </div>
+
           <div className={styles.counts}>
             <span className={styles.countPill}>{reviews.filter(r => r.status === 'pending').length} Pending</span>
             <span className={`${styles.countPill} ${styles.countApproved}`}>{reviews.filter(r => r.status === 'approved').length} Approved</span>
             <span className={`${styles.countPill} ${styles.countRejected}`}>{reviews.filter(r => r.status === 'rejected').length} Rejected</span>
-            <span className={styles.countPill} style={{ marginLeft: 'auto' }}>{personGroups.length} {personGroups.length === 1 ? 'Student' : 'Students'}</span>
+            <span className={styles.countPill} style={{ marginLeft: 'auto' }}>
+              {prSearch.trim() ? `${filteredPersonGroups.length} / ${personGroups.length}` : personGroups.length}
+              {' '}{personGroups.length === 1 ? 'Student' : 'Students'}
+            </span>
           </div>
 
           {prLoading && <div className={styles.stateBox}><Loader2 size={26} className={styles.spinner} /><p>Loading…</p></div>}
@@ -335,11 +379,18 @@ export default function LinkedInVerifyPage() {
               <p className={styles.emptyHint}>Student project submissions will appear here.</p>
             </div>
           )}
+          {!prLoading && !prError && personGroups.length > 0 && filteredPersonGroups.length === 0 && (
+            <div className={styles.stateBox}>
+              <Search size={36} className={styles.emptyIcon} />
+              <p className={styles.emptyTitle}>No matching students</p>
+              <p className={styles.emptyHint}>No submissions match &ldquo;{prSearch}&rdquo;. Try a different name, email or domain.</p>
+            </div>
+          )}
 
           {/* ── One container per person ── */}
-          {!prLoading && !prError && personGroups.length > 0 && (
+          {!prLoading && !prError && filteredPersonGroups.length > 0 && (
             <div className={styles.prList}>
-              {personGroups.map(person => {
+              {filteredPersonGroups.map(person => {
                 const isPersonOpen = expandedPerson === person.email;
                 return (
                   <div key={person.email} className={`${styles.personCard} ${person.pendingCount > 0 ? styles.personCardPending : ''}`}>
