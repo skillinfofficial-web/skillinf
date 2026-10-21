@@ -263,3 +263,69 @@
   padding: 12px 20px 16px; background: var(--highlight);
   display: flex; flex-direction: column; gap: 8px;
 }
+
+/* ── Assigned Project Card ───────────────────────────────────────────────── */
+.assignedCard {
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+}
+.assignedCardLabel {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #1d4ed8; margin-bottom: 5px;
+}
+.assignedCardTitle {
+  font-size: 0.9rem; font-weight: 700; color: #1e3a8a;
+  margin-bottom: 4px; line-height: 1.4;
+}
+.assignedCardDesc {
+  font-size: 0.8rem; color: #3b82f6; line-height: 1.55;
+}
+
+/* ── Mobile / Responsive — Project Reviews ───────────────────────────────── */
+@media (max-width: 768px) {
+  /* Person head: stack info on very small screens */
+  .personHead { padding: 14px 16px; }
+  .personAvatar { width: 36px; height: 36px; font-size: 0.78rem; }
+  .personName { font-size: 0.88rem; }
+  .personMeta { font-size: 0.72rem; gap: 4px; }
+
+  /* Collapse step row header */
+  .stepRowHead { padding: 10px 16px; flex-wrap: wrap; }
+  .stepRowLeft { gap: 6px; }
+  .prStepBadge { font-size: 0.68rem; padding: 3px 8px; }
+  .stepRowDate     { font-size: 0.7rem; }
+  .stepRowDeadline { font-size: 0.7rem; }
+
+  /* Step row body */
+  .stepRowBody { padding: 12px 16px 14px; }
+  .assignedCard { padding: 10px 12px; }
+
+  /* prRow: stack label above value */
+  .prRow { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .prRowLabel { width: auto; }
+
+  /* Action buttons full-width */
+  .prActions { flex-direction: column; }
+  .prActions .btn { width: 100%; }
+
+  /* Person right: wrap badges */
+  .personHeadRight { flex-wrap: wrap; justify-content: flex-end; }
+  .personStepCount { display: none; }
+}
+
+@media (max-width: 480px) {
+  .page { padding: 12px 10px 40px; }
+  .personHead { padding: 12px 12px; gap: 10px; }
+  .personHeadLeft { gap: 10px; }
+  .stepRowHead { padding: 10px 12px; }
+  .stepRowBody { padding: 10px 12px 14px; }
+  .prList { gap: 8px; }
+  .personCard { border-radius: 12px; }
+
+  /* Tabs: full width on tiny screens */
+  .tabs { width: 100%; }
+  .tabBtn { flex: 1; justify-content: center; padding: 8px 10px; font-size: 0.8rem; }
+}

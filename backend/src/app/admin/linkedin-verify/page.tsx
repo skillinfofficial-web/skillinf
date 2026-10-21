@@ -17,6 +17,8 @@ interface ProjectReview {
   createdAt: string; updatedAt: string;
   submittedAt?: string | null;
   weekDeadlineDate?: string | null;
+  weekProjectTitle?: string | null;
+  weekProjectDescription?: string | null;
 }
 interface PersonGroup {
   email: string; name: string; mobileNumber: string; domain: string;
@@ -354,8 +356,21 @@ export default function LinkedInVerifyPage() {
                                 {/* Step row body */}
                                 {isStepOpen && (
                                   <div className={styles.stepRowBody}>
+                                    {/* Assigned project from course DB */}
+                                    {(rev.weekProjectTitle || rev.weekProjectDescription) && (
+                                      <div className={styles.assignedCard}>
+                                        <p className={styles.assignedCardLabel}>Assigned Project</p>
+                                        {rev.weekProjectTitle && (
+                                          <p className={styles.assignedCardTitle}>{rev.weekProjectTitle}</p>
+                                        )}
+                                        {rev.weekProjectDescription && (
+                                          <p className={styles.assignedCardDesc}>{rev.weekProjectDescription}</p>
+                                        )}
+                                      </div>
+                                    )}
+                                    {/* Student submission */}
                                     <div className={styles.prRow}>
-                                      <span className={styles.prRowLabel}>📎 Project Link</span>
+                                      <span className={styles.prRowLabel}>Student Submission</span>
                                       <a href={rev.driveLink} target="_blank" rel="noreferrer" className={styles.urlLink}>
                                         <ExternalLink size={12} /> Open Project
                                       </a>
@@ -409,4 +424,6 @@ export default function LinkedInVerifyPage() {
     </div>
   );
 }
+
+
 

@@ -32,13 +32,19 @@ export async function GET() {
       userMap.set(`${u.email}::${u.domain}`, { startDate: u.startDate as string });
     });
 
-    // Load course deadlineDays indexed by domain name
+    // Load full week data (deadlineDays + projectTitle + projectDescription)
     const courses = await db.collection('CompanyInternships').find(
       {}, { projection: { name: 1, weeks: 1 } }
     ).toArray();
-    const courseMap = new Map<string, { deadlineDays: number }[]>();
+
+    type WeekData = {
+      deadlineDays: number;
+      projectTitle?: string;
+      projectDescription?: string;
+    };
+    const courseMap = new Map<string, WeekData[]>();
     courses.forEach((c) => {
-      courseMap.set(c.name as string, (c.weeks as { deadlineDays: number }[]) ?? []);
+      courseMap.set(c.name as string, (c.weeks as WeekData[]) ?? []);
     });
 
     const enriched = reviews.map((r) => {
@@ -46,6 +52,7 @@ export async function GET() {
       const user   = userMap.get(key);
       const weeks  = courseMap.get(r.domain as string) ?? [];
       const step   = (r.step as number) - 1; // 0-indexed
+      const weekData = weeks[step] ?? null;
 
       let weekDeadlineDate: string | null = null;
       if (user?.startDate && weeks.length > step && step >= 0) {
@@ -59,8 +66,10 @@ export async function GET() {
       return {
         ...r,
         _id: r._id.toString(),
-        submittedAt:      (r.createdAt as Date | string | undefined)?.toString() ?? null,
+        submittedAt:          (r.createdAt as Date | string | undefined)?.toString() ?? null,
         weekDeadlineDate,
+        weekProjectTitle:     weekData?.projectTitle     ?? null,
+        weekProjectDescription: weekData?.projectDescription ?? null,
       };
     });
 
@@ -70,6 +79,7 @@ export async function GET() {
     return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
   }
 }
+
 
 
 // ── Approval email HTML ───────────────────────────────────────
