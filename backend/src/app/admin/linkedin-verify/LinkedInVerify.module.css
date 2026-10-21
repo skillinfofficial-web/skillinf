@@ -254,7 +254,10 @@
 .stepRowHead:hover { background: var(--highlight); }
 
 .stepRowLeft { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.stepRowDate { font-size: 0.74rem; color: var(--secondary-text); }
+.stepRowDate     { font-size: 0.74rem; color: var(--secondary-text); }
+.stepRowDeadline { font-size: 0.74rem; color: #b45309; font-weight: 600;
+                   background: #fef3c7; border-radius: 4px; padding: 1px 6px; }
+
 
 .stepRowBody {
   padding: 12px 20px 16px; background: var(--highlight);

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Phone } from 'lucide-react';
@@ -15,6 +15,8 @@ interface ProjectReview {
   mobileNumber?: string; domain: string; step: number; driveLink: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string; updatedAt: string;
+  submittedAt?: string | null;
+  weekDeadlineDate?: string | null;
 }
 interface PersonGroup {
   email: string; name: string; mobileNumber: string; domain: string;
@@ -339,7 +341,12 @@ export default function LinkedInVerifyPage() {
                                     <span className={`${styles.statusBadge} ${styles[prStatusClass[rev.status]]}`}>
                                       {prStatusLabel[rev.status]}
                                     </span>
-                                    <span className={styles.stepRowDate}>{fmtDate(rev.updatedAt)}</span>
+                                    <span className={styles.stepRowDate}>Submitted: {fmtDate(rev.submittedAt ?? rev.createdAt)}</span>
+                                    {rev.weekDeadlineDate && (
+                                      <span className={styles.stepRowDeadline}>
+                                        Week End: {new Date(rev.weekDeadlineDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                      </span>
+                                    )}
                                   </div>
                                   <span className={styles.prChevron}>{isStepOpen ? '▲' : '▼'}</span>
                                 </div>
@@ -402,3 +409,4 @@ export default function LinkedInVerifyPage() {
     </div>
   );
 }
+

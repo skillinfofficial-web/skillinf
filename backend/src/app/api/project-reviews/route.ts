@@ -17,15 +17,60 @@ export async function GET() {
       .find({})
       .sort({ updatedAt: -1 })
       .toArray();
-    return NextResponse.json({
-      success: true,
-      reviews: reviews.map((r) => ({ ...r, _id: r._id.toString() })),
+
+    // Build a lookup: email → user doc (for startDate)
+    const emails = [...new Set(reviews.map((r) => r.email as string))];
+    const users = emails.length
+      ? await db.collection('users').find({ email: { $in: emails } }, {
+          projection: { email: 1, domain: 1, startDate: 1 },
+        }).toArray()
+      : [];
+
+    // Index by "email::domain" for fast lookup
+    const userMap = new Map<string, { startDate: string }>();
+    users.forEach((u) => {
+      userMap.set(`${u.email}::${u.domain}`, { startDate: u.startDate as string });
     });
+
+    // Load course deadlineDays indexed by domain name
+    const courses = await db.collection('CompanyInternships').find(
+      {}, { projection: { name: 1, weeks: 1 } }
+    ).toArray();
+    const courseMap = new Map<string, { deadlineDays: number }[]>();
+    courses.forEach((c) => {
+      courseMap.set(c.name as string, (c.weeks as { deadlineDays: number }[]) ?? []);
+    });
+
+    const enriched = reviews.map((r) => {
+      const key    = `${r.email}::${r.domain}`;
+      const user   = userMap.get(key);
+      const weeks  = courseMap.get(r.domain as string) ?? [];
+      const step   = (r.step as number) - 1; // 0-indexed
+
+      let weekDeadlineDate: string | null = null;
+      if (user?.startDate && weeks.length > step && step >= 0) {
+        let cumDays = 0;
+        for (let i = 0; i <= step; i++) cumDays += (weeks[i]?.deadlineDays ?? 0);
+        const d = new Date(user.startDate);
+        d.setDate(d.getDate() + cumDays);
+        weekDeadlineDate = d.toISOString();
+      }
+
+      return {
+        ...r,
+        _id: r._id.toString(),
+        submittedAt:      (r.createdAt as Date | string | undefined)?.toString() ?? null,
+        weekDeadlineDate,
+      };
+    });
+
+    return NextResponse.json({ success: true, reviews: enriched });
   } catch (err) {
     console.error('[GET /api/project-reviews]', err);
     return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
   }
 }
+
 
 // ── Approval email HTML ───────────────────────────────────────
 function buildApprovalEmail(name: string, step: number, allDone: boolean): string {
