@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '@/lib/mailer';
@@ -11,9 +11,12 @@ export async function GET() {
 
     // Enrich with startDate + endDate from users collection
     const userIds = records.map(r => r.userId as string).filter(Boolean);
-    const users = userIds.length
+    const objectIds = userIds
+      .map(id => { try { return new ObjectId(id); } catch { return null; } })
+      .filter((id): id is ObjectId => id !== null);
+    const users = objectIds.length
       ? await db.collection('users').find(
-          { _id: { $in: userIds.map(id => { try { return new ObjectId(id); } catch { return null; } }).filter(Boolean) } },
+          { _id: { $in: objectIds } },
           { projection: { _id: 1, startDate: 1, endDate: 1, domain: 1 } }
         ).toArray()
       : [];
