@@ -1205,7 +1205,9 @@ export default function DashboardPage() {
             </span>
             <p className={styles.edNote}>
               Please wait until your internship end date to download your certificate.
-              If you believe this is an error, please contact{' '}
+              We will <strong>automatically send you an email</strong> to{' '}
+              <strong>{user.email}</strong> on that day notifying you that your certificate
+              download is unlocked. If you believe this is an error, please contact{' '}
               <a href="mailto:support@skillinf.in" target="_blank" rel="noreferrer">
                 SkillInf Support
               </a>
