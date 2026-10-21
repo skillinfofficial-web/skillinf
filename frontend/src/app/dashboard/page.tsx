@@ -315,6 +315,9 @@ export default function DashboardPage() {
   // Lock tooltip
   const [showLockMsg, setShowLockMsg] = useState(false);
 
+  // End-date gate popup
+  const [showEndDatePopup, setShowEndDatePopup] = useState(false);
+
   // My Internships Switcher
   const [showInternshipsModal, setShowInternshipsModal] = useState(false);
   const [switchingTo, setSwitchingTo] = useState<string | null>(null);
@@ -952,15 +955,27 @@ export default function DashboardPage() {
             className={styles.certBannerBtn}
             disabled={(!allDone && !eCertPaid) || payLoad}
             onClick={() => {
-              if (eCertPaid) { downloadCertificate(user); }
-              else { setShowPayModal(true); }
+              if (eCertPaid) {
+                // Date gate: current date must be >= internship end date
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const endDate = new Date(user.endDate);
+                endDate.setHours(0, 0, 0, 0);
+                if (today >= endDate) {
+                  downloadCertificate(user);
+                } else {
+                  setShowEndDatePopup(true);
+                }
+              } else {
+                setShowPayModal(true);
+              }
             }}
           >
             {eCertPaid
-              ? '⬇️ Download Certificate'
+              ? 'Download Certificate'
               : allDone
-                ? '🎓 Get Certificate'
-                : '🔒 Complete all steps first'}
+                ? 'Get Certificate'
+                : 'Complete all steps first'}
           </button>
         </div>
 
@@ -1175,6 +1190,39 @@ export default function DashboardPage() {
         )}
 
       </div>
+
+      {/* ══ END-DATE GATE POPUP ══════════════════════════════════════════ */}
+      {showEndDatePopup && (
+        <div className={styles.edOverlay} onClick={() => setShowEndDatePopup(false)}>
+          <div className={styles.edCard} onClick={e => e.stopPropagation()}>
+            <span className={styles.edIcon}>🗓️</span>
+            <p className={styles.edTitle}>Internship Not Yet Completed</p>
+            <p className={styles.edBody}>
+              Your certificate will be available for download once your internship end date is reached.
+            </p>
+            <span className={styles.edEndDate}>
+              Your End Date: {fmtDate(new Date(user.endDate))}
+            </span>
+            <p className={styles.edNote}>
+              Please wait until your internship end date to download your certificate.
+              If you believe this is an error, please contact{' '}
+              <a href="mailto:support@skillinf.in" target="_blank" rel="noreferrer">
+                SkillInf Support
+              </a>
+              .
+            </p>
+            <button className={styles.edClose} onClick={() => setShowEndDatePopup(false)}>
+              Got it
+            </button>
+            <p className={styles.edSupport}>
+              Need help?{' '}
+              <a href="mailto:support@skillinf.in" target="_blank" rel="noreferrer">
+                Contact SkillInf Support
+              </a>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ══ PROJECT SUBMIT MODAL ════════════════════════════════════════ */}
       {projectModal?.open && (() => {
