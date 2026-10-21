@@ -9,6 +9,9 @@ interface LinkedInRecord {
   _id: string; userId: string; name: string; email: string;
   linkedinUrl: string; status: 'pending' | 'approved' | 'rejected';
   createdAt: string; updatedAt: string;
+  startDate?: string | null;
+  endDate?:   string | null;
+  domain?:    string | null;
 }
 interface ProjectReview {
   _id: string; userId: string; name: string; email: string;
@@ -191,7 +194,7 @@ export default function LinkedInVerifyPage() {
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
                   <thead><tr>
-                    <th>Student</th><th>LinkedIn Post</th><th>Status</th><th>Submitted</th><th>Actions</th>
+                    <th>Student</th><th>LinkedIn Post</th><th>Internship Dates</th><th>Status</th><th>Submitted</th><th>Actions</th>
                   </tr></thead>
                   <tbody>
                     {records.map(rec => (
@@ -205,6 +208,12 @@ export default function LinkedInVerifyPage() {
                             <ExternalLink size={13} /> View Post
                           </a>
                           <p className={styles.urlText}>{rec.linkedinUrl}</p>
+                        </td>
+                        <td className={styles.internshipDatesCell}>
+                          {rec.startDate
+                            ? <><span className={styles.dateChip}>{new Date(rec.startDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span><span className={styles.dateSep}>→</span><span className={styles.dateChip}>{rec.endDate ? new Date(rec.endDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</span></>
+                            : <span className={styles.dateNa}>—</span>
+                          }
                         </td>
                         <td><span className={`${styles.statusBadge} ${styles[liStatusClass[rec.status]]}`}>{liStatusLabel[rec.status]}</span></td>
                         <td className={styles.dateCell}>{fmtDate(rec.createdAt)}</td>
@@ -234,7 +243,17 @@ export default function LinkedInVerifyPage() {
                     </div>
                     <div className={styles.cardRows}>
                       <div className={styles.cardRow}><span className={styles.cardRowLabel}>🔗 Post</span><span className={styles.cardRowValue}><a href={rec.linkedinUrl} target="_blank" rel="noreferrer" className={styles.urlLink}><ExternalLink size={12} /> View Post</a></span></div>
-                      <div className={styles.cardRow}><span className={styles.cardRowLabel}>🕐 Date</span><span className={styles.cardRowValue}>{fmtDate(rec.createdAt)}</span></div>
+                      {(rec.startDate || rec.endDate) && (
+                        <div className={styles.cardRow}>
+                          <span className={styles.cardRowLabel}>Period</span>
+                          <span className={styles.cardRowValue}>
+                            {rec.startDate ? new Date(rec.startDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}
+                            {' → '}
+                            {rec.endDate ? new Date(rec.endDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}
+                          </span>
+                        </div>
+                      )}
+                      <div className={styles.cardRow}><span className={styles.cardRowLabel}>Submitted</span><span className={styles.cardRowValue}>{fmtDate(rec.createdAt)}</span></div>
                     </div>
                     <div className={styles.cardActions}>
                       <button className={`${styles.btn} ${styles.verifyBtn}`} onClick={() => liAct(rec, 'verify')} disabled={liBusyId === rec._id || rec.status === 'approved'} style={{ flex: 1 }}>
@@ -424,6 +443,7 @@ export default function LinkedInVerifyPage() {
     </div>
   );
 }
+
 
 
 

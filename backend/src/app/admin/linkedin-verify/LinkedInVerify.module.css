@@ -108,18 +108,43 @@
 
 .cardActions { display: flex; gap: 8px; }
 
-@media (max-width: 640px) {
-  .page { padding: 16px 12px 40px; }
+/* ── Internship Dates cell (desktop table) ─────────────────────────────── */
+.internshipDatesCell {
+  white-space: nowrap; font-size: 0.78rem;
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+}
+.dateChip {
+  background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;
+  border-radius: 6px; padding: 2px 8px; font-size: 0.72rem; font-weight: 600;
+  white-space: nowrap;
+}
+.dateSep { color: var(--secondary-text); font-size: 0.8rem; }
+.dateNa  { color: var(--secondary-text); font-size: 0.78rem; }
+
+/* ── Responsive — LinkedIn Verify ─────────────────────────────────────────── */
+/* Switch table → cards at tablet width too (not just mobile) */
+@media (max-width: 768px) {
   .tableWrap { display: none; }
-  .cardList { display: flex; }
+  .cardList  { display: flex; }
   .actionsCell { flex-direction: row; }
   .btn { width: auto; flex: 1; }
+  /* Card tweaks */
+  .card { padding: 14px 14px; }
+  .cardName  { font-size: 0.88rem; }
+  .cardEmail { font-size: 0.74rem; }
+  .cardActions { flex-direction: column; }
+  .cardActions .btn { flex: unset; width: 100%; }
 }
 
 @media (max-width: 480px) {
+  .page { padding: 12px 10px 40px; }
   .header { flex-direction: column; align-items: flex-start; }
   .counts { width: 100%; }
+  .card   { padding: 12px 12px; border-radius: 12px; }
+  .cardHeader { margin-bottom: 10px; }
+  .cardRowLabel { min-width: 54px; }
 }
+
 
 /* ── Tabs ────────────────────────────────────────────────────────────────── */
 .tabs {

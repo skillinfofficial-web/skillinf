@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { sendMail } from '@/lib/mailer';
@@ -8,9 +8,30 @@ export async function GET() {
   try {
     const db      = await getDatabase();
     const records = await db.collection('linkedin_verify').find({}).sort({ createdAt: -1 }).toArray();
+
+    // Enrich with startDate + endDate from users collection
+    const userIds = records.map(r => r.userId as string).filter(Boolean);
+    const users = userIds.length
+      ? await db.collection('users').find(
+          { _id: { $in: userIds.map(id => { try { return new ObjectId(id); } catch { return null; } }).filter(Boolean) } },
+          { projection: { _id: 1, startDate: 1, endDate: 1, domain: 1 } }
+        ).toArray()
+      : [];
+
+    const userMap = new Map(users.map(u => [u._id.toString(), u]));
+
     return NextResponse.json({
       success: true,
-      records: records.map(r => ({ ...r, _id: r._id.toString() })),
+      records: records.map(r => {
+        const u = userMap.get(r.userId as string);
+        return {
+          ...r,
+          _id:       r._id.toString(),
+          startDate: u?.startDate ?? null,
+          endDate:   u?.endDate   ?? null,
+          domain:    (r.domain ?? u?.domain) ?? null,
+        };
+      }),
     });
   } catch (e) {
     console.error('[GET /api/linkedin-verify]', e);
@@ -170,3 +191,4 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
   }
 }
+
