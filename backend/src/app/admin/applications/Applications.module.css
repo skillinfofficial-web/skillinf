@@ -369,6 +369,18 @@
 }
 .cardTickDone { color: var(--main-text); font-weight: 600; }
 
+.dateChipApp {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .page { padding: 16px 12px 40px; }
   .tableWrap { display: none; }

@@ -1,7 +1,7 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Phone } from 'lucide-react';
+import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Phone, Search } from 'lucide-react';
 import styles from './LinkedInVerify.module.css';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -43,6 +43,7 @@ export default function LinkedInVerifyPage() {
   const [liError,   setLiError]   = useState('');
   const [liActionMsg, setLiActionMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [liBusyId,  setLiBusyId]  = useState<string | null>(null);
+  const [liSearch,  setLiSearch]  = useState('');
 
   /* ── Project Reviews state ── */
   const [reviews,   setReviews]   = useState<ProjectReview[]>([]);
@@ -140,6 +141,14 @@ export default function LinkedInVerifyPage() {
 
   const pendingPr = reviews.filter(r => r.status === 'pending').length;
 
+  // LinkedIn search filter
+  const filteredRecords = liSearch.trim()
+    ? records.filter(r => {
+        const q = liSearch.toLowerCase();
+        return r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q);
+      })
+    : records;
+
   return (
     <div className={styles.page}>
       {/* ── Header ── */}
@@ -175,9 +184,31 @@ export default function LinkedInVerifyPage() {
       {/* ══════════════════ LINKEDIN TAB ══════════════════ */}
       {tab === 'linkedin' && (
         <>
+          {/* Search bar */}
+          <div className={styles.liSearchRow}>
+            <div className={styles.liSearchWrap}>
+              <Search size={15} className={styles.liSearchIcon} />
+              <input
+                type="text"
+                id="li-search"
+                className={styles.liSearchInput}
+                placeholder="Search by name or email…"
+                value={liSearch}
+                onChange={e => setLiSearch(e.target.value)}
+              />
+              {liSearch && (
+                <button className={styles.liSearchClear} onClick={() => setLiSearch('')}>✕</button>
+              )}
+            </div>
+          </div>
           <div className={styles.counts}>
             <span className={styles.countPill}>{records.filter(r => r.status === 'pending').length} Pending</span>
             <span className={`${styles.countPill} ${styles.countApproved}`}>{records.filter(r => r.status === 'approved').length} Approved</span>
+            {liSearch.trim() && (
+              <span className={styles.countPill} style={{ background: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0' }}>
+                {filteredRecords.length} found
+              </span>
+            )}
           </div>
 
           {liLoading && <div className={styles.stateBox}><Loader2 size={26} className={styles.spinner} /><p>Loading…</p></div>}
@@ -189,7 +220,14 @@ export default function LinkedInVerifyPage() {
               <p className={styles.emptyHint}>LinkedIn post submissions will appear here once students submit.</p>
             </div>
           )}
-          {!liLoading && !liError && records.length > 0 && (
+          {!liLoading && !liError && records.length > 0 && filteredRecords.length === 0 && (
+            <div className={styles.stateBox}>
+              <Search size={36} className={styles.emptyIcon} />
+              <p className={styles.emptyTitle}>No matching submissions</p>
+              <p className={styles.emptyHint}>No submissions match &ldquo;{liSearch}&rdquo;. Try checking the spelling.</p>
+            </div>
+          )}
+          {!liLoading && !liError && filteredRecords.length > 0 && (
             <>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
@@ -197,7 +235,7 @@ export default function LinkedInVerifyPage() {
                     <th>Student</th><th>LinkedIn Post</th><th>Internship Dates</th><th>Status</th><th>Submitted</th><th>Actions</th>
                   </tr></thead>
                   <tbody>
-                    {records.map(rec => (
+                    {filteredRecords.map(rec => (
                       <tr key={rec._id} className={styles.row}>
                         <td className={styles.studentCell}>
                           <p className={styles.studentName}>{rec.name}</p>
@@ -235,7 +273,7 @@ export default function LinkedInVerifyPage() {
               </div>
 
               <div className={styles.cardList}>
-                {records.map(rec => (
+                {filteredRecords.map(rec => (
                   <div key={rec._id} className={styles.card}>
                     <div className={styles.cardHeader}>
                       <div><p className={styles.cardName}>{rec.name}</p><p className={styles.cardEmail}>{rec.email}</p></div>
@@ -243,16 +281,20 @@ export default function LinkedInVerifyPage() {
                     </div>
                     <div className={styles.cardRows}>
                       <div className={styles.cardRow}><span className={styles.cardRowLabel}>🔗 Post</span><span className={styles.cardRowValue}><a href={rec.linkedinUrl} target="_blank" rel="noreferrer" className={styles.urlLink}><ExternalLink size={12} /> View Post</a></span></div>
-                      {(rec.startDate || rec.endDate) && (
-                        <div className={styles.cardRow}>
-                          <span className={styles.cardRowLabel}>Period</span>
-                          <span className={styles.cardRowValue}>
-                            {rec.startDate ? new Date(rec.startDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}
-                            {' → '}
-                            {rec.endDate ? new Date(rec.endDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}
-                          </span>
-                        </div>
-                      )}
+                      <div className={styles.cardRow}>
+                        <span className={styles.cardRowLabel}>Period</span>
+                        <span className={styles.cardRowValue}>
+                          {rec.startDate ? (
+                            <>
+                              {new Date(rec.startDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+                              {' → '}
+                              {rec.endDate ? new Date(rec.endDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}
+                            </>
+                          ) : (
+                            <span className={styles.dateNa}>—</span>
+                          )}
+                        </span>
+                      </div>
                       <div className={styles.cardRow}><span className={styles.cardRowLabel}>Submitted</span><span className={styles.cardRowValue}>{fmtDate(rec.createdAt)}</span></div>
                     </div>
                     <div className={styles.cardActions}>
@@ -443,6 +485,7 @@ export default function LinkedInVerifyPage() {
     </div>
   );
 }
+
 
 
 

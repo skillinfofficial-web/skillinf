@@ -16,6 +16,8 @@ export async function GET() {
         'physicalCertificate.paid': 1,
         createdAt: 1,
         collegeUniversity: 1,
+        startDate: 1,
+        endDate: 1,
       })
       .sort({ createdAt: -1 })
       .toArray();
@@ -37,9 +39,12 @@ export async function GET() {
         eCertPaid:        u.paymentDone === true,
         physicalCertPaid: u.physicalCertificate?.paid === true,
         createdAt:        u.createdAt ?? null,
+        startDate:        u.startDate  ?? null,
+        endDate:          u.endDate    ?? null,
       })),
     });
   } catch (e) {
     return NextResponse.json({ success: false, message: String(e) }, { status: 500 });
   }
 }
+

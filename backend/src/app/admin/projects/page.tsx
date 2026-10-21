@@ -67,11 +67,42 @@ export default function AdminProjectsPage() {
     loadProjects();
   }, [loadProjects]);
 
-  /* ── Image upload ────────────────────────────────────────── */
+  /* ── Image upload — convert any image → WebP 800×450 via canvas ── */
   const processFile = (file: File) => {
-    if (file.type !== 'image/webp') { setFormError('Only .webp images are accepted.'); return; }
+    if (!file.type.startsWith('image/')) { setFormError('Please upload an image file.'); return; }
     const reader = new FileReader();
-    reader.onload = (e) => { if (e.target?.result) { setImage(e.target.result as string); setFormError(''); } };
+    reader.onload = (evt) => {
+      if (!evt.target?.result) return;
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width  = 800;
+        canvas.height = 450;
+        const ctx = canvas.getContext('2d')!;
+        // Fill white background (transparent webp support)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 800, 450);
+        // Cover-fit: scale to fill 800×450, centre crop
+        const srcAR = img.width / img.height;
+        const dstAR = 800 / 450;
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if (srcAR > dstAR) {
+          // wider than 16:9 → crop sides
+          sw = Math.round(img.height * dstAR);
+          sx = Math.round((img.width - sw) / 2);
+        } else {
+          // taller than 16:9 → crop top/bottom
+          sh = Math.round(img.width / dstAR);
+          sy = Math.round((img.height - sh) / 2);
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 800, 450);
+        const webpDataUrl = canvas.toDataURL('image/webp', 0.92);
+        setImage(webpDataUrl);
+        setFormError('');
+      };
+      img.onerror = () => setFormError('Could not load image. Please try another file.');
+      img.src = evt.target.result as string;
+    };
     reader.readAsDataURL(file);
   };
 
@@ -94,7 +125,7 @@ export default function AdminProjectsPage() {
     e.preventDefault();
     setFormError(''); setFormSuccess('');
     if (!domain) { setFormError('Please select a domain.'); return; }
-    if (!image) { setFormError('Please upload a WebP image.'); return; }
+    if (!image) { setFormError('Please upload an image (any format — it will be converted to WebP 800×450).'); return; }
     if (!name.trim()) { setFormError('Project name is required.'); return; }
     if (!githubLink.trim()) { setFormError('GitHub link is required.'); return; }
     try { new URL(githubLink); } catch { setFormError('Enter a valid URL (include https://).'); return; }
@@ -188,15 +219,15 @@ export default function AdminProjectsPage() {
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
               <Upload size={13} /> Upload Image <span className={styles.required}>*</span>
-              <span className={styles.webpBadge}>WebP only</span>
+              <span className={styles.webpBadge}>Auto → WebP 800×450</span>
             </label>
 
             {/* Size placeholder guide */}
             <div className={styles.sizeGuide}>
               <span className={styles.sizeGuideIcon}>📐</span>
               <span>
-                Upload a <strong>16:9</strong> image for best display across all devices.{' '}
-                Recommended: <strong>800 × 450 px</strong>
+                Upload <strong>any</strong> image format (JPG, PNG, WebP, AVIF, etc.). It will be
+                automatically <strong>converted to WebP</strong> and <strong>resized to 800 × 450 px</strong> (16:9) before saving.
               </span>
             </div>
 
@@ -213,14 +244,14 @@ export default function AdminProjectsPage() {
                   <div className={styles.imgPlaceholderInner}>
                     <Upload size={28} className={styles.uploadIcon} />
                     <p className={styles.dropTitle}>Click or drag &amp; drop</p>
-                    <p className={styles.dropHint}>WebP · 800 × 450 px (16:9)</p>
+                    <p className={styles.dropHint}>Any image · auto-converted to WebP 800 × 450 px</p>
                   </div>
                   <div className={styles.aspectRatio}>16 : 9</div>
                 </div>
                 <input
                   ref={inputRef}
                   type="file"
-                  accept=".webp,image/webp"
+                  accept="image/*"
                   className={styles.hiddenInput}
                   onChange={(e) => { const f = e.target.files?.[0]; if (f) processFile(f); }}
                 />

@@ -21,7 +21,9 @@ interface UserRecord {
   step4: boolean;
   eCertPaid: boolean;
   physicalCertPaid: boolean;
-  createdAt: string | null;
+  createdAt:  string | null;
+  startDate:  string | null;
+  endDate:    string | null;
 }
 
 const STEPS = [
@@ -372,6 +374,7 @@ export default function ApplicationsPage() {
                             <th className={styles.thDomain}>Domain</th>
                             <th className={styles.thDomain}>College / University</th>
                             <th className={styles.thJoined}>Joined</th>
+                            <th className={styles.thJoined} style={{ minWidth: '150px' }}>Internship Period</th>
                             <th className={styles.thProgress}>Progress</th>
                             {STEPS.map((s, i) => (
                               <th key={s.key} className={styles.thCheck}>
@@ -403,6 +406,16 @@ export default function ApplicationsPage() {
                                   </span>
                                 </td>
                                 <td className={styles.tdDate}>{fmtDate(u.createdAt)}</td>
+                                <td className={styles.tdDate}>
+                                  {u.startDate ? (
+                                    <span style={{display:'flex',flexDirection:'column',gap:'2px'}}>
+                                      <span style={{fontSize:'0.7rem',color:'var(--secondary-text)',fontWeight:700}}>Start</span>
+                                      <span className={styles.dateChipApp}>{fmtDate(u.startDate)}</span>
+                                      <span style={{fontSize:'0.7rem',color:'var(--secondary-text)',fontWeight:700,marginTop:'4px'}}>End</span>
+                                      <span className={styles.dateChipApp} style={{background:'#fef3c7',color:'#92400e',border:'1px solid #fde68a'}}>{u.endDate ? fmtDate(u.endDate) : '—'}</span>
+                                    </span>
+                                  ) : <span style={{color:'var(--secondary-text)'}}>—</span>}
+                                </td>
                                 <td className={styles.tdProgress}>
                                   <div className={styles.progRow}>
                                     <div className={styles.progTrack}>
@@ -443,6 +456,11 @@ export default function ApplicationsPage() {
                                 <span className={styles.domainBadge}>{u.domain}</span>
                                 {u.college && <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{u.college}</span>}
                                 <span style={{ fontSize: '0.72rem', color: 'var(--secondary-text)' }}>{fmtDate(u.createdAt)}</span>
+                                {u.startDate && (
+                                  <span style={{ fontSize: '0.72rem', color: '#1d4ed8', fontWeight: 600 }}>
+                                    {fmtDate(u.startDate)} → {u.endDate ? fmtDate(u.endDate) : '—'}
+                                  </span>
+                                )}
                               </div>
                             </div>
                             <div className={styles.cardProgRow}>
@@ -492,3 +510,4 @@ export default function ApplicationsPage() {
     </div>
   );
 }
+
