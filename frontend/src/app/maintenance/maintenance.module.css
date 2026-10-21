@@ -1,0 +1,175 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f2027 100%);
+  font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated background blobs */
+.blob1, .blob2, .blob3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+  animation: float 8s ease-in-out infinite;
+}
+.blob1 {
+  width: 400px; height: 400px;
+  background: #00b894;
+  top: -100px; left: -100px;
+  animation-delay: 0s;
+}
+.blob2 {
+  width: 350px; height: 350px;
+  background: #0a66c2;
+  bottom: -80px; right: -80px;
+  animation-delay: -3s;
+}
+.blob3 {
+  width: 250px; height: 250px;
+  background: #7c3aed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -6s;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.06); }
+}
+.blob3 {
+  animation-name: floatCenter;
+}
+@keyframes floatCenter {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%       { transform: translate(-50%, -60%) scale(1.05); }
+}
+
+/* Card */
+.card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 48px 40px 36px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* Logo row */
+.logoRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.logoIcon { display: flex; }
+.logoText {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+/* Gear icon */
+.iconWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.iconBg {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0,184,148,0.15), rgba(10,102,194,0.15));
+  border: 1px solid rgba(0,184,148,0.3);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(0,184,148,0.15);
+}
+.gearIcon {
+  color: #00b894;
+  animation: spin 8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Titles */
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+}
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 24px;
+  min-height: 1.5em;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
+  margin: 0 0 24px;
+}
+
+/* Message */
+.messageBox {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.messageLine {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+  margin: 0 0 8px;
+}
+.messageLine:last-child { margin-bottom: 0; }
+
+/* Email button */
+.emailBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #00b894, #0a66c2);
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(0,184,148,0.3);
+}
+.emailBtn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* Footer */
+.footer {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+  margin: 0;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .card { padding: 36px 20px 28px; border-radius: 20px; }
+  .title { font-size: 1.5rem; }
+  .messageBox { padding: 16px 16px; }
+  .blob1, .blob2 { width: 200px; height: 200px; }
+}

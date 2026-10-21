@@ -315,3 +315,141 @@
   .headerBtns { width: 100%; }
   .markAllBtn, .refreshBtn { flex: 1; justify-content: center; }
 }
+
+/* ─── System Settings Card ────────────────────────────────────────────────── */
+.settingsCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(36,49,44,0.05);
+}
+
+.settingsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.settingsRowLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.settingsIcon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.settingsLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--main-text);
+  margin: 0 0 3px;
+}
+
+.settingsHint {
+  font-size: 0.78rem;
+  color: var(--secondary-text);
+  margin: 0;
+}
+
+/* Toggle switch */
+.toggleBtn {
+  position: relative;
+  width: 54px;
+  height: 30px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.25s;
+  padding: 0;
+}
+.toggleBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.toggleOff { background: #d1d5db; }
+.toggleOn  { background: #00b894; box-shadow: 0 0 12px rgba(0,184,148,0.4); }
+
+.toggleKnob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px; height: 24px;
+  background: #fff;
+  border-radius: 50%;
+  transition: left 0.25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggleOn .toggleKnob  { left: 27px; }
+
+/* Message section */
+.settingsMessageWrap {
+  padding: 20px 24px;
+}
+
+.settingsMessageLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--secondary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.settingsTextarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--admin-bg);
+  color: var(--main-text);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.settingsTextarea:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0,184,148,0.12);
+}
+
+.saveSettingsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #00b894;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+}
+.saveSettingsBtn:hover:not(:disabled) { background: #007a63; transform: translateY(-1px); }
+.saveSettingsBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .settingsRow { padding: 16px; }
+  .settingsMessageWrap { padding: 16px; }
+  .toggleBtn { width: 48px; height: 28px; }
+  .toggleKnob { width: 22px; height: 22px; }
+  .toggleOn .toggleKnob { left: 23px; }
+}
+

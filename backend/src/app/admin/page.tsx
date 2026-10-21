@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   Users, UserPlus, Link2, Award, Package,
   TrendingUp, RefreshCw, ArrowRight, CheckCircle,
-  Clock, Loader2, BellOff, Bell,
+  Clock, Loader2, BellOff, Bell, Settings, Power, AlertTriangle,
 } from 'lucide-react';
 import styles from './dashboard.module.css';
 
@@ -113,11 +113,22 @@ function StatCard({
 }
 
 /* ── Main ─────────────────────────────────────────────────────────────────── */
+interface SiteSettings {
+  maintenanceMode: boolean;
+  maintenanceMessage: string;
+}
+
 export default function AdminDashboard() {
   const [stats,       setStats]       = useState<Stats | null>(null);
   const [recent,      setRecent]      = useState<RecentReg[]>([]);
   const [loading,     setLoading]     = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+
+  /* ── System Settings state ── */
+  const [settings,      setSettings]      = useState<SiteSettings>({ maintenanceMode: false, maintenanceMessage: '' });
+  const [settingsLoad,  setSettingsLoad]  = useState(true);
+  const [settingsSave,  setSettingsSave]  = useState(false);
+  const [settingsMsg,   setSettingsMsg]   = useState<{ ok: boolean; text: string } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -134,6 +145,36 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  /* ── Load site settings ── */
+  const loadSettings = useCallback(async () => {
+    setSettingsLoad(true);
+    try {
+      const r = await fetch('/api/site-settings');
+      const d = await r.json();
+      if (d.success) setSettings(d.settings);
+    } catch {/* silent */}
+    finally { setSettingsLoad(false); }
+  }, []);
+  useEffect(() => { loadSettings(); }, [loadSettings]);
+
+  /* ── Save site settings ── */
+  const saveSettings = async (patch: Partial<SiteSettings>) => {
+    const next = { ...settings, ...patch };
+    setSettings(next);
+    setSettingsSave(true); setSettingsMsg(null);
+    try {
+      const r = await fetch('/api/site-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(next),
+      });
+      const d = await r.json();
+      setSettingsMsg({ ok: d.success, text: d.success ? 'Settings saved.' : (d.message || 'Failed.') });
+      setTimeout(() => setSettingsMsg(null), 3000);
+    } catch { setSettingsMsg({ ok: false, text: 'Network error.' }); }
+    finally { setSettingsSave(false); }
+  };
 
   /* ── Mark-read helpers ─────────────────────────────────────────────────── */
   const markAndReload = async (cats: string[]) => {
@@ -382,6 +423,79 @@ export default function AdminDashboard() {
                 </div>
               ))}
             </div>
+          </section>
+
+          {/* ── System Settings ─────────────────────────────────────── */}
+          <section>
+            <h2 className={styles.sectionTitle}>
+              <span className={styles.sectionDot} style={{ background: '#f59e0b' }} />
+              System Settings
+              <span className={styles.sectionSub}>Site-wide controls</span>
+            </h2>
+            {settingsLoad ? (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center', color: 'var(--secondary-text)', fontSize: '0.875rem' }}>
+                <Loader2 size={16} style={{ animation: 'spin 0.8s linear infinite' }} /> Loading…
+              </div>
+            ) : (
+              <div className={styles.settingsCard}>
+                {/* Maintenance Mode toggle */}
+                <div className={styles.settingsRow}>
+                  <div className={styles.settingsRowLeft}>
+                    <div className={styles.settingsIcon} style={{ background: settings.maintenanceMode ? '#fef3c7' : '#f0fdf4', color: settings.maintenanceMode ? '#92400e' : '#166534' }}>
+                      {settings.maintenanceMode ? <AlertTriangle size={18} /> : <Power size={18} />}
+                    </div>
+                    <div>
+                      <p className={styles.settingsLabel}>Site Status</p>
+                      <p className={styles.settingsHint}>
+                        {settings.maintenanceMode
+                          ? '⚠️ Site is OFFLINE — visitors see the maintenance page'
+                          : '✅ Site is ONLINE — all pages accessible normally'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    id="maintenance-toggle-btn"
+                    className={`${styles.toggleBtn} ${settings.maintenanceMode ? styles.toggleOn : styles.toggleOff}`}
+                    onClick={() => saveSettings({ maintenanceMode: !settings.maintenanceMode })}
+                    disabled={settingsSave}
+                    title={settings.maintenanceMode ? 'Turn site ON (disable maintenance)' : 'Turn site OFF (enable maintenance)'}
+                  >
+                    <span className={styles.toggleKnob} />
+                  </button>
+                </div>
+
+                {/* Message editor — shown when maintenance is on or being configured */}
+                <div className={styles.settingsMessageWrap}>
+                  <label className={styles.settingsMessageLabel}>
+                    <Settings size={13} /> Maintenance Message
+                  </label>
+                  <textarea
+                    id="maintenance-message"
+                    className={styles.settingsTextarea}
+                    rows={4}
+                    value={settings.maintenanceMessage}
+                    onChange={e => setSettings(s => ({ ...s, maintenanceMessage: e.target.value }))}
+                    placeholder="Type the message visitors will see on the maintenance page…"
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10 }}>
+                    <button
+                      id="save-maintenance-message-btn"
+                      className={styles.saveSettingsBtn}
+                      onClick={() => saveSettings({})}
+                      disabled={settingsSave}
+                    >
+                      {settingsSave ? <Loader2 size={13} style={{ animation: 'spin 0.8s linear infinite' }} /> : <Settings size={13} />}
+                      {settingsSave ? 'Saving…' : 'Save Message'}
+                    </button>
+                    {settingsMsg && (
+                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: settingsMsg.ok ? '#007a63' : '#c0334d' }}>
+                        {settingsMsg.text}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         </>
       )}
