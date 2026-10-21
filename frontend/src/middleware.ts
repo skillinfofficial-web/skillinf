@@ -23,15 +23,16 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Check maintenance mode from our own API (same server)
-    const url = request.nextUrl.clone();
-    url.pathname = '/api/site-settings';
-    const res = await fetch(url.toString(), { next: { revalidate: 30 } });
+    // Build absolute URL to the site-settings API on the same origin
+    const apiUrl = new URL('/api/site-settings', request.nextUrl.origin);
+    const res    = await fetch(apiUrl.toString(), {
+      // Bypass edge cache — we want the live value from MongoDB
+      headers: { 'cache-control': 'no-store' },
+    });
 
     if (res.ok) {
       const data = await res.json();
       if (data?.settings?.maintenanceMode === true) {
-        // Redirect to maintenance page
         const maintenanceUrl = request.nextUrl.clone();
         maintenanceUrl.pathname = '/maintenance';
         return NextResponse.redirect(maintenanceUrl);
@@ -46,12 +47,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths EXCEPT:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico, public files
-     */
     '/((?!_next/static|_next/image|favicon|icon|apple-touch-icon).*)',
   ],
 };
