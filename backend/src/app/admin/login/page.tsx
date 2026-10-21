@@ -20,18 +20,42 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
 
-    // Simulate a small async delay for UX
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 300));
 
-    if (email.trim() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      // Set cookie (expires in 8 hours)
+    const emailNorm = email.trim().toLowerCase();
+
+    // ── 1. Master admin ───────────────────────────────────────────────────────
+    if (emailNorm === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
       const expires = new Date(Date.now() + 8 * 60 * 60 * 1000).toUTCString();
-      document.cookie = `admin_session=1; path=/; expires=${expires}; SameSite=Strict`;
+      document.cookie = `admin_session=master; path=/; expires=${expires}; SameSite=Strict`;
+      document.cookie = `admin_role=master; path=/; expires=${expires}; SameSite=Strict`;
       router.push('/admin');
-    } else {
-      setError('Invalid email or password. Please try again.');
-      setLoading(false);
+      return;
     }
+
+    // ── 2. Sub-admin credential check via API ─────────────────────────────────
+    try {
+      const res  = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailNorm, password }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const expires = new Date(Date.now() + 8 * 60 * 60 * 1000).toUTCString();
+        document.cookie = `admin_session=sub; path=/; expires=${expires}; SameSite=Strict`;
+        document.cookie = `admin_role=sub; path=/; expires=${expires}; SameSite=Strict`;
+        // Store permissions in sessionStorage so sidebar can read them
+        sessionStorage.setItem('admin_permissions', JSON.stringify(data.permissions));
+        sessionStorage.setItem('admin_label',       data.label ?? '');
+        sessionStorage.setItem('admin_email',       emailNorm);
+        router.push('/admin');
+        return;
+      }
+    } catch { /* fall through */ }
+
+    setError('Invalid email or password. Please try again.');
+    setLoading(false);
   };
 
   return (
@@ -67,7 +91,7 @@ export default function AdminLoginPage() {
                 id="admin-email"
                 type="email"
                 className={styles.input}
-                placeholder="skillinfofficial@gmail.com"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
