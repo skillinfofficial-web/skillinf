@@ -9,9 +9,9 @@ export function middleware(req: NextRequest) {
   // Allow the login page itself (and its assets)
   if (pathname.startsWith('/admin/login')) return NextResponse.next();
 
-  // Check for the session cookie
+  // Check for the session cookie ('master' or 'sub' set by login page)
   const session = req.cookies.get('admin_session');
-  if (session?.value === '1') return NextResponse.next();
+  if (session?.value === 'master' || session?.value === 'sub') return NextResponse.next();
 
   // Redirect to login
   const loginUrl = req.nextUrl.clone();
