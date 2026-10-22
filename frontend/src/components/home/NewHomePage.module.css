@@ -195,13 +195,27 @@
    CTA
 ═══════════════════════════ */
 .ctaWrap    { background:var(--highlight); padding:96px 0 }
-.ctaBox     { max-width:700px; margin:0 auto; text-align:center; background:#fff; border:1.5px solid var(--border); border-radius:20px; padding:60px 48px; box-shadow:0 12px 56px rgba(63,95,84,.09) }
-.ctaH       { font-size:clamp(1.9rem,3.5vw,2.6rem); font-weight:900; color:var(--hp-accent-deep); letter-spacing:-.04em; line-height:1.08; margin-bottom:14px }
-.ctaP       { font-size:.975rem; color:var(--secondary-text); line-height:1.75; max-width:480px; margin:0 auto 36px }
-.ctaRow     { display:flex; gap:14px; justify-content:center; flex-wrap:wrap }
-.btnCtaMain { padding:14px 36px; background:var(--hp-accent); color:#fff; border-radius:8px; font-size:.95rem; font-weight:700; border:none; cursor:pointer; transition:background .2s,transform .18s }
+.ctaBox     {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 60px 48px;
+  box-shadow: 0 12px 56px rgba(63,95,84,.09);
+  /* Force vertical stack — prevents AnimationProvider class injection from breaking layout */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0;
+}
+.ctaH       { font-size:clamp(1.9rem,3.5vw,2.6rem); font-weight:900; color:var(--hp-accent-deep); letter-spacing:-.04em; line-height:1.08; margin-bottom:14px; width:100%; display:block !important; transform:none !important; opacity:1 !important }
+.ctaP       { font-size:.975rem; color:var(--secondary-text); line-height:1.75; max-width:480px; margin:0 0 36px; width:100%; display:block !important; transform:none !important; opacity:1 !important }
+.ctaRow     { display:flex !important; flex-direction:row; gap:14px; justify-content:center; flex-wrap:wrap; width:100% }
+.btnCtaMain { padding:14px 36px; background:var(--hp-accent); color:#fff; border-radius:8px; font-size:.95rem; font-weight:700; border:none; cursor:pointer; transition:background .2s,transform .18s; flex-shrink:0 }
 .btnCtaMain:hover { background:var(--hp-accent-dark); transform:translateY(-2px) }
-.btnCtaSec  { padding:14px 26px; background:transparent; color:var(--brand-dark); border:1.5px solid var(--border); border-radius:8px; font-size:.95rem; font-weight:600; cursor:pointer; transition:border-color .2s,background .2s,transform .18s }
+.btnCtaSec  { padding:14px 26px; background:transparent; color:var(--brand-dark); border:1.5px solid var(--border); border-radius:8px; font-size:.95rem; font-weight:600; cursor:pointer; transition:border-color .2s,background .2s,transform .18s; flex-shrink:0 }
 .btnCtaSec:hover { border-color:var(--main-brand); background:var(--highlight); transform:translateY(-2px) }
 
 /* ═══════════════════════════

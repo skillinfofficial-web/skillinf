@@ -17,54 +17,65 @@ import { usePathname } from 'next/navigation';
 const REVEAL = '.sr,.sr-l,.sr-r,.sr-scale,.img-rev';
 
 /** Stamp animation classes onto raw DOM elements in <main> */
+/** Check if element is inside a [data-no-stamp] container */
+function isProtected(el: Element): boolean {
+  return !!el.closest('[data-no-stamp]');
+}
+
 function stampAnimations() {
   const main = document.querySelector('main');
   if (!main) return;
 
-  // h1-h3 → staggered fade-up
+  // h1-h3 → staggered fade-up (skip protected zones)
   main.querySelectorAll('h1,h2,h3').forEach((el, i) => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('sr') && !el.classList.contains('tl-1')) {
       el.classList.add('sr');
       if (i > 0) el.classList.add(`sd-${Math.min((i % 4) + 1, 6)}`);
     }
   });
 
-  // section & header paragraphs → fade-up
+  // section & header paragraphs → fade-up (skip protected zones)
   main.querySelectorAll('section p, header p').forEach((el, i) => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('sr')) {
       el.classList.add('sr');
       el.classList.add(`sd-${Math.min((i % 3) + 2, 6)}`);
     }
   });
 
-  // cards / articles / tiles / steps / items → lift + stagger
+  // cards / articles / tiles / steps / items → lift + stagger (skip protected zones)
   main.querySelectorAll(
     'article,[class*="card"],[class*="Card"],[class*="tile"],[class*="Tile"],' +
     '[class*="step"],[class*="Step"],[class*="item"],[class*="Item"]'
   ).forEach((el, i) => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('sr') && !el.classList.contains('sr-l'))
       el.classList.add('sr');
     if (!el.classList.contains('lift')) el.classList.add('lift');
     el.classList.add(`sd-${Math.min((i % 6) + 1, 6)}`);
   });
 
-  // images → clip-path reveal (skip logos/icons/avatars)
+  // images → clip-path reveal (skip logos/icons/avatars + protected zones)
   main.querySelectorAll('img').forEach(img => {
+    if (isProtected(img)) return;
     const c = img.className ?? '';
     if (/logo|Logo|icon|Icon|avatar|Avatar/.test(c)) return;
     if (!img.classList.contains('img-rev')) img.classList.add('img-rev');
   });
 
-  // CTA buttons → magnetic
+  // CTA buttons → magnetic (skip protected zones)
   main.querySelectorAll(
     '[class*="btn"],[class*="Btn"],[class*="Cta"],[class*="cta"],' +
     '[class*="signUp"],[class*="signup"],[class*="apply"],[class*="Apply"]'
   ).forEach(el => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('mag')) el.classList.add('mag');
   });
 
-  // stat/count elements → sr + count-up
+  // stat/count elements → sr + count-up (skip protected zones)
   main.querySelectorAll('[class*="stat"],[class*="Stat"],[class*="count"],[class*="Count"]').forEach(el => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('sr')) el.classList.add('sr');
     const text = (el.textContent ?? '').trim();
     const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
@@ -74,8 +85,9 @@ function stampAnimations() {
     }
   });
 
-  // feature / section blocks → alternate left/right slide-in
+  // feature / section blocks → alternate left/right slide-in (skip protected zones)
   main.querySelectorAll('[class*="feature"],[class*="Feature"],[class*="section"]').forEach((el, i) => {
+    if (isProtected(el)) return;
     if (!el.classList.contains('sr') && !el.classList.contains('sr-l') && !el.classList.contains('sr-r'))
       el.classList.add(i % 2 === 0 ? 'sr-l' : 'sr-r');
   });

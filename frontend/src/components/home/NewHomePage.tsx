@@ -478,7 +478,7 @@ export default function NewHomePage() {
       <section className={s.ctaWrap} id="contact" aria-label="Call to action">
         <div className={s.wrap}>
           <SR>
-            <div className={`${s.ctaBox} ${s.lift}`}>
+            <div className={`${s.ctaBox} ${s.lift}`} data-no-stamp>
               <h2 className={s.ctaH}>
                 Ready to Begin <span className={s.gradText}>Your Journey?</span>
               </h2>
