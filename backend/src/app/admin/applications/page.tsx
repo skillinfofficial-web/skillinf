@@ -49,6 +49,15 @@ const FILTER_OPTIONS: { key: StepKey; label: string; notKey?: StepKey }[] = [
   { key: 'physicalCertPaid', label: 'Physical Certificate'                             },
 ];
 
+// "Registered" = signed up but NO action taken at all
+function isOnlyRegistered(u: UserRecord) {
+  return (
+    !u.linkedinVerified &&
+    !u.step1 && !u.step2 && !u.step3 && !u.step4 &&
+    !u.eCertPaid && !u.physicalCertPaid
+  );
+}
+
 const STEP_COLORS = ['#0a66c2', '#7c3aed', '#7c3aed', '#7c3aed', '#7c3aed', '#00b894', '#f59e0b'];
 
 function ProgressTick({ done, index }: { done: boolean; index: number }) {
@@ -139,8 +148,9 @@ export default function ApplicationsPage() {
   const [search,     setSearch]     = useState('');
   const [openMonths, setOpenMonths] = useState<Set<string>>(new Set());
 
-  // Checkbox filters — set of active StepKeys
-  const [activeFilters, setActiveFilters] = useState<Set<StepKey>>(new Set());
+  // Checkbox filters — set of active StepKeys; plus special 'registered' flag
+  const [activeFilters,      setActiveFilters]      = useState<Set<StepKey>>(new Set());
+  const [registeredFilter,   setRegisteredFilter]   = useState(false);
 
   const load = () => {
     setLoading(true); setError('');
@@ -169,7 +179,9 @@ export default function ApplicationsPage() {
     });
   };
 
-  const clearFilters = () => setActiveFilters(new Set());
+  const toggleRegistered = () => setRegisteredFilter(p => !p);
+
+  const clearFilters = () => { setActiveFilters(new Set()); setRegisteredFilter(false); };
 
   // Apply search + checkbox stage filters
   const filtered = useMemo(() => {
@@ -184,19 +196,22 @@ export default function ApplicationsPage() {
         (u.college ?? '').toLowerCase().includes(q),
       );
     }
-    // Stage filter: show users who are AT one of the selected stages (OR across selections)
-    // A user is "at stage X" if X is done AND the next milestone is NOT done
-    if (activeFilters.size > 0) {
-      r = r.filter(u =>
-        FILTER_OPTIONS.some(opt =>
+    // Stage filter (OR logic): Registered special flag + milestone checkboxes
+    const hasStageFilter = activeFilters.size > 0 || registeredFilter;
+    if (hasStageFilter) {
+      r = r.filter(u => {
+        // Registered = no action taken at all
+        if (registeredFilter && isOnlyRegistered(u)) return true;
+        // Milestone-based filters
+        return FILTER_OPTIONS.some(opt =>
           activeFilters.has(opt.key) &&
           u[opt.key] === true &&
           (opt.notKey ? u[opt.notKey] === false : true),
-        ),
-      );
+        );
+      });
     }
     return r;
-  }, [records, search, activeFilters]);
+  }, [records, search, activeFilters, registeredFilter]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, UserRecord[]>();
@@ -241,13 +256,25 @@ export default function ApplicationsPage() {
       <div className={styles.filterPanel}>
         <div className={styles.filterTop}>
           <span className={styles.filterLabel}>Filter by milestone:</span>
-          {activeFilters.size > 0 && (
+          {(activeFilters.size > 0 || registeredFilter) && (
             <button className={styles.clearBtn} onClick={clearFilters}>
-              Clear filters ({activeFilters.size})
+              Clear filters ({activeFilters.size + (registeredFilter ? 1 : 0)})
             </button>
           )}
         </div>
         <div className={styles.filterGrid}>
+          {/* Special: Registered only — no action taken */}
+          <label className={`${styles.filterChip} ${styles.filterChipRegistered} ${registeredFilter ? styles.filterChipOn : ''}`}>
+            <input
+              type="checkbox"
+              className={styles.filterCheckbox}
+              checked={registeredFilter}
+              onChange={toggleRegistered}
+              id="filter-registered"
+            />
+            <span className={styles.filterChipLabel}>🆕 Registered</span>
+          </label>
+
           {FILTER_OPTIONS.map(opt => {
             const checked = activeFilters.has(opt.key);
             return (

@@ -77,6 +77,14 @@
   background: var(--soft-accent);
   color: var(--brand-dark);
 }
+/* Registered chip — amber accent */
+.filterChipRegistered { border-color: #f59e0b; }
+.filterChipRegistered:hover { border-color: #d97706; color: #92400e; }
+.filterChipRegistered.filterChipOn {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
 .filterCheckbox { accent-color: var(--main-brand); width: 14px; height: 14px; cursor: pointer; }
 .filterChipLabel { white-space: nowrap; }
 
