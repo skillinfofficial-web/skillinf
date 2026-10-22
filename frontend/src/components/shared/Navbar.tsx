@@ -15,11 +15,11 @@ const serviceLinks = [
 ];
 
 const navLinks = [
-  { href: '/internships', label: 'Internships' },
-  { href: '/programs',    label: 'Programs'    },
-  { href: '/projects',    label: 'Projects'    },
-  { href: '/support',     label: 'Support'     },
-  { href: '/about',       label: 'About'       },
+  { href: '/sign-up',  label: 'Internships' },
+  { href: '/programs', label: 'Programs'    },
+  { href: '/projects', label: 'Projects'    },
+  { href: '/support',  label: 'Support'     },
+  { href: '/about',    label: 'About'       },
 ];
 
 export default function Navbar() {
