@@ -750,3 +750,76 @@ p {
 
 /* ── count-up number ──────────────────────────────────────── */
 .count-up { font-variant-numeric: tabular-nums }
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL RESPONSIVE — covers all pages site-wide
+═══════════════════════════════════════════════════════════════ */
+
+/* Ensure every section / page wrapper stretches full width */
+main { width: 100%; min-height: 60vh; }
+
+/* ── Tablet (≤1024px) ── */
+@media (max-width: 1024px) {
+  /* Services pages */
+  .services-page-container,
+  .services-overview-page { padding: 40px 20px 60px; }
+
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  .services-overview-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile (≤768px) ── */
+@media (max-width: 768px) {
+  /* Global section spacing */
+  .section { padding: 52px 0; }
+
+  /* Services overview & pricing */
+  .services-hero { margin-bottom: 40px; }
+  .services-title { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+  .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
+  .services-overview-grid { grid-template-columns: 1fr; }
+  .services-page-container,
+  .services-overview-page { padding: 32px 16px 48px; }
+
+  /* Auth / sign-in / sign-up forms */
+  form { width: 100%; }
+
+  /* Footer stacking */
+  footer .container { padding: 0 16px; }
+}
+
+/* ── Small phone (≤640px) ── */
+@media (max-width: 640px) {
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid  { grid-template-columns: 1fr; }
+
+  /* Navbar */
+  :root { --nav-height: 60px; }
+}
+
+/* ── Very small phone (≤480px) ── */
+@media (max-width: 480px) {
+  /* Global */
+  .container { padding: 0 14px; }
+  .section { padding: 40px 0; }
+
+  /* Cards */
+  .card { padding: 22px 16px; border-radius: 10px; }
+
+  /* Services */
+  .services-grid { grid-template-columns: 1fr; }
+  .services-overview-card { padding: 24px 20px; }
+  .pricing-card { padding: 24px 18px; }
+  .pricing-price { font-size: 1.6rem; }
+
+  /* Animation classes — reduce movement on small screens */
+  .sr { transform: translateY(16px); }
+  .sr-l { transform: translateX(-16px); }
+  .sr-r { transform: translateX(16px); }
+}
+
+/* ── Minimum support (≤360px) ── */
+@media (max-width: 360px) {
+  .container { padding: 0 12px; }
+  :root { --nav-height: 56px; }
+}
