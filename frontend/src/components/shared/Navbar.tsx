@@ -77,8 +77,8 @@ export default function Navbar() {
             <Link
               key={label}
               href={href}
-              className={`${styles.navLink} ${
-                pathname === href || pathname?.startsWith(href + '/') ? styles.navLinkActive : ''
+              className={`${styles.navLink} nav-ul ${
+                pathname === href || pathname?.startsWith(href + '/') ? styles.navLinkActive + ' active' : ''
               }`}
             >
               {label}
@@ -122,8 +122,8 @@ export default function Navbar() {
             <Link
               key={label}
               href={href}
-              className={`${styles.navLink} ${
-                pathname === href || pathname?.startsWith(href + '/') ? styles.navLinkActive : ''
+              className={`${styles.navLink} nav-ul ${
+                pathname === href || pathname?.startsWith(href + '/') ? styles.navLinkActive + ' active' : ''
               }`}
             >
               {label}
