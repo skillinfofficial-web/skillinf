@@ -15,8 +15,8 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "SkillInf | Transforming Ideas into Digital Solutions",
-    template: "%s | SkillInf",
+    default: "Skillinf Tech India | Transforming Ideas into Digital Solutions",
+    template: "%s | Skillinf Tech India",
   },
   description:
     "SkillInf builds premium websites, AI automation tools, UI/UX designs, and 3D renders for businesses — and runs virtual internship programs to help students build real-world skills.",
