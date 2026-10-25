@@ -8,25 +8,25 @@ import s from './NewHomePage.module.css';
 /* ── DATA ─────────────────────────────────────────────────────────────── */
 const SERVICES = [
   {
-    num: '01', img: '/svc-web.jpg', rev: false,
+    num: '01', img: '/svc-web.webp', rev: false,
     name: 'Website Development',
     desc: 'We design and develop high-performance websites and web applications that look great, load fast, and convert visitors into customers. From marketing sites to complex SaaS platforms — built production-ready.',
     features: ['Custom React & Next.js Websites', 'Landing Pages & Marketing Sites', 'SaaS Platforms & Web Apps', 'E-Commerce & Storefronts'],
   },
   {
-    num: '02', img: '/svc-ai.jpg', rev: true,
+    num: '02', img: '/svc-ai.webp', rev: true,
     name: 'AI Automation',
     desc: 'Reduce manual work and accelerate operations with custom AI agents and automation pipelines. We build intelligent workflows that handle repetitive tasks so your team can focus on what matters.',
     features: ['Custom AI Agents & Chatbots', 'Business Workflow Automation', 'CRM & Sales Automation', 'Lead Generation Systems'],
   },
   {
-    num: '03', img: '/svc-uiux.jpg', rev: false,
+    num: '03', img: '/svc-uiux.webp', rev: false,
     name: 'UI/UX Design',
     desc: 'Design is not just how it looks — it is how it works. We create intuitive, visually refined interfaces for websites, mobile apps, dashboards, and SaaS products that earn user trust.',
     features: ['End-to-End Figma Design', 'Design Systems & Component Libraries', 'Mobile App UI & Dashboards', 'User Research & Prototyping'],
   },
   {
-    num: '04', img: '/svc-3d.jpg', rev: true,
+    num: '04', img: '/svc-3d.webp', rev: true,
     name: '3D Design & Rendering',
     desc: 'Bring ideas to life with photorealistic 3D visuals. We produce architectural renders, product visualizations, construction walkthroughs, and animated brand assets that make a lasting impression.',
     features: ['Architectural 3D Rendering', 'Product Visualization', 'Construction Walkthroughs', 'Brand Animations & Videos'],
@@ -260,8 +260,8 @@ export default function NewHomePage() {
             </div>
 
             <div className={`${s.heroImgWrap} ${s.lift}`}>
-              <Image src="/hero.jpg" alt="SkillInf digital services dashboard" width={800} height={460}
-                style={{ width: '100%', height: 460, objectFit: 'cover' }} priority />
+              <Image src="/hero.webp" alt="SkillInf digital services dashboard" width={800} height={460} priority
+                style={{ width: '100%', height: 460, objectFit: 'cover' }} />
               <div className={s.heroBadge}>
                 <span className={s.hbDot} />
                 <div>
@@ -317,7 +317,7 @@ export default function NewHomePage() {
             </SR>
             <SR cls={s.revealR}>
               <div className={s.introImg}>
-                <Image src="/svc-web.jpg" alt="SkillInf services overview" width={600} height={360}
+                <Image src="/svc-web.webp" alt="SkillInf services overview" width={600} height={360}
                   style={{ width: '100%', height: 360, objectFit: 'cover' }} />
               </div>
             </SR>

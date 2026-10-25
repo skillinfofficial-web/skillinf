@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [],
+    formats: ['image/webp'],          // serve WebP by default
+    minimumCacheTTL: 31536000,        // cache images for 1 year
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
   },
   async headers() {
     return [

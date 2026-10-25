@@ -56,13 +56,11 @@ function stampAnimations() {
     el.classList.add(`sd-${Math.min((i % 6) + 1, 6)}`);
   });
 
-  // images → clip-path reveal (skip logos/icons/avatars + protected zones)
-  main.querySelectorAll('img').forEach(img => {
-    if (isProtected(img)) return;
-    const c = img.className ?? '';
-    if (/logo|Logo|icon|Icon|avatar|Avatar/.test(c)) return;
-    if (!img.classList.contains('img-rev')) img.classList.add('img-rev');
-  });
+  // NOTE: img-rev (clip-path reveal) is NOT auto-stamped on all images.
+  // Above-fold images stamped with img-rev would stay hidden forever since
+  // IntersectionObserver only fires .in when scrolling INTO view.
+  // Apply img-rev explicitly in JSX only on below-fold images that should animate in.
+
 
   // CTA buttons → magnetic (skip protected zones)
   main.querySelectorAll(
