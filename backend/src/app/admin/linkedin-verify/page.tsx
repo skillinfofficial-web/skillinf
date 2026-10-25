@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Search, Mail, Send } from 'lucide-react';
+import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Search, Phone, Mail, Send } from 'lucide-react';
 import styles from './LinkedInVerify.module.css';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
