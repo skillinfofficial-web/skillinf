@@ -52,6 +52,7 @@ const navSections = [
       { name: 'Batches',             path: '/admin/batches',              icon: CalendarDays },
       { name: 'Platforms',            path: '/admin/platforms',            icon: Monitor },
       { name: 'Announcement Bar',     path: '/admin/announcement',         icon: Megaphone },
+      { name: 'Careers',              path: '/admin/careers',              icon: Briefcase },
     ],
   },
   {
@@ -60,7 +61,6 @@ const navSections = [
       { name: 'Applications',          path: '/admin/applications',          icon: FileText },
       { name: 'E-Certificate',         path: '/admin/e-certificate',         icon: GraduationCap },
       { name: 'LinkedIn Verify',       path: '/admin/linkedin-verify',       icon: Link2 },
-      { name: 'Careers',               path: '/admin/careers',               icon: Briefcase },
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
       { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
       { name: 'Referrals',             path: '/admin/referrals',             icon: Gift },

@@ -37,6 +37,20 @@ const EMPTY_FORM = {
 const JOB_TYPES   = ['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance'];
 const DEPARTMENTS = ['Engineering', 'Design', 'Marketing', 'Sales', 'Operations', 'HR', 'Finance', 'Content', 'Other'];
 
+/* ── Field — defined OUTSIDE parent to prevent focus-loss on re-render ── */
+function Field({
+  label, id, required = false, children,
+}: { label: string; id: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div className={styles.field}>
+      <label className={styles.label} htmlFor={id}>
+        {label}{required && <span className={styles.req}>*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
 export default function CareersPage() {
   const [jobs,    setJobs]    = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -151,17 +165,7 @@ export default function CareersPage() {
   const openJobs   = jobs.filter(j => j.status === 'open');
   const closedJobs = jobs.filter(j => j.status === 'closed');
 
-  /* ── Field component ── */
-  const Field = ({
-    label, id, required = false, children,
-  }: { label: string; id: string; required?: boolean; children: React.ReactNode }) => (
-    <div className={styles.field}>
-      <label className={styles.label} htmlFor={id}>
-        {label}{required && <span className={styles.req}>*</span>}
-      </label>
-      {children}
-    </div>
-  );
+
 
   return (
     <div className={styles.page}>
