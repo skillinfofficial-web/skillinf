@@ -28,7 +28,6 @@ export default function InternshipsPage() {
         <ProjectsSection />
       </main>
       <Footer />
-      <LiveRegistrationPopup />
     </>
   );
 }
