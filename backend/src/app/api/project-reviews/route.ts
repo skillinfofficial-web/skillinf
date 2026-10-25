@@ -224,10 +224,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Step ${review.step} rejected — user can resubmit.`,
-      // Return mobile so frontend can open WhatsApp
-      mobileNumber: (review.mobileNumber as string) ?? '',
-      name: review.name as string,
-      step: review.step as number,
+      email: review.email as string,
+      name:  review.name  as string,
+      step:  review.step  as number,
     });
   } catch (err) {
     console.error('[PATCH /api/project-reviews]', err);

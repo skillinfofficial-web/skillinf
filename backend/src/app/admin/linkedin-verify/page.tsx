@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Phone, Search } from 'lucide-react';
+import { CheckCircle2, XCircle, Link2, Loader2, AlertCircle, ExternalLink, FolderOpen, ChevronDown, ChevronUp, Search, Mail, Send } from 'lucide-react';
 import styles from './LinkedInVerify.module.css';
 
 /* ── Types ─────────────────────────────────────────────────────────────────── */
@@ -55,6 +55,14 @@ export default function LinkedInVerifyPage() {
   // expanded: which person containers + which step rows are open
   const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
   const [expandedStep,   setExpandedStep]   = useState<string | null>(null);
+
+  /* ── Reject email modal state ── */
+  const [rejectModal, setRejectModal] = useState<{
+    reviewId: string; name: string; email: string; step: number;
+  } | null>(null);
+  const [rejectContent, setRejectContent] = useState('');
+  const [rejectSending, setRejectSending] = useState(false);
+  const [rejectResult,  setRejectResult]  = useState<{ ok: boolean; msg: string } | null>(null);
 
   /* ── Loaders ── */
   const loadLi = () => {
@@ -144,18 +152,31 @@ export default function LinkedInVerifyPage() {
       setPrActionMsg({ id: review._id, msg: data.message, ok: data.success });
       if (data.success) {
         loadPr();
-        // On reject — open WhatsApp with pre-typed message
-        if (action === 'reject' && data.mobileNumber) {
-          const mobile = String(data.mobileNumber).replace(/\D/g, '');
-          const waNumber = mobile.startsWith('91') ? mobile : `91${mobile}`;
-          const waMsg = encodeURIComponent(
-            `Hi ${data.name}, your Week ${data.step} project submission on Skillinf could not be verified — the link you provided is not accessible or invalid. Please re-submit with a valid Google Drive / GitHub link so our mentor can review it. Log in to your dashboard to resubmit: https://skillinf.in/dashboard`
-          );
-          window.open(`https://wa.me/${waNumber}?text=${waMsg}`, '_blank');
+        // On reject — open the email compose modal
+        if (action === 'reject') {
+          setRejectModal({ reviewId: review._id, name: data.name, email: data.email, step: data.step });
+          setRejectContent('');
+          setRejectResult(null);
         }
       }
     } catch { setPrActionMsg({ id: review._id, msg: 'Network error.', ok: false }); }
     finally { setPrBusyId(null); }
+  };
+
+  /* ── Send rejection email ── */
+  const sendRejectEmail = async () => {
+    if (!rejectModal || !rejectContent.trim()) return;
+    setRejectSending(true); setRejectResult(null);
+    try {
+      const res  = await fetch('/api/project-reviews/reject-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId: rejectModal.reviewId, content: rejectContent }),
+      });
+      const data = await res.json();
+      setRejectResult({ ok: data.success, msg: data.message });
+      if (data.success) setTimeout(() => setRejectModal(null), 2000);
+    } catch { setRejectResult({ ok: false, msg: 'Network error. Try again.' }); }
+    finally { setRejectSending(false); }
   };
 
   const fmtDate = (d: string) => d
@@ -174,6 +195,67 @@ export default function LinkedInVerifyPage() {
 
   return (
     <div className={styles.page}>
+
+      {/* ── Reject Email Modal ── */}
+      {rejectModal && (
+        <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) setRejectModal(null); }}>
+          <div className={styles.modalBox}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalIcon}><Mail size={20} /></div>
+              <div>
+                <p className={styles.modalTitle}>Send Rejection Email</p>
+                <p className={styles.modalSubtitle}>
+                  To: <strong>{rejectModal.name}</strong> · {rejectModal.email} · Week {rejectModal.step}
+                </p>
+              </div>
+            </div>
+
+            <div className={styles.modalSubjectRow}>
+              <span className={styles.modalSubjectLabel}>Subject</span>
+              <span className={styles.modalSubjectValue}>Project Submission Rejected — Action Required | Skillinf</span>
+            </div>
+
+            <label className={styles.modalLabel} htmlFor="reject-content">Message to student</label>
+            <textarea
+              id="reject-content"
+              className={styles.modalTextarea}
+              rows={7}
+              placeholder={`Hi ${rejectModal.name},\n\nYour Week ${rejectModal.step} project submission could not be verified.\n\nReason: [write the reason here]\n\nPlease resubmit via your dashboard.`}
+              value={rejectContent}
+              onChange={e => setRejectContent(e.target.value)}
+              autoFocus
+            />
+
+            {rejectResult && (
+              <p className={`${styles.modalFeedback} ${rejectResult.ok ? styles.modalFeedbackOk : styles.modalFeedbackErr}`}>
+                {rejectResult.msg}
+              </p>
+            )}
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={() => setRejectModal(null)}
+                disabled={rejectSending}
+              >
+                Cancel
+              </button>
+              <button
+                id="send-reject-email-btn"
+                className={styles.modalSendBtn}
+                onClick={sendRejectEmail}
+                disabled={rejectSending || !rejectContent.trim()}
+              >
+                {rejectSending
+                  ? <><Loader2 size={14} className={styles.btnSpinner} /> Sending…</>
+                  : <><Send size={14} /> Send Email</>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Header ── */}
       <header className={styles.header}>
         <div>
