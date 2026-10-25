@@ -29,6 +29,7 @@ import {
   Monitor,
   Mail,
   Ticket,
+  Briefcase,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -59,6 +60,7 @@ const navSections = [
       { name: 'Applications',          path: '/admin/applications',          icon: FileText },
       { name: 'E-Certificate',         path: '/admin/e-certificate',         icon: GraduationCap },
       { name: 'LinkedIn Verify',       path: '/admin/linkedin-verify',       icon: Link2 },
+      { name: 'Careers',               path: '/admin/careers',               icon: Briefcase },
       { name: 'Physical Certificates', path: '/admin/physical-certificates', icon: Package },
       { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
       { name: 'Referrals',             path: '/admin/referrals',             icon: Gift },
