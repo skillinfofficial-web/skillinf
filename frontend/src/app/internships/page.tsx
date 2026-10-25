@@ -1,5 +1,4 @@
 import Navbar from '@/components/shared/Navbar';
-import AnnouncementBar from '@/components/home/AnnouncementBar';
 import HeroSection from '@/components/home/HeroSection';
 import StatsStrip from '@/components/home/StatsStrip';
 import PopularDomainsSection from '@/components/home/PopularDomainsSection';
@@ -11,13 +10,11 @@ import HowItWorksSection from '@/components/home/HowItWorksSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import ProjectsSection from '@/components/projects/ProjectsSection';
 import Footer from '@/components/shared/Footer';
-import LiveRegistrationPopup from '@/components/home/LiveRegistrationPopup';
 
 export default function InternshipsPage() {
   return (
     <>
       <Navbar />
-      <AnnouncementBar />
       <main>
         <HeroSection />
         <StatsStrip />

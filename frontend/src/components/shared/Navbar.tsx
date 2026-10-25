@@ -19,8 +19,8 @@ const navLinks = [
   { href: '/programs',    label: 'Programs'    },
   { href: '/projects',    label: 'Projects'    },
   { href: '/support',     label: 'Support'     },
-  { href: '/about',       label: 'About'       },
   { href: '/careers',     label: 'Careers'     },
+  { href: '/about',       label: 'About'       },
 ];
 
 export default function Navbar() {
