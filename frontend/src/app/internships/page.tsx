@@ -1,4 +1,5 @@
 import Navbar from '@/components/shared/Navbar';
+import AnnouncementBar from '@/components/home/AnnouncementBar';
 import HeroSection from '@/components/home/HeroSection';
 import StatsStrip from '@/components/home/StatsStrip';
 import PopularDomainsSection from '@/components/home/PopularDomainsSection';
@@ -15,6 +16,7 @@ export default function InternshipsPage() {
   return (
     <>
       <Navbar />
+      <AnnouncementBar />
       <main>
         <HeroSection />
         <StatsStrip />

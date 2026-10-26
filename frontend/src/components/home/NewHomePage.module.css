@@ -45,7 +45,7 @@
 /* ═══════════════════════════
    HERO
 ═══════════════════════════ */
-.heroWrap   { background:#fff; min-height:calc(100vh - var(--nav-height) - var(--announcement-height,0px)); display:flex; align-items:center; padding:72px 0; position:relative; overflow:hidden }
+.heroWrap   { background:#fff; min-height:calc(100vh - var(--nav-height) - var(--announcement-height,0px)); display:flex; align-items:center; padding-top:calc(var(--nav-height) + var(--announcement-height,44px) + 36px); padding-bottom:72px; position:relative; overflow:hidden }
 .heroBlob   { position:absolute; width:700px; height:700px; border-radius:50%; pointer-events:none; background:radial-gradient(circle,rgba(107,144,128,.11) 0%,rgba(0,184,148,.05) 40%,transparent 70%); top:-200px; right:-150px; animation:nh-blob 14s ease-in-out infinite }
 .heroGrid   { display:grid; grid-template-columns:1fr 500px; gap:72px; align-items:center; position:relative; z-index:1 }
 .heroEyebrow{ display:inline-flex; align-items:center; gap:10px; font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--hp-accent-dark); margin-bottom:26px; animation:nh-fade-up .5s ease both }
@@ -277,7 +277,7 @@
 
 /* ── Mobile landscape / large phone (≤768px) ── */
 @media(max-width:768px){
-  .heroWrap    { padding:48px 0; min-height:auto }
+  .heroWrap    { padding-top:calc(var(--nav-height) + var(--announcement-height,44px) + 24px); padding-bottom:40px; min-height:auto }
   .heroH1      { font-size:clamp(2rem,7vw,3rem) }
   .heroP       { font-size:.95rem; margin-bottom:26px }
   .heroBtns    { gap:10px }
@@ -301,7 +301,7 @@
 
 /* ── Small phone (≤480px) ── */
 @media(max-width:480px){
-  .heroWrap    { padding:36px 0 }
+  .heroWrap    { padding-top:calc(var(--nav-height) + var(--announcement-height,44px) + 16px); padding-bottom:32px }
   .heroH1      { font-size:clamp(1.8rem,8vw,2.4rem) }
   .heroBtns,.ctaRow,.internBtns { flex-direction:column; align-items:stretch }
   .btnSolid,.btnGhost,.btnCtaMain,.btnCtaSec,.btnAccent,.btnOutlineW { width:100%; justify-content:center; text-align:center }
