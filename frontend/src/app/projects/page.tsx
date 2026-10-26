@@ -64,7 +64,7 @@ export default function ProjectsPage() {
             </div>
             <h1 className={styles.heroTitle}>Explore Intern Projects</h1>
             <p className={styles.heroSub}>
-              Real-world projects built by skillinf interns — browse by domain or search by name.
+              Real-world projects built by Skillinf interns — browse by domain or search by name.
             </p>
 
             {/* Search */}

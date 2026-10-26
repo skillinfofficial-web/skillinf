@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 // ─── Admin key guard ────────────────────────────────────────────────────────
 function isAdmin(req: Request) {
   const auth = req.headers.get('x-admin-key');
-  return auth === (process.env.ADMIN_KEY ?? 'skillinf-admin-2024');
+  return auth === (process.env.ADMIN_KEY ?? 'Skillinf-admin-2024');
 }
 
 // ─── Generate a 7-char unique offer code ───────────────────────────────────

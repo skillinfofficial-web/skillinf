@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "Website Development Services — Landing Pages to SaaS Platforms",
   description:
-    "skillinf builds fast, secure, and beautiful websites tailored for your business. From simple landing pages to full-stack SaaS platforms using React and Next.js. Transparent pricing, delivered on time.",
+    "Skillinf builds fast, secure, and beautiful websites tailored for your business. From simple landing pages to full-stack SaaS platforms using React and Next.js. Transparent pricing, delivered on time.",
   keywords: [
     "custom website development India",
     "React Next.js development",
@@ -23,25 +23,25 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/services/website`,
   },
   openGraph: {
-    title: "Website Development Services | skillinf",
+    title: "Website Development Services | Skillinf",
     description:
-      "Custom website development from landing pages to SaaS platforms. Fast, secure, and SEO-ready websites built with React & Next.js by skillinf.",
+      "Custom website development from landing pages to SaaS platforms. Fast, secure, and SEO-ready websites built with React & Next.js by Skillinf.",
     url: `${BASE_URL}/services/website`,
     type: "website",
     locale: "en_IN",
-    siteName: "skillinf",
+    siteName: "Skillinf",
     images: [
       {
         url: `${BASE_URL}/og-services-website.png`,
         width: 1200,
         height: 630,
-        alt: "Website Development Services by skillinf",
+        alt: "Website Development Services by Skillinf",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Website Development Services | skillinf",
+    title: "Website Development Services | Skillinf",
     description:
       "Custom website development from landing pages to SaaS platforms. Fast, secure, and SEO-ready — built with React & Next.js.",
     images: [`${BASE_URL}/og-services-website.png`],
@@ -54,7 +54,7 @@ const serviceSchema = {
   name: "Website Development",
   provider: {
     "@type": "Organization",
-    name: "skillinf",
+    name: "Skillinf",
     url: BASE_URL,
     telephone: "+919489922054",
   },

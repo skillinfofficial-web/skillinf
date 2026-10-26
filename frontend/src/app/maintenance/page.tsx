@@ -3,7 +3,7 @@ import { getDatabase } from '@/lib/mongodb';
 import MaintenanceClient from './MaintenanceClient';
 
 export const metadata: Metadata = {
-  title: 'Under Maintenance | skillinf',
+  title: 'Under Maintenance | Skillinf',
   description: 'Skillinf is currently under maintenance. We will be back soon!',
   robots: { index: false, follow: false },
 };

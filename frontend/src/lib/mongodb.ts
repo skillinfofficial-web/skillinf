@@ -20,7 +20,7 @@ function getClientPromise(): Promise<MongoClient> {
 }
 
 export async function getDatabase(): Promise<Db> {
-  const dbName = process.env.MONGODB_DATABASE || 'skillinf_course_data';
+  const dbName = process.env.MONGODB_DATABASE || 'Skillinf_course_data';
   const client = await getClientPromise();
   return client.db(dbName);
 }

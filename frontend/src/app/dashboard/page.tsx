@@ -113,7 +113,7 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 30);
   doc.text(`Dear ${user.name},`, ML, y); y += 10;
 
-  const intro = 'We are delighted to inform you that you have been selected for an internship opportunity with skillinf. This internship is designed to provide you with practical industry exposure through real-world projects, guided learning, and professional mentorship.';
+  const intro = 'We are delighted to inform you that you have been selected for an internship opportunity with Skillinf. This internship is designed to provide you with practical industry exposure through real-world projects, guided learning, and professional mentorship.';
   const introLines = doc.splitTextToSize(intro, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(introLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += introLines.length * 6.2 + 8;
@@ -135,9 +135,9 @@ async function downloadOfferLetter(user: UserDoc) {
   y += tableRows.length * rowH + 12;
 
   doc.setFontSize(11); doc.setFont('helvetica', 'normal'); doc.setTextColor(15, 23, 42);
-  doc.text('Welcome to skillinf, and congratulations!', ML, y); y += 7;
+  doc.text('Welcome to Skillinf, and congratulations!', ML, y); y += 7;
 
-  const body = 'Your progress and participation will be monitored throughout the internship. Successful completion will be based on your engagement, project performance, and fulfillment of the assigned internship requirements. We are excited to have you begin this learning journey with skillinf and wish you every success in your professional development.';
+  const body = 'Your progress and participation will be monitored throughout the internship. Successful completion will be based on your engagement, project performance, and fulfillment of the assigned internship requirements. We are excited to have you begin this learning journey with Skillinf and wish you every success in your professional development.';
   const bodyLines = doc.splitTextToSize(body, MR - ML);
   doc.setFontSize(10.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(40, 40, 40);
   doc.text(bodyLines, ML, y, { align: 'justify', maxWidth: MR - ML }); y += bodyLines.length * 6.2 + 10;
@@ -156,11 +156,11 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.setDrawColor(210, 210, 210); doc.setLineWidth(0.25); doc.line(ML, footerY - 6, MR, footerY - 6);
   doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(150, 150, 150);
   doc.text('This is an electronically generated document. No physical signature is required.', W / 2, footerY - 1, { align: 'center' });
-  doc.text('For verification, contact skillinf Verification Cell.', W / 2, footerY + 3.5, { align: 'center' });
+  doc.text('For verification, contact Skillinf Verification Cell.', W / 2, footerY + 3.5, { align: 'center' });
   doc.text('www.skillinf.in', W / 2, footerY + 8, { align: 'center' });
 
   const safeName = user.name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-  doc.save(`${safeName}_skillinf_internship.pdf`);
+  doc.save(`${safeName}_Skillinf_internship.pdf`);
 }
 
 /* ── Certificate PDF generator ──────────────────────────────────────────── */
@@ -173,7 +173,7 @@ async function downloadCertificate(user: UserDoc) {
 
   const [templateB64] = await Promise.all([imgToBase64('/certificate-template.png')]);
 
-  const verifyUrl = `https://skillinf.in/verify-certificate?id=${user._id}`;
+  const verifyUrl = `https://Skillinf.in/verify-certificate?id=${user._id}`;
   const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
     width: 120, margin: 1,
     color: { dark: '#000000', light: '#ffffff' },
@@ -229,7 +229,7 @@ async function downloadCertificate(user: UserDoc) {
 
   drawMixedLine([
     { text: user.domain, bold: true },
-    { text: ' Internship at skillinf from ', bold: false },
+    { text: ' Internship at Skillinf from ', bold: false },
     { text: startStr, bold: true },
     { text: ' to ', bold: false },
     { text: endStr, bold: true },
@@ -255,7 +255,7 @@ async function downloadCertificate(user: UserDoc) {
   doc.text(user._id, qrX + qrSize + 3, qrY + qrSize / 2 + 3);
 
   const safeName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-  doc.save(`${safeName}_skillinf_certificate.pdf`);
+  doc.save(`${safeName}_Skillinf_certificate.pdf`);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -381,8 +381,8 @@ export default function DashboardPage() {
     if (!user?.myReferralCode) return;
     const shareUrl = `${window.location.origin}/sign-up?ref=${user.myReferralCode}`;
     const shareData = {
-      title: 'Join SkillInf Internships',
-      text: 'Use my referral code to join SkillInf internships and get started!',
+      title: 'Join Skillinf Internships',
+      text: 'Use my referral code to join Skillinf internships and get started!',
       url: shareUrl,
     };
     if (navigator.share) {
@@ -593,7 +593,7 @@ export default function DashboardPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/skillinf-logo.png"
-            alt="skillinf"
+            alt="Skillinf"
             className={styles.topLogoImg}
           />
         </Link>
@@ -749,7 +749,7 @@ export default function DashboardPage() {
                       ⚡ LinkedIn Verification Failed — Please resubmit after checking the rules below
                     </p>
                     <p className={styles.liSub} style={{ color: '#dc2626' }}>
-                      Please recheck your post or article: it must contain your <strong>Skillinf Offer Letter</strong>, include the hashtag <strong>#skillinf</strong>, and be posted on <strong>your own LinkedIn account</strong>.
+                      Please recheck your post or article: it must contain your <strong>Skillinf Offer Letter</strong>, include the hashtag <strong>#Skillinf</strong>, and be posted on <strong>your own LinkedIn account</strong>.
                     </p>
                     {user.linkedinPostUrl && (
                       <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink} style={{ color: '#ef4444', marginTop: 4, display: 'inline-block' }}>
@@ -797,7 +797,7 @@ export default function DashboardPage() {
                   <p className={styles.liSub}>
                     {isPending
                       ? 'Our team will verify within 3–4 hours. Step 1 unlocks on approval.'
-                      : 'Share your offer letter on LinkedIn with #skillinf to unlock your course steps.'}
+                      : 'Share your offer letter on LinkedIn with #Skillinf to unlock your course steps.'}
                   </p>
                 </div>
               </div>
@@ -1021,7 +1021,7 @@ export default function DashboardPage() {
                 <li>✅ Verified Digital Certificate</li>
                 <li>✅ LinkedIn-shareable credential</li>
                 <li>✅ Instant download after payment</li>
-                <li>✅ skillinf MSME-registered seal</li>
+                <li>✅ Skillinf MSME-registered seal</li>
               </ul>
 
               {/* Offer code input */}
@@ -1222,7 +1222,7 @@ export default function DashboardPage() {
               <strong>{user.email}</strong> on that day notifying you that your certificate
               download is unlocked. If you believe this is an error, please contact{' '}
               <a href="mailto:support@skillinf.in" target="_blank" rel="noreferrer">
-                SkillInf Support
+                Skillinf Support
               </a>
               .
             </p>
@@ -1232,7 +1232,7 @@ export default function DashboardPage() {
             <p className={styles.edSupport}>
               Need help?{' '}
               <a href="mailto:support@skillinf.in" target="_blank" rel="noreferrer">
-                Contact SkillInf Support
+                Contact Skillinf Support
               </a>
             </p>
           </div>

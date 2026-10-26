@@ -71,7 +71,7 @@ export default function WebsiteServices() {
 
   function buildWaUrl(planName: string) {
     const message = encodeURIComponent(
-      `Hi skillinf Team! \uD83D\uDC4B\n\n` +
+      `Hi Skillinf Team! \uD83D\uDC4B\n\n` +
       `I'm interested in your *Website Services*.\n` +
       `*Selected Plan:* ${planName}\n\n` +
       `Could you please share the exact pricing and further details?\n` +
@@ -154,7 +154,7 @@ export default function WebsiteServices() {
           </div>
           <div className="pricing-disclaimer svc-fade-up">
             <span className="pricing-disclaimer-label">Note:</span>
-            Prices may vary based on your requirements. For the exact price, contact skillinf via WhatsApp.
+            Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
       </div>

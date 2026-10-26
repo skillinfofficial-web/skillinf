@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     const istTime = nowIST;
 
     void sendMail({
-      to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+      to: ['arunkumar.s202006@gmail.com', 'Skillinfofficial@gmail.com'],
       subject: `🔔 New LinkedIn Verification Request — ${user.name}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
               Please review and approve/reject this request in the <strong>admin panel</strong>.
             </div>
             <div style="margin-top:16px;text-align:center;">
-              <a href="https://skillinf-backend.onrender.com/admin/linkedin-verify"
+              <a href="https://Skillinf-backend.onrender.com/admin/linkedin-verify"
                  style="display:inline-block;background:#0077b5;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
                 Verify in Admin Panel →
               </a>

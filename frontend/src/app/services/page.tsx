@@ -6,14 +6,14 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "Digital Services — Website, AI, UI/UX & 3D Design",
   description:
-    "skillinf offers premium digital services: custom website development, AI automation, UI/UX design, and 3D rendering. Built for startups, SMEs and enterprises in India.",
+    "Skillinf offers premium digital services: custom website development, AI automation, UI/UX design, and 3D rendering. Built for startups, SMEs and enterprises in India.",
   keywords: [
     "digital services India",
     "website development India",
     "AI automation services",
     "UI UX design agency India",
     "3D design rendering India",
-    "skillinf services",
+    "Skillinf services",
     "web development company India",
     "custom software development",
   ],
@@ -21,27 +21,27 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/services`,
   },
   openGraph: {
-    title: "Digital Services — Website, AI, UI/UX & 3D Design | skillinf",
+    title: "Digital Services — Website, AI, UI/UX & 3D Design | Skillinf",
     description:
-      "Premium digital services from skillinf: Website Development, AI Automation, UI/UX Design, and 3D Design & Rendering for businesses across India.",
+      "Premium digital services from Skillinf: Website Development, AI Automation, UI/UX Design, and 3D Design & Rendering for businesses across India.",
     url: `${BASE_URL}/services`,
     type: "website",
     locale: "en_IN",
-    siteName: "skillinf",
+    siteName: "Skillinf",
     images: [
       {
         url: `${BASE_URL}/og-services.png`,
         width: 1200,
         height: 630,
-        alt: "skillinf Digital Services — Website, AI, UI/UX & 3D Design",
+        alt: "Skillinf Digital Services — Website, AI, UI/UX & 3D Design",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digital Services — Website, AI, UI/UX & 3D Design | skillinf",
+    title: "Digital Services — Website, AI, UI/UX & 3D Design | Skillinf",
     description:
-      "Premium digital services from skillinf: Website Development, AI Automation, UI/UX Design, and 3D Design & Rendering.",
+      "Premium digital services from Skillinf: Website Development, AI Automation, UI/UX Design, and 3D Design & Rendering.",
     images: [`${BASE_URL}/og-services.png`],
   },
 };
@@ -49,10 +49,10 @@ export const metadata: Metadata = {
 const servicesSchema = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "skillinf Digital Services",
+  name: "Skillinf Digital Services",
   url: `${BASE_URL}/services`,
   description:
-    "Premium digital services offered by skillinf including Website Development, AI Automation, UI/UX Design, and 3D Design.",
+    "Premium digital services offered by Skillinf including Website Development, AI Automation, UI/UX Design, and 3D Design.",
   numberOfItems: 4,
   itemListElement: [
     {

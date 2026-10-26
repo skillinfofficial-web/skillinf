@@ -209,7 +209,7 @@ export default function AdminPanelPage() {
     return (
       <div className={styles.loginShell}>
         <div className={styles.loginCard}>
-          <Image src="/logo.png" alt="skillinf" width={120} height={32} style={{ objectFit: 'contain', marginBottom: 24 }} />
+          <Image src="/logo.png" alt="Skillinf" width={120} height={32} style={{ objectFit: 'contain', marginBottom: 24 }} />
           <h1 className={styles.loginTitle}>Admin Panel</h1>
           <p className={styles.loginSub}>Enter your admin key to continue</p>
           <form onSubmit={handleAuth} className={styles.loginForm}>
@@ -235,7 +235,7 @@ export default function AdminPanelPage() {
 
       {/* Topbar */}
       <div className={styles.topbar}>
-        <Image src="/logo.png" alt="skillinf" width={110} height={28} style={{ objectFit: 'contain' }} />
+        <Image src="/logo.png" alt="Skillinf" width={110} height={28} style={{ objectFit: 'contain' }} />
         <div className={styles.topRight}>
           <span className={styles.topLabel}>Admin Panel</span>
           <button className={styles.logoutBtn} onClick={() => { setAuthed(false); setAdminKey(''); }}>Sign out</button>

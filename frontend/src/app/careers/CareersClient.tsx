@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import {
-  Briefcase, MapPin, Clock, DollarSign, Building2,
+  Briefcase, MapPin, Clock, Building2,
   ChevronDown, ChevronUp, Instagram, Linkedin, Twitter,
   Send, Loader2, CheckCircle, AlertCircle, X, User,
   Mail, Phone, FileText, Link2, Star, ArrowRight,
@@ -146,14 +146,14 @@ export default function CareersClient() {
                 </p>
                 <div className={styles.socialRow}>
                   <a
-                    href="https://www.instagram.com/skillinfofficial/"
+                    href="https://www.instagram.com/Skillinfofficial/"
                     target="_blank" rel="noreferrer"
                     className={`${styles.socialBtn} ${styles.instagram}`}
                   >
                     <Instagram size={17} /> Instagram
                   </a>
                   <a
-                    href="https://www.linkedin.com/company/skillinf-official/"
+                    href="https://www.linkedin.com/company/Skillinf-official/"
                     target="_blank" rel="noreferrer"
                     className={`${styles.socialBtn} ${styles.linkedin}`}
                   >
@@ -191,7 +191,7 @@ export default function CareersClient() {
                             <span className={styles.metaDot} />
                             <span><Clock size={12} /> {job.type}</span>
                             {job.experience && <><span className={styles.metaDot} /><span><Star size={12} /> {job.experience}</span></>}
-                            {job.salary && <><span className={styles.metaDot} /><span><DollarSign size={12} /> {job.salary}</span></>}
+                            {job.salary && <><span className={styles.metaDot} /><span>₹ {job.salary}</span></>}
                           </div>
                         </div>
                         <button

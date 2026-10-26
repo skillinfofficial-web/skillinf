@@ -23,7 +23,7 @@ function buildApplyEmail(data: {
         <tr><td style="background:linear-gradient(135deg,#1a3c34 0%,#2d6a4f 100%);padding:32px 40px;">
           <p style="color:rgba(255,255,255,0.6);font-size:0.75rem;font-weight:700;letter-spacing:0.12em;margin:0 0 6px;">NEW JOB APPLICATION</p>
           <h1 style="color:#fff;font-size:1.4rem;font-weight:800;margin:0 0 6px;">📋 ${data.jobTitle}</h1>
-          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin:0;">Application received via skillinf.in/careers</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin:0;">Application received via Skillinf.in/careers</p>
         </td></tr>
 
         <!-- Applicant Details -->
@@ -52,7 +52,7 @@ function buildApplyEmail(data: {
         <!-- Footer -->
         <tr><td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e2e8f0;">
           <p style="font-size:0.75rem;color:#94a3b8;margin:0;">
-            Skillinf &nbsp;·&nbsp; <a href="https://skillinf.in" style="color:#2d6a4f;text-decoration:none;">skillinf.in</a>
+            Skillinf &nbsp;·&nbsp; <a href="https://Skillinf.in" style="color:#2d6a4f;text-decoration:none;">Skillinf.in</a>
             &nbsp;·&nbsp; Reply directly to this email to respond to the applicant.
           </p>
         </td></tr>

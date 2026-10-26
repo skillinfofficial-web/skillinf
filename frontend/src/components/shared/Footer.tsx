@@ -9,7 +9,7 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div className={styles.brandCol}>
-            <Link href="/" className={styles.logo}>skillinf</Link>
+            <Link href="/" className={styles.logo}>Skillinf</Link>
             <p className={styles.desc}>
               We help students turn their academic knowledge into practical, career-ready skills through structured project-based learning.
               <br />
@@ -19,7 +19,7 @@ export default function Footer() {
             <div className={styles.socials}>
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/skillinfofficial/"
+                href="https://www.instagram.com/Skillinfofficial/"
                 className={styles.socialIcon}
                 aria-label="Instagram"
                 target="_blank"
@@ -34,7 +34,7 @@ export default function Footer() {
 
               {/* LinkedIn */}
               <a
-                href="https://www.linkedin.com/company/skillinf-official/home/"
+                href="https://www.linkedin.com/company/Skillinf-official/home/"
                 className={styles.socialIcon}
                 aria-label="LinkedIn"
                 target="_blank"
@@ -89,7 +89,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.bottom}>
-          <p>&copy; {new Date().getFullYear()} skillinf. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Skillinf. All rights reserved.</p>
           <div className={styles.bottomLinks}>
             <Link href="/privacy-policy" className={styles.bottomLink}>Privacy Policy</Link>
             <span className={styles.bottomDot}>·</span>

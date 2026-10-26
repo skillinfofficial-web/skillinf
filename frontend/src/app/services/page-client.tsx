@@ -33,7 +33,7 @@ export default function ServicesHomeClient() {
           All Our <span className="services-gradient-text">Services</span>
         </h1>
         <p className="services-subtitle svc-fade-up svc-delay-1">
-          Premium digital services by skillinf to take your business to the next level — all in one place.
+          Premium digital services by Skillinf to take your business to the next level — all in one place.
         </p>
       </div>
       <div className="services-overview-grid">

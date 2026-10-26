@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "UI/UX Design Services — Figma Design for Apps, Websites & SaaS",
   description:
-    "Pixel-perfect, intuitive UI/UX designs by skillinf for mobile apps, web apps, dashboards, and SaaS products. User research, wireframes, prototypes, and final Figma handoffs. Loved by users.",
+    "Pixel-perfect, intuitive UI/UX designs by Skillinf for mobile apps, web apps, dashboards, and SaaS products. User research, wireframes, prototypes, and final Figma handoffs. Loved by users.",
   keywords: [
     "UI UX design services India",
     "Figma design agency India",
@@ -23,27 +23,27 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/services/ui-ux-design`,
   },
   openGraph: {
-    title: "UI/UX Design Services — Figma, Apps, SaaS & Dashboards | skillinf",
+    title: "UI/UX Design Services — Figma, Apps, SaaS & Dashboards | Skillinf",
     description:
-      "Pixel-perfect UI/UX designs by skillinf for apps, websites, and SaaS dashboards. User research, wireframes, prototypes, and Figma handoffs.",
+      "Pixel-perfect UI/UX designs by Skillinf for apps, websites, and SaaS dashboards. User research, wireframes, prototypes, and Figma handoffs.",
     url: `${BASE_URL}/services/ui-ux-design`,
     type: "website",
     locale: "en_IN",
-    siteName: "skillinf",
+    siteName: "Skillinf",
     images: [
       {
         url: `${BASE_URL}/og-services-uiux.png`,
         width: 1200,
         height: 630,
-        alt: "UI/UX Design Services by skillinf",
+        alt: "UI/UX Design Services by Skillinf",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "UI/UX Design Services — Figma, Apps & SaaS | skillinf",
+    title: "UI/UX Design Services — Figma, Apps & SaaS | Skillinf",
     description:
-      "Pixel-perfect UI/UX designs by skillinf. Wireframes, prototypes, design systems, and Figma handoffs for apps, websites & SaaS.",
+      "Pixel-perfect UI/UX designs by Skillinf. Wireframes, prototypes, design systems, and Figma handoffs for apps, websites & SaaS.",
     images: [`${BASE_URL}/og-services-uiux.png`],
   },
 };
@@ -54,7 +54,7 @@ const serviceSchema = {
   name: "UI/UX Design",
   provider: {
     "@type": "Organization",
-    name: "skillinf",
+    name: "Skillinf",
     url: BASE_URL,
     telephone: "+919489922054",
   },

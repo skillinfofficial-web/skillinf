@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Skillinf Tech India",
   },
   description:
-    "SkillInf builds premium websites, AI automation tools, UI/UX designs, and 3D renders for businesses — and runs virtual internship programs to help students build real-world skills.",
+    "Skillinf builds premium websites, AI automation tools, UI/UX designs, and 3D renders for businesses — and runs virtual internship programs to help students build real-world skills.",
   keywords: [
     "digital agency India",
     "website development company",
@@ -33,11 +33,11 @@ export const metadata: Metadata = {
     "virtual internship",
     "student internship online",
     "internship certificate",
-    "skillinf",
+    "Skillinf",
   ],
-  authors: [{ name: "skillinf", url: BASE_URL }],
-  creator: "skillinf",
-  publisher: "skillinf",
+  authors: [{ name: "Skillinf", url: BASE_URL }],
+  creator: "Skillinf",
+  publisher: "Skillinf",
   robots: {
     index: true,
     follow: true,
@@ -60,25 +60,25 @@ export const metadata: Metadata = {
     shortcut: "/favicon.png",
   },
   openGraph: {
-    title: "skillinf | Free Virtual Internships for Students",
+    title: "Skillinf | Free Virtual Internships for Students",
     description:
-      "Gain real project experience, build a portfolio, and earn a verified certificate through skillinf's virtual internship programs.",
+      "Gain real project experience, build a portfolio, and earn a verified certificate through Skillinf's virtual internship programs.",
     url: BASE_URL + "/",
     type: "website",
     locale: "en_US",
-    siteName: "skillinf",
+    siteName: "Skillinf",
     images: [
       {
         url: `${BASE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "skillinf — Free Virtual Internships for Students",
+        alt: "Skillinf — Free Virtual Internships for Students",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "skillinf | Free Virtual Internships for Students",
+    title: "Skillinf | Free Virtual Internships for Students",
     description:
       "Free virtual internships in AI, Web Dev & Data Science. Build projects, earn certificates, and become career-ready.",
     images: [`${BASE_URL}/og-image.png`],
@@ -89,11 +89,11 @@ export const metadata: Metadata = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "skillinf",
+  name: "Skillinf",
   url: BASE_URL,
   logo: `${BASE_URL}/skillinf-logo.png`,
   description:
-    "skillinf helps students turn academic knowledge into practical, career-ready skills through free virtual internship programs.",
+    "Skillinf helps students turn academic knowledge into practical, career-ready skills through free virtual internship programs.",
   email: "support@skillinf.in",
   telephone: "+919489922054",
   address: {
@@ -102,8 +102,8 @@ const organizationSchema = {
     addressRegion: "Remote",
   },
   sameAs: [
-    "https://www.linkedin.com/company/skillinf-official/",
-    "https://www.instagram.com/skillinfofficial/",
+    "https://www.linkedin.com/company/Skillinf-official/",
+    "https://www.instagram.com/Skillinfofficial/",
   ],
   knowsAbout: [
     "Artificial Intelligence",
@@ -118,7 +118,7 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "skillinf",
+  name: "Skillinf",
   url: BASE_URL,
   description:
     "Free virtual internship programs for students in AI, Web Development, Data Science, and more.",
@@ -140,7 +140,7 @@ const educationProgramSchema = {
     "Structured online internship programs in AI, Machine Learning, Web Development, Data Science, Cybersecurity, and more.",
   provider: {
     "@type": "Organization",
-    name: "skillinf",
+    name: "Skillinf",
     url: BASE_URL,
   },
   url: `${BASE_URL}/internships`,
@@ -163,26 +163,26 @@ const faqSchema = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Are skillinf internships free?",
+      name: "Are Skillinf internships free?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, enrollment in skillinf virtual internships is free. A small fee applies only if you want a certificate at the end of the program.",
+        text: "Yes, enrollment in Skillinf virtual internships is free. A small fee applies only if you want a certificate at the end of the program.",
       },
     },
     {
       "@type": "Question",
-      name: "What internship domains does skillinf offer?",
+      name: "What internship domains does Skillinf offer?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "skillinf offers virtual internships in AI & Machine Learning, Full-Stack Web Development, Data Science & Analytics, Cybersecurity, Python Development, UI/UX Design, Cloud Computing, and more.",
+        text: "Skillinf offers virtual internships in AI & Machine Learning, Full-Stack Web Development, Data Science & Analytics, Cybersecurity, Python Development, UI/UX Design, Cloud Computing, and more.",
       },
     },
     {
       "@type": "Question",
-      name: "How long is a skillinf internship?",
+      name: "How long is a Skillinf internship?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "skillinf internships are structured over 4 weeks with hands-on project tasks each week.",
+        text: "Skillinf internships are structured over 4 weeks with hands-on project tasks each week.",
       },
     },
     {
@@ -198,7 +198,7 @@ const faqSchema = {
       name: "Is the internship fully online and remote?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, all skillinf internships are 100% online and can be completed remotely from anywhere in India.",
+        text: "Yes, all Skillinf internships are 100% online and can be completed remotely from anywhere in India.",
       },
     },
   ],

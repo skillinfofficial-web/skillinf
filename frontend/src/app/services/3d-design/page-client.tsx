@@ -94,7 +94,7 @@ const WA_NUMBER = "919489922054";
 
 function buildWaUrl(planName: string) {
   const msg = [
-    "Hi skillinf Team! \uD83D\uDC4B\n\n",
+    "Hi Skillinf Team! \uD83D\uDC4B\n\n",
     "I'm interested in your *3D Design* service.\n",
     "*Selected Plan:* " + planName + "\n\n",
     "Could you please share the exact pricing and further details?\n",
@@ -181,7 +181,7 @@ export default function ThreeDDesign() {
           </div>
           <div className="pricing-disclaimer pricing-disclaimer--accent svc-fade-up">
             <span className="pricing-disclaimer-label pricing-disclaimer-label--accent">Note:</span>
-            Prices may vary based on your requirements. For the exact price, contact skillinf via WhatsApp.
+            Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
       </div>

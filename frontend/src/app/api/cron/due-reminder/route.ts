@@ -33,7 +33,7 @@ function buildReminderEmail(
 
         <!-- Header -->
         <tr><td style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);padding:32px 40px;text-align:center;">
-          <p style="color:#fef3c7;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;margin:0 0 8px;">SKILLINF INTERNSHIP</p>
+          <p style="color:#fef3c7;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;margin:0 0 8px;">Skillinf INTERNSHIP</p>
           <h1 style="color:#fff;font-size:1.5rem;font-weight:800;margin:0;">⏰ Deadline Reminder</h1>
         </td></tr>
 
@@ -63,7 +63,7 @@ function buildReminderEmail(
             before midnight IST to avoid missing your step verification.
           </p>
 
-          <a href="https://skillinf.in/dashboard"
+          <a href="https://Skillinf.in/dashboard"
             style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);
                    color:#fff;text-decoration:none;padding:14px 32px;
                    border-radius:12px;font-size:0.95rem;font-weight:700;">
@@ -75,7 +75,7 @@ function buildReminderEmail(
         <tr><td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e2e8f0;">
           <p style="font-size:0.75rem;color:#94a3b8;margin:0;">
             Skillinf &nbsp;·&nbsp;
-            <a href="https://skillinf.in" style="color:#f59e0b;text-decoration:none;">skillinf.in</a>
+            <a href="https://Skillinf.in" style="color:#f59e0b;text-decoration:none;">Skillinf.in</a>
             &nbsp;·&nbsp; You received this because you are enrolled in a Skillinf internship.
           </p>
         </td></tr>

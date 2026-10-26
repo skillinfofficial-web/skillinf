@@ -25,8 +25,8 @@ import {
 import styles from "./AboutPage.module.css";
 
 export const metadata: Metadata = {
-  title: { absolute: 'About skillinf — Our Mission & Story' },
-  description: 'Learn about skillinf — our mission to help students gain real-world internship experience and become career-ready through structured programs.',
+  title: { absolute: 'About Skillinf — Our Mission & Story' },
+  description: 'Learn about Skillinf — our mission to help students gain real-world internship experience and become career-ready through structured programs.',
   alternates: { canonical: 'https://www.skillinf.in/about' },
   openGraph: { url: 'https://www.skillinf.in/about' },
 };
@@ -204,20 +204,20 @@ export default function AboutPage() {
           <div className="container">
             <div className={styles.heroBadge}>
               <span className={styles.heroDot} />
-              About skillinf
+              About Skillinf
             </div>
             <h1 className={styles.heroTitle}>
               Learn Skills. Build Projects.<br />
               <span className={styles.heroHighlight}>Become Career Ready.</span>
             </h1>
             <p className={styles.heroSub}>
-              skillinf is a practical learning and career-development platform designed to help
+              Skillinf is a practical learning and career-development platform designed to help
               students turn what they learn into skills they can actually demonstrate.
             </p>
           </div>
         </section>
 
-        {/* ── What is skillinf / Mission + Vision ── */}
+        {/* ── What is Skillinf / Mission + Vision ── */}
         <section className={styles.section}>
           <div className="container">
             <div className={styles.sectionHeader}>
@@ -249,7 +249,7 @@ export default function AboutPage() {
                 <p className={styles.mvText}>
                   A future where students learn by building — and don't have to wait until their first job to gain
                   practical experience. Through structured paths, hands-on projects, internships, and portfolio-focused
-                  experiences, skillinf helps students move from <em>learning</em> to <em>doing</em>.
+                  experiences, Skillinf helps students move from <em>learning</em> to <em>doing</em>.
                 </p>
               </div>
             </div>
@@ -287,7 +287,7 @@ export default function AboutPage() {
               <span className={styles.label}>What We Offer</span>
               <h2 className={styles.sectionTitle}>Three Ways to Learn &amp; Grow</h2>
               <p className={styles.sectionSub}>
-                Whether you're starting out or ready to go deeper, skillinf gives you the structure and support to
+                Whether you're starting out or ready to go deeper, Skillinf gives you the structure and support to
                 learn progressively and work on meaningful projects.
               </p>
             </div>
@@ -314,7 +314,7 @@ export default function AboutPage() {
               <span className={styles.label}>What We Build</span>
               <h2 className={styles.sectionTitle}>Our Digital Services</h2>
               <p className={styles.sectionSub}>
-                Beyond education, skillinf also builds digital products that bring your business ideas to life —
+                Beyond education, Skillinf also builds digital products that bring your business ideas to life —
                 from websites and automation to stunning design and 3D visualisations.
               </p>
             </div>
@@ -338,7 +338,7 @@ export default function AboutPage() {
         <section className={styles.sectionAlt}>
           <div className="container">
             <div className={styles.sectionHeader}>
-              <span className={styles.label}>Why skillinf</span>
+              <span className={styles.label}>Why Skillinf</span>
               <h2 className={styles.sectionTitle}>What Makes Us Different</h2>
               <p className={styles.sectionSub}>
                 Instead of focusing only on course completion, we focus on the journey from learning to practical
@@ -365,9 +365,9 @@ export default function AboutPage() {
           <div className="container">
             <div className={styles.sectionHeader}>
               <span className={styles.label}>For Every Learner</span>
-              <h2 className={styles.sectionTitle}>Who Can Learn With skillinf?</h2>
+              <h2 className={styles.sectionTitle}>Who Can Learn With Skillinf?</h2>
               <p className={styles.sectionSub}>
-                skillinf is designed for learners at different stages of their journey. There is always an opportunity
+                Skillinf is designed for learners at different stages of their journey. There is always an opportunity
                 to learn, practice, and build.
               </p>
             </div>
@@ -412,7 +412,7 @@ export default function AboutPage() {
         {/* ── CTA ── */}
         <section className={styles.cta}>
           <div className="container">
-            <h2 className={styles.ctaTitle}>Build Your Next Step With skillinf</h2>
+            <h2 className={styles.ctaTitle}>Build Your Next Step With Skillinf</h2>
             <p className={styles.ctaSub}>
               Start with a skill. Turn it into practice. Turn practice into a project. Turn projects into
               opportunities.

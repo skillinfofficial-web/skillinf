@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const orderId = `skillinf_${Date.now()}`;
+    const orderId = `Skillinf_${Date.now()}`;
 
     const cfRes = await fetch(`${CF_BASE}/orders`, {
       method: 'POST',

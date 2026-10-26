@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     const userEmail = (user?.email as string) || 'Unknown';
 
     void sendMail({
-      to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+      to: ['arunkumar.s202006@gmail.com', 'Skillinfofficial@gmail.com'],
       subject: `📦 New Physical Certificate Request — ${userName}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
               Ship the physical certificate to the address above.
             </div>
             <div style="margin-top:16px;text-align:center;">
-              <a href="https://skillinf-backend.onrender.com/admin/physical-certificates"
+              <a href="https://Skillinf-backend.onrender.com/admin/physical-certificates"
                  style="display:inline-block;background:#f59e0b;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
                 View in Admin Panel →
               </a>

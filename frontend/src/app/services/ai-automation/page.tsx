@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "AI Automation Services — Custom AI Agents & Workflow Automation",
   description:
-    "Save hundreds of manual hours. skillinf builds custom AI agents, chatbots, and n8n automation workflows for sales, marketing, HR, and operations teams across India.",
+    "Save hundreds of manual hours. Skillinf builds custom AI agents, chatbots, and n8n automation workflows for sales, marketing, HR, and operations teams across India.",
   keywords: [
     "AI automation services India",
     "custom AI agents",
@@ -23,27 +23,27 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/services/ai-automation`,
   },
   openGraph: {
-    title: "AI Automation Services — Custom AI Agents & Workflows | skillinf",
+    title: "AI Automation Services — Custom AI Agents & Workflows | Skillinf",
     description:
-      "Custom AI agents, chatbots, and workflow automation by skillinf. Automate repetitive tasks in sales, marketing, and operations. Built for Indian businesses.",
+      "Custom AI agents, chatbots, and workflow automation by Skillinf. Automate repetitive tasks in sales, marketing, and operations. Built for Indian businesses.",
     url: `${BASE_URL}/services/ai-automation`,
     type: "website",
     locale: "en_IN",
-    siteName: "skillinf",
+    siteName: "Skillinf",
     images: [
       {
         url: `${BASE_URL}/og-services-ai.png`,
         width: 1200,
         height: 630,
-        alt: "AI Automation Services by skillinf",
+        alt: "AI Automation Services by Skillinf",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Automation Services — Custom AI Agents & Workflows | skillinf",
+    title: "AI Automation Services — Custom AI Agents & Workflows | Skillinf",
     description:
-      "Custom AI agents, chatbots, and n8n workflow automation. Save hundreds of manual hours with skillinf.",
+      "Custom AI agents, chatbots, and n8n workflow automation. Save hundreds of manual hours with Skillinf.",
     images: [`${BASE_URL}/og-services-ai.png`],
   },
 };
@@ -54,7 +54,7 @@ const serviceSchema = {
   name: "AI Automation",
   provider: {
     "@type": "Organization",
-    name: "skillinf",
+    name: "Skillinf",
     url: BASE_URL,
     telephone: "+919489922054",
   },

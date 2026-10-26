@@ -4,7 +4,7 @@ import { getDatabase } from '@/lib/mongodb';
 // Simple admin password guard
 function isAdmin(req: Request) {
   const auth = req.headers.get('x-admin-key');
-  return auth === (process.env.ADMIN_KEY ?? 'skillinf-admin-2024');
+  return auth === (process.env.ADMIN_KEY ?? 'Skillinf-admin-2024');
 }
 
 export async function GET(req: Request) {

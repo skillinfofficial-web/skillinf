@@ -244,7 +244,7 @@ export default function NewHomePage() {
                 <div className={s.l3}>Business Results.</div>
               </h1>
               <p className={s.heroP}>
-                SkillInf delivers premium website development, AI automation, UI/UX design, and 3D rendering
+                Skillinf delivers premium website development, AI automation, UI/UX design, and 3D rendering
                 for businesses — alongside a structured virtual internship program helping students build real
                 skills and start careers.
               </p>
@@ -260,7 +260,7 @@ export default function NewHomePage() {
             </div>
 
             <div className={`${s.heroImgWrap} ${s.lift}`}>
-              <Image src="/hero.webp" alt="SkillInf digital services dashboard" width={800} height={460} priority
+              <Image src="/hero.webp" alt="Skillinf digital services dashboard" width={800} height={460} priority
                 style={{ width: '100%', height: 460, objectFit: 'cover' }} />
               <div className={s.heroBadge}>
                 <span className={s.hbDot} />
@@ -296,7 +296,7 @@ export default function NewHomePage() {
       </div>
 
       {/* ── INTRO ── */}
-      <section className={s.introWrap} aria-label="About SkillInf">
+      <section className={s.introWrap} aria-label="About Skillinf">
         <div className={s.wrap}>
           <div className={s.introGrid}>
             <SR cls={s.revealL}>
@@ -304,7 +304,7 @@ export default function NewHomePage() {
                 <div className={s.sk}>What We Do</div>
                 <h2 className={s.sh}>One Agency.<br />Two Specialisations.</h2>
                 <p className={s.sp}>
-                  SkillInf operates across two focus areas. We build premium digital products for businesses —
+                  Skillinf operates across two focus areas. We build premium digital products for businesses —
                   websites, AI tools, design systems, and 3D visuals — and we run a structured virtual internship
                   program to develop the next generation of digital professionals.
                 </p>
@@ -317,7 +317,7 @@ export default function NewHomePage() {
             </SR>
             <SR cls={s.revealR}>
               <div className={s.introImg}>
-                <Image src="/svc-web.webp" alt="SkillInf services overview" width={600} height={360}
+                <Image src="/svc-web.webp" alt="Skillinf services overview" width={600} height={360}
                   style={{ width: '100%', height: 360, objectFit: 'cover' }} />
               </div>
             </SR>
@@ -382,7 +382,7 @@ export default function NewHomePage() {
                 </p>
                 <div className={s.internHighlight}>
                   <div className={s.ihN}>1,040<span>+</span></div>
-                  <div className={s.ihL}>students have already enrolled and are actively building their skills and portfolios through SkillInf.</div>
+                  <div className={s.ihL}>students have already enrolled and are actively building their skills and portfolios through Skillinf.</div>
                 </div>
                 <div className={s.internBtns}>
                   <MagLink href="/sign-in" className={s.btnAccent}>Apply Now <Arr /></MagLink>
@@ -434,7 +434,7 @@ export default function NewHomePage() {
       </section>
 
       {/* ── WHY + OUTCOMES ── */}
-      <section className={s.whyOutWrap} aria-label="Why SkillInf and outcomes">
+      <section className={s.whyOutWrap} aria-label="Why Skillinf and outcomes">
         <div className={s.wrap}>
           <SR>
             <div className={s.sk} style={{ marginBottom: 10 }}>Results &amp; Reasons</div>
@@ -459,7 +459,7 @@ export default function NewHomePage() {
             </SR>
             <SR cls={s.revealR}>
               <div>
-                <p className={s.colLabel}>Why Choose SkillInf</p>
+                <p className={s.colLabel}>Why Choose Skillinf</p>
                 <div className={s.whyCards}>
                   {WHY.map(w => (
                     <div key={w.title} className={s.whyCard}>
@@ -484,7 +484,7 @@ export default function NewHomePage() {
               </h2>
               <p className={s.ctaP}>
                 Whether you need a premium digital product for your business or you are a student ready to build
-                real skills — SkillInf is where it starts.
+                real skills — Skillinf is where it starts.
               </p>
               <div className={s.ctaRow}>
                 <MagLink href="/sign-in" className={s.btnCtaMain}>Apply for Internship</MagLink>

@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-const SECRET  = process.env.JWT_SECRET || 'skillinf_dev_secret_change_in_prod';
-export const COOKIE_NAME = 'skillinf_token';
+const SECRET  = process.env.JWT_SECRET || 'Skillinf_dev_secret_change_in_prod';
+export const COOKIE_NAME = 'Skillinf_token';
 export const MAX_AGE     = 7 * 24 * 60 * 60; // 7 days in seconds
 
 export interface TokenPayload {

@@ -39,7 +39,7 @@ export default function MaintenanceClient({ message }: { message: string }) {
               </defs>
             </svg>
           </div>
-          <span className={styles.logoText}>skillinf</span>
+          <span className={styles.logoText}>Skillinf</span>
         </div>
 
         {/* Animated gear/wrench icon */}
@@ -84,7 +84,7 @@ export default function MaintenanceClient({ message }: { message: string }) {
         )}
 
         <p className={styles.footer}>
-          &copy; {new Date().getFullYear()} skillinf &mdash; All rights reserved
+          &copy; {new Date().getFullYear()} Skillinf &mdash; All rights reserved
         </p>
       </div>
     </div>

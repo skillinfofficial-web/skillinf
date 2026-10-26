@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDatabase } from "@/lib/mongodb";
 import { sendMail } from "@/lib/mailer";
 import { toISTMidnight, addCalendarDays, fmtISTLong } from "@/lib/ist";
@@ -22,7 +22,7 @@ function buildCertUnlockEmail(name: string, domain: string, endDateFmt: string):
       <table width="540" cellpadding="0" cellspacing="0"
         style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
         <tr><td style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:32px 40px;text-align:center;">
-          <p style="color:#d1fae5;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;margin:0 0 8px;">SKILLINF INTERNSHIP</p>
+          <p style="color:#d1fae5;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;margin:0 0 8px;">Skillinf INTERNSHIP</p>
           <h1 style="color:#fff;font-size:1.5rem;font-weight:800;margin:0;">Your Certificate is Now Available!</h1>
         </td></tr>
         <tr><td style="padding:36px 40px;">
@@ -44,7 +44,7 @@ function buildCertUnlockEmail(name: string, domain: string, endDateFmt: string):
             Log in to your dashboard, scroll to the <strong>Get Your E-Certificate</strong> section,
             and click <strong>"Download Certificate"</strong> to save your personalised PDF.
           </p>
-          <a href="https://skillinf.in/dashboard"
+          <a href="https://Skillinf.in/dashboard"
             style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);
                    color:#fff;text-decoration:none;padding:14px 32px;
                    border-radius:12px;font-size:0.95rem;font-weight:700;">
@@ -58,7 +58,7 @@ function buildCertUnlockEmail(name: string, domain: string, endDateFmt: string):
         <tr><td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e2e8f0;">
           <p style="font-size:0.75rem;color:#94a3b8;margin:0;">
             Skillinf &nbsp;&middot;&nbsp;
-            <a href="https://skillinf.in" style="color:#10b981;text-decoration:none;">skillinf.in</a>
+            <a href="https://Skillinf.in" style="color:#10b981;text-decoration:none;">Skillinf.in</a>
             &nbsp;&middot;&nbsp; You received this because you are enrolled in a Skillinf internship.
           </p>
         </td></tr>

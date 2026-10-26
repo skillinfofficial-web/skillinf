@@ -79,10 +79,10 @@ export default function SignInPage() {
     <div className={styles.page}>
       {/* Brand bar */}
       <div className={styles.brand}>
-        <Link href="/" className={styles.logoWrap} aria-label="skillinf Home">
+        <Link href="/" className={styles.logoWrap} aria-label="Skillinf Home">
           <Image
             src="/skillinf-logo.png"
-            alt="skillinf — Learn Built Grow"
+            alt="Skillinf — Learn Built Grow"
             width={160}
             height={60}
             priority

@@ -147,7 +147,7 @@
 }
 .verifiedTitle { font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
 .verifiedSub   { font-size: 0.82rem; color: rgba(255,255,255,0.6); }
-.skillinf {
+.Skillinf {
   margin-left: auto; font-size: 0.78rem; font-weight: 900;
   color: rgba(255,255,255,0.25); letter-spacing: 0.15em;
 }
@@ -200,7 +200,7 @@
   .inputRow    { flex-direction: column; }
   .verifyBtn   { width: 100%; }
   .verifiedBanner { padding: 20px; }
-  .skillinf    { display: none; }
+  .Skillinf    { display: none; }
   .resultFooter { flex-direction: column; align-items: flex-start; }
   .verifyAnotherBtn { width: 100%; text-align: center; }
 }
