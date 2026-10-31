@@ -30,6 +30,7 @@ import {
   Mail,
   Ticket,
   Briefcase,
+  Award,
 } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
@@ -65,6 +66,7 @@ const navSections = [
       { name: 'Payments',              path: '/admin/payments',              icon: CreditCard },
       { name: 'Referrals',             path: '/admin/referrals',             icon: Gift },
       { name: 'Email Status',          path: '/admin/email-status',          icon: Mail },
+      { name: 'Event Certificates',    path: '/admin/event-certificates',   icon: Award },
       { name: 'Offer Codes',           path: '/admin/offer-codes',           icon: Ticket },
     ],
   },
