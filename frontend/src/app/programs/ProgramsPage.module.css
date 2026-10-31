@@ -98,16 +98,11 @@
 
 /* ─── Card ──────────────────────────────────────────────────────────────────── */
 .card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden;
+  background: var(--card);
+  border-radius: 0; overflow: hidden;
   display: flex; flex-direction: column;
   text-decoration: none; cursor: pointer;
-  transition: box-shadow 0.28s, transform 0.28s, border-color 0.28s;
-}
-.card:hover {
-  box-shadow: 0 12px 40px rgba(63,95,84,0.13);
-  transform: translateY(-4px);
-  border-color: var(--main-brand);
+  flex: 1;
 }
 
 /* Image area */
@@ -217,6 +212,112 @@
 }
 
 .bottomSpacer { height: 80px; }
+
+/* ─── Card wrap (holds card + cert strip) ──────────────────────────────────── */
+.cardWrap {
+  display: flex; flex-direction: column;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.cardWrap:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.10); transform: translateY(-2px); }
+
+/* Override card's own border/shadow since cardWrap handles it */
+.cardWrap .card {
+  border: none; border-radius: 0; box-shadow: none; transform: none;
+}
+.cardWrap .card:hover { transform: none; box-shadow: none; }
+
+/* ─── Certificate strip ─────────────────────────────────────────────────────── */
+.certStrip {
+  display: flex; gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--highlight);
+}
+.certBtn, .verifyBtn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 700; cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.certBtn {
+  flex: 1; justify-content: center;
+  background: var(--brand-dark, #0f172a); color: #fff; border: none;
+}
+.certBtn:hover { background: var(--main-brand, #2d6a4f); }
+.verifyBtn {
+  flex: 1; justify-content: center;
+  background: var(--card); color: var(--brand-dark, #0f172a);
+  border: 1.5px solid var(--border);
+}
+.verifyBtn:hover { background: var(--highlight); border-color: var(--main-brand, #2d6a4f); }
+
+/* ─── Certificate modal ─────────────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.modal {
+  background: var(--background); border: 1px solid var(--border);
+  border-radius: 18px; padding: 32px 28px;
+  width: 100%; max-width: 520px; position: relative;
+  box-shadow: 0 12px 48px rgba(15,23,42,0.18);
+  max-height: 90vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modalClose {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; font-size: 1.1rem;
+  cursor: pointer; color: var(--secondary-text); padding: 4px;
+  border-radius: 6px; line-height: 1;
+}
+.modalClose:hover { color: var(--main-text); background: var(--highlight); }
+.modalTitle { margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--main-text); }
+.modalSub   { margin: 0; font-size: 0.83rem; color: var(--secondary-text); margin-bottom: 8px; }
+.modalLabel {
+  display: block; font-size: 0.82rem; font-weight: 700;
+  color: var(--secondary-text); margin-bottom: 4px; margin-top: 6px;
+}
+.modalInput {
+  width: 100%; padding: 10px 13px;
+  border: 1.5px solid var(--border); border-radius: 9px;
+  font-size: 0.9rem; font-family: inherit; box-sizing: border-box;
+  outline: none; background: var(--input-bg, #f8fafc); color: var(--main-text);
+  transition: border-color 0.2s;
+}
+.modalInput:focus { border-color: var(--main-brand, #2d6a4f); }
+.modalErr     { font-size: 0.8rem; color: #ef4444; margin: 2px 0; }
+.modalSuccess { font-size: 0.82rem; color: #16a34a; font-weight: 600; margin: 2px 0; }
+.certPreviewCanvas {
+  width: 100%; height: auto; border-radius: 10px;
+  border: 1px solid var(--border); display: block; margin: 6px 0;
+}
+.modalActions { display: flex; gap: 10px; margin-top: 4px; }
+.modalPrimaryBtn {
+  flex: 1; padding: 11px; background: var(--brand-dark, #0f172a); color: #fff;
+  border: none; border-radius: 9px; font-size: 0.9rem; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.modalPrimaryBtn:hover:not(:disabled) { background: var(--main-brand, #2d6a4f); }
+.modalPrimaryBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+.modalSecondaryBtn {
+  padding: 11px 18px; background: var(--highlight); color: var(--brand-dark, #0f172a);
+  border: 1.5px solid var(--border); border-radius: 9px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.modalSecondaryBtn:hover { background: var(--card); }
 
 /* ─── Mobile ────────────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
