@@ -1,9 +1,16 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import styles from './ProgramsPage.module.css';
+
+const VerifyModalDynamic = dynamic(
+  () => import('@/components/event-cert/VerifyModal'),
+  { ssr: false }
+);
 
 interface Program {
   _id: string;
@@ -23,7 +30,8 @@ function getStatus(startDate: string, endDate: string): 'live' | 'completed' {
   return now >= start && now <= end ? 'live' : 'completed';
 }
 
-export default function ProgramsPage() {
+/* ── Inner component that uses useSearchParams ─────────────────── */
+function ProgramsInner() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,6 +40,16 @@ export default function ProgramsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'live' | 'completed'>('all');
   const [platformFilter, setPlatformFilter] = useState('all');
 
+  /* QR-scan verify modal state */
+  const [qrModal, setQrModal] = useState<{
+    certId: string;
+    eventName: string;
+    email: string;
+  } | null>(null);
+
+  const searchParams = useSearchParams();
+
+  /* Load programs */
   useEffect(() => {
     fetch('/api/programs')
       .then((r) => r.json())
@@ -42,6 +60,27 @@ export default function ProgramsPage() {
       .catch(() => setError('Network error — check your connection.'))
       .finally(() => setLoading(false));
   }, []);
+
+  /* Detect QR-scan params: ?event=<certId>&verify=1&email=<encoded-email> */
+  useEffect(() => {
+    const eventId  = searchParams.get('event');
+    const doVerify = searchParams.get('verify');
+    const email    = searchParams.get('email');
+    if (eventId && doVerify === '1' && email) {
+      fetch(`/api/event-certificates/${eventId}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success) {
+            setQrModal({
+              certId: eventId,
+              eventName: d.data.programName ?? 'Event',
+              email: decodeURIComponent(email),
+            });
+          }
+        })
+        .catch(() => {/* silent — user can still navigate normally */});
+    }
+  }, [searchParams]);
 
   /* Unique platform names for dropdown */
   const platformOptions = useMemo(() => {
@@ -139,7 +178,7 @@ export default function ProgramsPage() {
           {loading && (
             <div className={styles.state}>
               <div className={styles.spinner} />
-              <p className={styles.stateText}>Loading programs…</p>
+              <p className={styles.stateText}>Loading programs...</p>
             </div>
           )}
 
@@ -222,6 +261,26 @@ export default function ProgramsPage() {
         </div>
       </main>
       <Footer />
+
+      {/* ── QR-scan auto-verify modal ── */}
+      {qrModal && (
+        <VerifyModalDynamic
+          certId={qrModal.certId}
+          eventName={qrModal.eventName}
+          onClose={() => setQrModal(null)}
+          prefillEmail={qrModal.email}
+          autoVerify={true}
+        />
+      )}
     </>
+  );
+}
+
+/* ── Page export wrapped in Suspense for useSearchParams ────────── */
+export default function ProgramsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProgramsInner />
+    </Suspense>
   );
 }

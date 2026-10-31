@@ -467,3 +467,274 @@
   .codeRevealCode { font-size: 1.2rem; }
   .offerTimePreview { flex-direction: column; align-items: flex-start; }
 }
+
+
+/* ══════════════════════════════════════════════════
+   EVENT CERTIFICATES TAB
+   ══════════════════════════════════════════════════ */
+.evForm {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 28px 24px;
+  margin-top: 20px;
+}
+.evFormTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px;
+}
+.evRow { margin-bottom: 24px; }
+
+.evLabel {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.evSubLabel {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+.evLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.evHint { font-size: 0.76rem; color: #94a3b8; margin: 5px 0 0; }
+
+.evInput {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.18s;
+}
+.evInput:focus { border-color: #0f172a; background: #fff; }
+
+.evInputSm {
+  width: 88px;
+  padding: 7px 10px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.evInputSm:focus { border-color: #0f172a; }
+
+.evSelect {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.evTextarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: vertical;
+  line-height: 1.5;
+}
+.evTextarea:focus { border-color: #0f172a; background: #fff; }
+
+.evColorInput {
+  width: 44px;
+  height: 36px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px;
+  background: #f8fafc;
+}
+.evSlider { width: 100%; accent-color: #0f172a; cursor: pointer; }
+.evSliderVal { font-size: 0.8rem; color: #64748b; margin-left: 8px; }
+
+.evAddBtn {
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.evAddBtn:hover:not(:disabled) { background: #e2e8f0; }
+.evAddBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.evRemoveBtn {
+  padding: 4px 10px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  color: #ef4444;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.evRemoveBtn:hover { background: #fee2e2; }
+
+.evTwoCol   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.evThreeCol { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.evInlineRow { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; align-items: flex-end; }
+
+.evTemplateCard {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #f8fafc;
+}
+.evTemplateCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.evTemplateBadge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  background: #e2e8f0;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.evPrizeCard {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  background: #f8fafc;
+}
+.evContentCard {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  background: #fff;
+}
+.evContentCardHeader {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.evSubSection { margin-bottom: 18px; }
+.evSubSectionLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6366f1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.evSubmitBtn {
+  width: 100%;
+  padding: 13px;
+  background: #0f172a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: inherit;
+  transition: background 0.18s;
+}
+.evSubmitBtn:hover:not(:disabled) { background: #1e293b; }
+.evSubmitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* List */
+.evList { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.evListCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.evListCardMain { flex: 1; min-width: 0; }
+.evListCardTitle { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+.evListCardMeta  { font-size: 0.8rem; color: #64748b; margin-bottom: 2px; }
+.evListCardDate  { font-size: 0.75rem; color: #94a3b8; }
+.evListCardActions { display: flex; gap: 8px; }
+
+.evEditBtn {
+  padding: 6px 14px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.evEditBtn:hover { background: #e2e8f0; }
+
+.evDeleteBtn {
+  padding: 6px 14px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #ef4444;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.evDeleteBtn:hover { background: #fee2e2; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .evTwoCol   { grid-template-columns: 1fr; }
+  .evThreeCol { grid-template-columns: 1fr; }
+  .evListCard { flex-direction: column; align-items: flex-start; }
+  .evForm     { padding: 18px 14px; }
+}

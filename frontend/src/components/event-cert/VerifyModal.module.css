@@ -1,0 +1,128 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--background, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(15, 23, 42, 0.14);
+}
+@media (max-width: 480px) { .modal { padding: 24px 18px; } }
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.closeBtn:hover { background: #f1f5f9; }
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--foreground, #0f172a);
+  margin: 0 0 4px;
+}
+.sub {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 24px;
+}
+.label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 6px;
+}
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--foreground, #0f172a);
+  background: #f8fafc;
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.18s;
+}
+.input:focus { border-color: var(--brand-dark, #0f172a); background: #fff; }
+.err { font-size: 0.8rem; color: #ef4444; margin: 6px 0 0; }
+
+.btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 11px;
+  background: var(--brand-dark, #0f172a);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s;
+}
+.btn:hover:not(:disabled) { background: #1e293b; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.successBox {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.notFoundBox {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.tier {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--brand-dark, #0f172a);
+  margin-bottom: 8px;
+}
+.message {
+  font-size: 0.88rem;
+  color: #334155;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+.resetBtn {
+  background: none;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #64748b;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.resetBtn:hover { background: #f1f5f9; }
+
