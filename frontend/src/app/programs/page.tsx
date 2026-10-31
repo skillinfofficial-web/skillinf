@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
+import AnnouncementBar from '@/components/home/AnnouncementBar';
 import styles from './ProgramsPage.module.css';
 
 const VerifyModalDynamic = dynamic(
@@ -331,6 +332,7 @@ function ProgramsInner() {
   return (
     <>
       <Navbar />
+      <AnnouncementBar />
       <main className={styles.main}>
 
         {/* Hero */}

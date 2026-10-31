@@ -51,7 +51,7 @@ export default function AnnouncementPage() {
       if (data.success) {
         setOriginal(message.trim());
         setOrigEnabled(enabled);
-        setSuccess('Announcement bar updated! Changes are live on the home page.');
+        setSuccess('Announcement bar updated! Changes are live on all pages.');
         setTimeout(() => setSuccess(''), 4000);
       } else {
         setError(data.message || 'Failed to save.');
@@ -79,7 +79,7 @@ export default function AnnouncementPage() {
         <div>
           <h1 className={styles.title}>Announcement Bar</h1>
           <p className={styles.desc}>
-            Edit the scrolling ticker text shown below the navbar on the home page.
+            Edit the scrolling ticker text shown below the navbar on the home, internships, programs and projects pages.
           </p>
         </div>
         <div className={`${styles.statusBadge} ${enabled ? styles.badgeOn : styles.badgeOff}`}>
@@ -107,7 +107,7 @@ export default function AnnouncementPage() {
               <span className={styles.previewPill}>Register Now</span>
             </div>
             {!enabled && (
-              <p className={styles.hiddenNote}>⚠ The bar is currently hidden on the home page.</p>
+              <p className={styles.hiddenNote}>The bar is currently hidden on all pages.</p>
             )}
           </div>
 

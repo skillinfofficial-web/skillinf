@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
+import AnnouncementBar from '@/components/home/AnnouncementBar';
 import styles from './ProjectsPage.module.css';
 
 interface Project {
@@ -51,6 +52,7 @@ export default function ProjectsPage() {
   return (
     <>
       <Navbar />
+      <AnnouncementBar />
       <main className={styles.main}>
 
         {/* ── Hero ── */}
