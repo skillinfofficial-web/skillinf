@@ -350,6 +350,23 @@
   margin-top: 8px;
 }
 
+/* ── Font family row ── */
+.fontRow {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 4px 0;
+}
+.fontRow .labelSm { white-space: nowrap; min-width: 80px; }
+.fontRow .select  { flex: 1; min-width: 180px; }
+
+/* ── QR slider row ── */
+.qrSliderRow {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; padding: 6px 0;
+}
+@media (max-width: 560px) {
+  .qrSliderRow { grid-template-columns: 1fr; }
+}
+
 /* ── Position grid (X slider, Y slider, colour, font size) ── */
 .positionGrid {
   display: grid;

@@ -27,20 +27,26 @@ interface EvContent {
   /* Top text */
   topText:     string;
   topColor:    string;
-  topXPct:     number;  // 0-100 horizontal %
-  topYPct:     number;  // 0-100 vertical %
+  topXPct:     number;
+  topYPct:     number;
   topFontSize: number;
+  topFont:     string;
   /* Name */
   nameColor:    string;
   nameXPct:     number;
   nameYPct:     number;
   nameFontSize: number;
+  nameFont:     string;
   /* Body text */
   bodyText:     string;
   bodyColor:    string;
   bodyXPct:     number;
   bodyYPct:     number;
   bodyFontSize: number;
+  bodyFont:     string;
+  /* QR code */
+  qrXPct: number;
+  qrYPct: number;
 }
 
 interface EvCertDoc {
@@ -53,13 +59,32 @@ interface EvCertDoc {
   contents:     EvContent[];
 }
 
+/* ── Certificate font options ────────────────────────────────────── */
+const CERT_FONTS: { label: string; value: string }[] = [
+  { label: 'Inter (default)',                value: 'Inter, sans-serif' },
+  { label: 'Times New Roman',               value: "'Times New Roman', Times, serif" },
+  { label: 'Georgia',                       value: 'Georgia, serif' },
+  { label: 'Garamond',                      value: "Garamond, 'EB Garamond', serif" },
+  { label: 'Palatino',                      value: "'Palatino Linotype', 'Book Antiqua', Palatino, serif" },
+  { label: 'Book Antiqua',                  value: "'Book Antiqua', Palatino, serif" },
+  { label: 'Bookman Old Style',             value: "'Bookman Old Style', Bookman, serif" },
+  { label: 'Arial',                         value: 'Arial, Helvetica, sans-serif' },
+  { label: 'Helvetica',                     value: 'Helvetica, Arial, sans-serif' },
+  { label: 'Calibri',                       value: "Calibri, 'Gill Sans', sans-serif" },
+  { label: 'Trebuchet MS',                  value: "'Trebuchet MS', Helvetica, sans-serif" },
+  { label: 'Verdana',                       value: 'Verdana, Geneva, sans-serif' },
+  { label: 'Tahoma',                        value: 'Tahoma, Geneva, sans-serif' },
+  { label: 'Century Gothic',               value: "'Century Gothic', CenturyGothic, AppleGothic, sans-serif" },
+];
+
 /* ── Defaults ────────────────────────────────────────────────────── */
 function defaultContent(templateIndex: number): EvContent {
   return {
     templateIndex,
-    topText: '', topColor: '#1a1a1a', topXPct: 50, topYPct: 30, topFontSize: 22,
-    nameColor: '#1a3a2a',             nameXPct: 50, nameYPct: 50, nameFontSize: 36,
-    bodyText: '', bodyColor: '#1a1a1a', bodyXPct: 50, bodyYPct: 68, bodyFontSize: 18,
+    topText: '', topColor: '#1a1a1a', topXPct: 50, topYPct: 28, topFontSize: 22, topFont: 'Inter, sans-serif',
+    nameColor: '#1a3a2a',             nameXPct: 50, nameYPct: 50, nameFontSize: 36, nameFont: "'Times New Roman', Times, serif",
+    bodyText: '', bodyColor: '#1a1a1a', bodyXPct: 50, bodyYPct: 68, bodyFontSize: 18, bodyFont: 'Inter, sans-serif',
+    qrXPct: 88, qrYPct: 84,
   };
 }
 
@@ -70,6 +95,7 @@ function mergeContent(saved: Partial<EvContent>, idx: number): EvContent {
 
 const CANVAS_W = 1123;
 const CANVAS_H = 794;
+const QR_SIZE  = 90;
 
 /* ── Live preview canvas ─────────────────────────────────────────── */
 function PreviewCanvas({
@@ -85,36 +111,13 @@ function PreviewCanvas({
 
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-    const draw = () => {
-      if (!ctx) return;
-      /* background */
-      if (imageUrl) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, CANVAS_W, CANVAS_H);
-          drawText();
-        };
-        img.onerror = () => {
-          ctx.fillStyle = '#e8f0ea';
-          ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-          drawText();
-        };
-        img.src = imageUrl;
-      } else {
-        ctx.fillStyle = '#e8f0ea';
-        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-        drawText();
-      }
-    };
-
     const drawText = () => {
-      if (!ctx) return;
       ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
 
       /* Top text */
       if (content.topText) {
-        ctx.font      = `bold ${content.topFontSize}px Inter, sans-serif`;
+        ctx.font      = `bold ${content.topFontSize}px ${content.topFont}`;
         ctx.fillStyle = content.topColor;
         wrapText(ctx, content.topText,
           content.topXPct / 100 * CANVAS_W,
@@ -124,7 +127,7 @@ function PreviewCanvas({
 
       /* Name */
       const name = sampleName || 'Participant Name';
-      ctx.font      = `bold ${content.nameFontSize}px Inter, sans-serif`;
+      ctx.font      = `bold ${content.nameFontSize}px ${content.nameFont}`;
       ctx.fillStyle = content.nameColor;
       ctx.fillText(name,
         content.nameXPct / 100 * CANVAS_W,
@@ -132,7 +135,7 @@ function PreviewCanvas({
 
       /* Body text */
       if (content.bodyText) {
-        ctx.font      = `${content.bodyFontSize}px Inter, sans-serif`;
+        ctx.font      = `${content.bodyFontSize}px ${content.bodyFont}`;
         ctx.fillStyle = content.bodyColor;
         wrapText(ctx, content.bodyText,
           content.bodyXPct / 100 * CANVAS_W,
@@ -140,17 +143,35 @@ function PreviewCanvas({
           CANVAS_W * 0.8, content.bodyFontSize * 1.4);
       }
 
-      /* QR placeholder */
-      ctx.strokeStyle = '#aaa';
+      /* QR placeholder box */
+      const qrX = content.qrXPct / 100 * CANVAS_W - QR_SIZE / 2;
+      const qrY = content.qrYPct / 100 * CANVAS_H - QR_SIZE / 2;
+      ctx.strokeStyle = '#888';
       ctx.lineWidth   = 2;
-      ctx.strokeRect(CANVAS_W - 110, CANVAS_H - 110, 90, 90);
+      ctx.strokeRect(qrX, qrY, QR_SIZE, QR_SIZE);
       ctx.font      = '14px Inter, sans-serif';
-      ctx.fillStyle = '#aaa';
+      ctx.fillStyle = '#888';
       ctx.textAlign = 'center';
-      ctx.fillText('QR', CANVAS_W - 65, CANVAS_H - 65);
+      ctx.fillText('QR', content.qrXPct / 100 * CANVAS_W, content.qrYPct / 100 * CANVAS_H);
     };
 
-    draw();
+    if (imageUrl) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, CANVAS_W, CANVAS_H);
+        drawText();
+      };
+      img.onerror = () => {
+        ctx.fillStyle = '#e8f0ea';
+        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+        drawText();
+      };
+      img.src = imageUrl;
+    } else {
+      ctx.fillStyle = '#e8f0ea';
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+      drawText();
+    }
   }, [imageUrl, content, sampleName]);
 
   return (
@@ -186,6 +207,33 @@ function wrapText(
   totalLines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
 }
 
+/* ── Font selector ───────────────────────────────────────────────── */
+function FontSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select className={styles.select} value={value} onChange={e => onChange(e.target.value)}>
+      {CERT_FONTS.map(f => (
+        <option key={f.value} value={f.value}>{f.label}</option>
+      ))}
+    </select>
+  );
+}
+
+/* ── Slider block ────────────────────────────────────────────────── */
+function SliderBlock({
+  label, value, onChange,
+}: { label: string; value: number; onChange: (v: number) => void }) {
+  return (
+    <div className={styles.sliderBlock}>
+      <div className={styles.sliderLabelRow}>
+        <span className={styles.labelSm}>{label}</span>
+        <span className={styles.sliderVal}>{value}%</span>
+      </div>
+      <input type="range" min={0} max={100} step={1} className={styles.slider}
+        value={value} onChange={e => onChange(Number(e.target.value))} />
+    </div>
+  );
+}
+
 /* ── Main Component ──────────────────────────────────────────────── */
 export default function EventCertsAdminPage() {
   const [programs,    setPrograms]    = useState<Program[]>([]);
@@ -206,9 +254,8 @@ export default function EventCertsAdminPage() {
   const [prizes,   setPrizes]   = useState<EvPrize[]>([]);
   const [contents, setContents] = useState<EvContent[]>([]);
 
-  /* Which content accordion is open + which template is previewed */
-  const [openContent,      setOpenContent]      = useState<number | null>(0);
-  const [previewTemplate,  setPreviewTemplate]  = useState<number>(0);
+  const [openContent,       setOpenContent]       = useState<number | null>(0);
+  const [previewTemplate,   setPreviewTemplate]   = useState<number>(0);
   const [previewSampleName, setPreviewSampleName] = useState('Participant Name');
 
   const [formError,   setFormError]   = useState('');
@@ -512,10 +559,10 @@ export default function EventCertsAdminPage() {
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Certificate Content &amp; Positioning</label>
               <p className={styles.hint}>
-                Landscape 1123 x 794 px. Use X (horizontal) and Y (vertical) sliders to position each text element. The preview updates live.
+                Landscape 1123 x 794 px. Drag X/Y sliders to position each text element and the QR code. The preview updates live.
               </p>
 
-              {/* Preview sample name input */}
+              {/* Preview sample name + template selector */}
               <div className={styles.previewNameRow}>
                 <label className={styles.labelSm}>Preview name</label>
                 <input
@@ -565,57 +612,29 @@ export default function EventCertsAdminPage() {
                             onChange={e => setContent(i, { topText: e.target.value })}
                           />
                           <div className={styles.positionGrid}>
-                            {/* X */}
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>X Position (horizontal)</span>
-                                <span className={styles.sliderVal}>{c.topXPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.topXPct} onChange={e => setContent(i, { topXPct: Number(e.target.value) })} />
-                            </div>
-                            {/* Y */}
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>Y Position (vertical)</span>
-                                <span className={styles.sliderVal}>{c.topYPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.topYPct} onChange={e => setContent(i, { topYPct: Number(e.target.value) })} />
-                            </div>
-                            {/* Colour */}
+                            <SliderBlock label="X Position (horizontal)" value={c.topXPct} onChange={v => setContent(i, { topXPct: v })} />
+                            <SliderBlock label="Y Position (vertical)"   value={c.topYPct} onChange={v => setContent(i, { topYPct: v })} />
                             <div className={styles.colorBlock}>
                               <span className={styles.labelSm}>Colour</span>
                               <input type="color" className={styles.colorInput} value={c.topColor}
                                 onChange={e => setContent(i, { topColor: e.target.value })} />
                             </div>
-                            {/* Font size */}
                             <div className={styles.sizeBlock}>
                               <span className={styles.labelSm}>Font (px)</span>
                               <input type="number" className={styles.input} min={8} max={120} value={c.topFontSize}
                                 onChange={e => setContent(i, { topFontSize: Number(e.target.value) })} />
                             </div>
                           </div>
+                          <div className={styles.fontRow}>
+                            <span className={styles.labelSm}>Font family</span>
+                            <FontSelect value={c.topFont} onChange={v => setContent(i, { topFont: v })} />
+                          </div>
 
                           {/* ── NAME ── */}
-                          <div className={styles.sectionDivider}>Name (auto-placed between top and body)</div>
+                          <div className={styles.sectionDivider}>Name (printed from participant&rsquo;s entry)</div>
                           <div className={styles.positionGrid}>
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>X Position (horizontal)</span>
-                                <span className={styles.sliderVal}>{c.nameXPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.nameXPct} onChange={e => setContent(i, { nameXPct: Number(e.target.value) })} />
-                            </div>
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>Y Position (vertical)</span>
-                                <span className={styles.sliderVal}>{c.nameYPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.nameYPct} onChange={e => setContent(i, { nameYPct: Number(e.target.value) })} />
-                            </div>
+                            <SliderBlock label="X Position (horizontal)" value={c.nameXPct} onChange={v => setContent(i, { nameXPct: v })} />
+                            <SliderBlock label="Y Position (vertical)"   value={c.nameYPct} onChange={v => setContent(i, { nameYPct: v })} />
                             <div className={styles.colorBlock}>
                               <span className={styles.labelSm}>Colour</span>
                               <input type="color" className={styles.colorInput} value={c.nameColor}
@@ -627,6 +646,10 @@ export default function EventCertsAdminPage() {
                                 onChange={e => setContent(i, { nameFontSize: Number(e.target.value) })} />
                             </div>
                           </div>
+                          <div className={styles.fontRow}>
+                            <span className={styles.labelSm}>Font family</span>
+                            <FontSelect value={c.nameFont} onChange={v => setContent(i, { nameFont: v })} />
+                          </div>
 
                           {/* ── BODY TEXT ── */}
                           <div className={styles.sectionDivider}>Body Content (below name)</div>
@@ -636,22 +659,8 @@ export default function EventCertsAdminPage() {
                             onChange={e => setContent(i, { bodyText: e.target.value })}
                           />
                           <div className={styles.positionGrid}>
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>X Position (horizontal)</span>
-                                <span className={styles.sliderVal}>{c.bodyXPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.bodyXPct} onChange={e => setContent(i, { bodyXPct: Number(e.target.value) })} />
-                            </div>
-                            <div className={styles.sliderBlock}>
-                              <div className={styles.sliderLabelRow}>
-                                <span className={styles.labelSm}>Y Position (vertical)</span>
-                                <span className={styles.sliderVal}>{c.bodyYPct}%</span>
-                              </div>
-                              <input type="range" min={0} max={100} step={1} className={styles.slider}
-                                value={c.bodyYPct} onChange={e => setContent(i, { bodyYPct: Number(e.target.value) })} />
-                            </div>
+                            <SliderBlock label="X Position (horizontal)" value={c.bodyXPct} onChange={v => setContent(i, { bodyXPct: v })} />
+                            <SliderBlock label="Y Position (vertical)"   value={c.bodyYPct} onChange={v => setContent(i, { bodyYPct: v })} />
                             <div className={styles.colorBlock}>
                               <span className={styles.labelSm}>Colour</span>
                               <input type="color" className={styles.colorInput} value={c.bodyColor}
@@ -662,6 +671,18 @@ export default function EventCertsAdminPage() {
                               <input type="number" className={styles.input} min={8} max={120} value={c.bodyFontSize}
                                 onChange={e => setContent(i, { bodyFontSize: Number(e.target.value) })} />
                             </div>
+                          </div>
+                          <div className={styles.fontRow}>
+                            <span className={styles.labelSm}>Font family</span>
+                            <FontSelect value={c.bodyFont} onChange={v => setContent(i, { bodyFont: v })} />
+                          </div>
+
+                          {/* ── QR CODE POSITION ── */}
+                          <div className={styles.sectionDivider}>QR Code Position</div>
+                          <p className={styles.hint}>The QR code links to this event&rsquo;s verify page for the participant. Position it anywhere on the certificate.</p>
+                          <div className={styles.qrSliderRow}>
+                            <SliderBlock label="X Position (horizontal)" value={c.qrXPct} onChange={v => setContent(i, { qrXPct: v })} />
+                            <SliderBlock label="Y Position (vertical)"   value={c.qrYPct} onChange={v => setContent(i, { qrYPct: v })} />
                           </div>
 
                         </div>
@@ -684,7 +705,7 @@ export default function EventCertsAdminPage() {
                   </div>
                   <p className={styles.previewNote}>
                     Showing: {templates[previewTemplate]?.label || `Template ${previewTemplate + 1}`}
-                    {' '}&mdash; QR placeholder shown in bottom-right corner.
+                    {' '}&mdash; QR placeholder shown at the configured position.
                   </p>
                 </div>
 

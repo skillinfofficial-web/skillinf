@@ -12,11 +12,6 @@ const VerifyModalDynamic = dynamic(
   { ssr: false }
 );
 
-const CertCanvasDynamic = dynamic(
-  () => import('@/components/event-cert/CertCanvas'),
-  { ssr: false }
-);
-
 interface Program {
   _id: string;
   name: string;
@@ -27,6 +22,17 @@ interface Program {
   link: string;
 }
 
+interface EvContent {
+  templateIndex: number;
+  topText: string; topColor: string;
+  topXPct: number; topYPct: number; topFontSize: number; topFont?: string;
+  nameColor: string;
+  nameXPct: number; nameYPct: number; nameFontSize: number; nameFont?: string;
+  bodyText: string; bodyColor: string;
+  bodyXPct: number; bodyYPct: number; bodyFontSize: number; bodyFont?: string;
+  qrXPct?: number; qrYPct?: number;
+}
+
 interface EvCertInfo {
   _id: string;
   programId: string;
@@ -34,16 +40,7 @@ interface EvCertInfo {
   templates: { label: string; imageUrl: string; order: number }[];
   participants: string[];
   prizes: { label: string; email: string; templateIndex: number }[];
-  contents: {
-    templateIndex: number;
-    topText: string; topColor: string;
-    bodyText: string; bodyColor: string;
-    nameColor: string;
-    nameYPct: number; nameXPct?: number;
-    topXPct?: number; topYPct?: number;
-    bodyXPct?: number; bodyYPct?: number;
-    topFontSize: number; nameFontSize: number; bodyFontSize: number;
-  }[];
+  contents: EvContent[];
 }
 
 /* Derive live / completed from dates */
@@ -52,6 +49,119 @@ function getStatus(startDate: string, endDate: string): 'live' | 'completed' {
   const start = new Date(startDate);
   const end   = new Date(endDate);
   return now >= start && now <= end ? 'live' : 'completed';
+}
+
+/* Defaults for missing fields */
+function safeContent(c: Partial<EvContent>, idx: number): Required<EvContent> {
+  return {
+    templateIndex: idx,
+    topText: c.topText ?? '', topColor: c.topColor ?? '#1a1a1a',
+    topXPct: c.topXPct ?? 50, topYPct: c.topYPct ?? 28,
+    topFontSize: c.topFontSize ?? 22, topFont: c.topFont ?? 'Inter, sans-serif',
+    nameColor: c.nameColor ?? '#1a3a2a',
+    nameXPct: c.nameXPct ?? 50, nameYPct: c.nameYPct ?? 50,
+    nameFontSize: c.nameFontSize ?? 36, nameFont: c.nameFont ?? "'Times New Roman', Times, serif",
+    bodyText: c.bodyText ?? '', bodyColor: c.bodyColor ?? '#1a1a1a',
+    bodyXPct: c.bodyXPct ?? 50, bodyYPct: c.bodyYPct ?? 68,
+    bodyFontSize: c.bodyFontSize ?? 18, bodyFont: c.bodyFont ?? 'Inter, sans-serif',
+    qrXPct: c.qrXPct ?? 88, qrYPct: c.qrYPct ?? 84,
+  };
+}
+
+const CERT_W = 1123;
+const CERT_H = 794;
+const QR_SIZE = 90;
+
+/* Wrap text on canvas */
+function wrapText(
+  ctx: CanvasRenderingContext2D,
+  text: string, x: number, y: number,
+  maxWidth: number, lineHeight: number,
+) {
+  const lines = text.split('\n');
+  const all: string[] = [];
+  for (const line of lines) {
+    const words = line.split(' ');
+    let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (ctx.measureText(test).width > maxWidth && cur) { all.push(cur); cur = w; }
+      else cur = test;
+    }
+    all.push(cur);
+  }
+  const startY = y - (all.length - 1) * lineHeight / 2;
+  all.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
+}
+
+/* Draw the full certificate on a canvas, return it */
+async function buildCertCanvas(
+  template: { imageUrl: string },
+  contentCfg: Required<EvContent>,
+  participantName: string,
+  qrDataUrl: string,
+): Promise<HTMLCanvasElement> {
+  return new Promise<HTMLCanvasElement>((resolve) => {
+    const c = document.createElement('canvas');
+    c.width  = CERT_W;
+    c.height = CERT_H;
+    const ctx = c.getContext('2d')!;
+
+    const drawAll = () => {
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+
+      /* Top text */
+      if (contentCfg.topText) {
+        ctx.font      = `bold ${contentCfg.topFontSize}px ${contentCfg.topFont}`;
+        ctx.fillStyle = contentCfg.topColor;
+        wrapText(ctx, contentCfg.topText,
+          contentCfg.topXPct / 100 * CERT_W,
+          contentCfg.topYPct / 100 * CERT_H,
+          CERT_W * 0.8, contentCfg.topFontSize * 1.4);
+      }
+
+      /* Name */
+      ctx.font      = `bold ${contentCfg.nameFontSize}px ${contentCfg.nameFont}`;
+      ctx.fillStyle = contentCfg.nameColor;
+      ctx.fillText(
+        participantName,
+        contentCfg.nameXPct / 100 * CERT_W,
+        contentCfg.nameYPct / 100 * CERT_H,
+      );
+
+      /* Body text */
+      if (contentCfg.bodyText) {
+        ctx.font      = `${contentCfg.bodyFontSize}px ${contentCfg.bodyFont}`;
+        ctx.fillStyle = contentCfg.bodyColor;
+        wrapText(ctx, contentCfg.bodyText,
+          contentCfg.bodyXPct / 100 * CERT_W,
+          contentCfg.bodyYPct / 100 * CERT_H,
+          CERT_W * 0.8, contentCfg.bodyFontSize * 1.4);
+      }
+
+      /* QR code */
+      const qrImg = new Image();
+      qrImg.onload = () => {
+        const qrX = contentCfg.qrXPct / 100 * CERT_W - QR_SIZE / 2;
+        const qrY = contentCfg.qrYPct / 100 * CERT_H - QR_SIZE / 2;
+        ctx.drawImage(qrImg, qrX, qrY, QR_SIZE, QR_SIZE);
+        resolve(c);
+      };
+      qrImg.onerror = () => resolve(c);
+      qrImg.src = qrDataUrl;
+    };
+
+    /* Background image */
+    if (template.imageUrl) {
+      const bg = new Image();
+      bg.onload  = () => { ctx.drawImage(bg, 0, 0, CERT_W, CERT_H); drawAll(); };
+      bg.onerror = () => drawAll();
+      bg.src = template.imageUrl;
+    } else {
+      drawAll();
+    }
+  });
 }
 
 /* ── Inner component that uses useSearchParams ─────────────────── */
@@ -63,13 +173,12 @@ function ProgramsInner() {
   /* Cert config map: programId → EvCertInfo */
   const [certMap, setCertMap] = useState<Record<string, EvCertInfo>>({});
 
-  /* Active cert modal (Get Certificate) */
-  const [certModal,  setCertModal]  = useState<{ cert: EvCertInfo } | null>(null);
-  const [certName,   setCertName]   = useState('');
-  const [certEmail,  setCertEmail]  = useState('');
-  const [certLoading,setCertLoading]= useState(false);
-  const [certErr,    setCertErr]    = useState('');
-  const [certCanvas, setCertCanvas] = useState<HTMLCanvasElement | null>(null);
+  /* Active cert modal */
+  const [certModal,   setCertModal]   = useState<{ cert: EvCertInfo } | null>(null);
+  const [certName,    setCertName]    = useState('');
+  const [certEmail,   setCertEmail]   = useState('');
+  const [certLoading, setCertLoading] = useState(false);
+  const [certErr,     setCertErr]     = useState('');
 
   /* Verify modal */
   const [verifyModal, setVerifyModal] = useState<{ certId: string; eventName: string; prefill?: string } | null>(null);
@@ -129,8 +238,7 @@ function ProgramsInner() {
   const [platformFilter, setPlatformFilter] = useState('all');
 
   const platformOptions = useMemo(() => {
-    const names = Array.from(new Set(programs.map((p) => p.platformName))).sort();
-    return names;
+    return Array.from(new Set(programs.map((p) => p.platformName))).sort();
   }, [programs]);
 
   const filtered = useMemo(() => {
@@ -148,87 +256,77 @@ function ProgramsInner() {
   /* Reset cert modal state */
   const openCertModal = useCallback((cert: EvCertInfo) => {
     setCertModal({ cert });
-    setCertName(''); setCertEmail(''); setCertErr(''); setCertCanvas(null);
+    setCertName(''); setCertEmail(''); setCertErr('');
   }, []);
 
-  /* Handle certificate download */
+  /* Handle certificate download — verify → track → draw → PDF */
   const handleDownloadCert = useCallback(async () => {
     if (!certModal) return;
-    if (!certName.trim()) { setCertErr('Enter your name as it should appear on the certificate.'); return; }
-    if (!certEmail.trim()) { setCertErr('Enter your registered email address.'); return; }
+    const name  = certName.trim();
+    const email = certEmail.trim();
+    if (!name)  { setCertErr('Enter your name as it should appear on the certificate.'); return; }
+    if (!email) { setCertErr('Enter your registered email address.'); return; }
     setCertErr(''); setCertLoading(true);
+
     try {
-      const res  = await fetch('/api/event-certificates/verify', {
+      /* Step 1 — Verify email is registered and get template index */
+      const verRes  = await fetch('/api/event-certificates/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ certId: certModal.cert._id, email: certEmail.trim() }),
+        body: JSON.stringify({ certId: certModal.cert._id, email }),
       });
-      const data = await res.json();
-      if (!data.success) { setCertErr(data.message || 'Verification failed.'); return; }
-      const { templateIndex } = data;
+      const verData = await verRes.json();
+      if (!verData.success) { setCertErr(verData.message || 'Verification failed.'); return; }
+      if (!verData.found)   { setCertErr('This email is not registered for this event.'); return; }
+
+      /* Step 2 — One-download-per-email guard */
+      const trackRes  = await fetch('/api/event-certificates/download-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ certId: certModal.cert._id, email }),
+      });
+      const trackData = await trackRes.json();
+      if (!trackData.success) { setCertErr(trackData.message || 'Server error.'); return; }
+      if (!trackData.allowed) {
+        setCertErr(trackData.message || 'This email address has already downloaded a certificate for this event. Each email may download only once.');
+        return;
+      }
+
+      /* Step 3 — Build canvas */
+      const { templateIndex } = verData;
       const template   = certModal.cert.templates[templateIndex] ?? certModal.cert.templates[0];
-      const contentCfg = certModal.cert.contents.find((c) => c.templateIndex === templateIndex)
+      const rawContent = certModal.cert.contents.find((c) => c.templateIndex === templateIndex)
                       ?? certModal.cert.contents[0];
-      if (!template || !contentCfg) { setCertErr('Certificate template not configured. Contact support.'); return; }
-      const qrVal = `https://www.skillinf.in/programs?event=${certModal.cert._id}&verify=1&email=${encodeURIComponent(certEmail.trim())}`;
+      if (!template || !rawContent) {
+        setCertErr('Certificate template not configured. Contact support.'); return;
+      }
+      const contentCfg = safeContent(rawContent, templateIndex);
 
-      const canvas = await new Promise<HTMLCanvasElement>((resolve) => {
-        const c = document.createElement('canvas');
-        c.width  = 1123;
-        c.height = 794;
-        const img = new Image();
-        img.onload = async () => {
-          const ctx = c.getContext('2d')!;
-          ctx.drawImage(img, 0, 0, 1123, 794);
+      const qrVal = `https://www.skillinf.in/programs?event=${certModal.cert._id}&verify=1&email=${encodeURIComponent(email)}`;
+      const QRCode = (await import('qrcode')).default;
+      const qrDataUrl = await QRCode.toDataURL(qrVal, { width: QR_SIZE * 2, margin: 1 });
 
-          /* Top text */
-          ctx.font      = `bold ${contentCfg.topFontSize ?? 22}px Inter, sans-serif`;
-          ctx.fillStyle = contentCfg.topColor ?? '#1a1a1a';
-          ctx.textAlign = 'center';
-          ctx.fillText(contentCfg.topText ?? '', (contentCfg.topXPct ?? 50) / 100 * 1123, (contentCfg.topYPct ?? 35) / 100 * 794);
+      const canvas = await buildCertCanvas(template, contentCfg, name, qrDataUrl);
 
-          /* Name */
-          ctx.font      = `bold ${contentCfg.nameFontSize ?? 36}px Inter, sans-serif`;
-          ctx.fillStyle = contentCfg.nameColor ?? '#1a3a2a';
-          ctx.fillText(certName.trim(), (contentCfg.nameXPct ?? 50) / 100 * 1123, (contentCfg.nameYPct ?? 50) / 100 * 794);
+      /* Step 4 — Export as PDF (landscape A4 = 297×210 mm) */
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
 
-          /* Body text */
-          ctx.font      = `${contentCfg.bodyFontSize ?? 18}px Inter, sans-serif`;
-          ctx.fillStyle = contentCfg.bodyColor ?? '#1a1a1a';
-          ctx.fillText(contentCfg.bodyText ?? '', (contentCfg.bodyXPct ?? 50) / 100 * 1123, (contentCfg.bodyYPct ?? 65) / 100 * 794);
+      const evName   = certModal.cert.programName.replace(/[^a-zA-Z0-9]/g, '-');
+      const safeName = name.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-');
+      pdf.save(`${evName}-${safeName}-certificate.pdf`);
 
-          /* QR code */
-          try {
-            const QRCode = (await import('qrcode')).default;
-            const qrDataUrl = await QRCode.toDataURL(qrVal, { width: 90, margin: 1 });
-            const qrImg = new Image();
-            qrImg.onload = () => {
-              ctx.drawImage(qrImg, 1123 - 110, 794 - 110, 96, 96);
-              resolve(c);
-            };
-            qrImg.src = qrDataUrl;
-          } catch { resolve(c); }
-        };
-        img.onerror = () => resolve(c);
-        img.src = template.imageUrl;
-      });
-      setCertCanvas(canvas);
-    } catch {
+      /* Close modal */
+      setCertModal(null);
+    } catch (ex) {
+      console.error(ex);
       setCertErr('Something went wrong. Please try again.');
     } finally {
       setCertLoading(false);
     }
   }, [certModal, certName, certEmail]);
-
-  const triggerDownload = useCallback(() => {
-    if (!certCanvas || !certModal) return;
-    const evName   = certModal.cert.programName.replace(/[^a-zA-Z0-9]/g, '-');
-    const safeName = certName.trim().replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-');
-    const link     = document.createElement('a');
-    link.href     = certCanvas.toDataURL('image/png');
-    link.download = `${evName}-${safeName}-certificate.png`;
-    link.click();
-  }, [certCanvas, certModal, certName]);
 
   return (
     <>
@@ -375,7 +473,7 @@ function ProgramsInner() {
                       </div>
                     </a>
 
-                    {/* Certificate + Verify buttons — only for programs with a cert config */}
+                    {/* Certificate + Verify buttons */}
                     {cert && (
                       <div className={styles.certStrip}>
                         <button
@@ -412,63 +510,55 @@ function ProgramsInner() {
 
       {/* Certificate download modal */}
       {certModal && (
-        <div className={styles.modalOverlay} onClick={() => { setCertModal(null); setCertCanvas(null); }}>
+        <div className={styles.modalOverlay} onClick={() => { if (!certLoading) setCertModal(null); }}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.modalClose} onClick={() => { setCertModal(null); setCertCanvas(null); }}>&#x2715;</button>
+            {!certLoading && (
+              <button className={styles.modalClose} onClick={() => setCertModal(null)}>&#x2715;</button>
+            )}
             <h2 className={styles.modalTitle}>Get Certificate</h2>
             <p className={styles.modalSub}>{certModal.cert.programName}</p>
 
-            {!certCanvas ? (
-              <>
-                <label className={styles.modalLabel}>Your name (as it will appear on the certificate)</label>
-                <input
-                  className={styles.modalInput}
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={certName}
-                  onChange={(e) => setCertName(e.target.value)}
-                />
-                <label className={styles.modalLabel}>Registered email address</label>
-                <input
-                  className={styles.modalInput}
-                  type="email"
-                  placeholder="you@example.com"
-                  value={certEmail}
-                  onChange={(e) => setCertEmail(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleDownloadCert(); }}
-                />
-                {certErr && <p className={styles.modalErr}>{certErr}</p>}
-                <button
-                  className={styles.modalPrimaryBtn}
-                  onClick={handleDownloadCert}
-                  disabled={certLoading}
-                >
-                  {certLoading ? 'Generating...' : 'Preview Certificate'}
-                </button>
-              </>
-            ) : (
-              <>
-                <p className={styles.modalSuccess}>Certificate ready — review and download below.</p>
-                <canvas
-                  ref={(el) => {
-                    if (el && certCanvas) {
-                      el.width  = certCanvas.width;
-                      el.height = certCanvas.height;
-                      el.getContext('2d')?.drawImage(certCanvas, 0, 0);
-                    }
-                  }}
-                  className={styles.certPreviewCanvas}
-                />
-                <div className={styles.modalActions}>
-                  <button className={styles.modalPrimaryBtn} onClick={triggerDownload}>
-                    Download Certificate
-                  </button>
-                  <button className={styles.modalSecondaryBtn} onClick={() => setCertCanvas(null)}>
-                    Re-enter details
-                  </button>
-                </div>
-              </>
-            )}
+            <div>
+              <label className={styles.modalLabel}>
+                Your full name
+                <span className={styles.modalLabelRed}> — as it will appear on the certificate</span>
+              </label>
+              <input
+                className={styles.modalInput}
+                type="text"
+                placeholder="Enter your full name"
+                value={certName}
+                onChange={(e) => setCertName(e.target.value)}
+                disabled={certLoading}
+              />
+            </div>
+
+            <div>
+              <label className={styles.modalLabel}>Registered email address</label>
+              <input
+                className={styles.modalInput}
+                type="email"
+                placeholder="you@example.com"
+                value={certEmail}
+                onChange={(e) => setCertEmail(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleDownloadCert(); }}
+                disabled={certLoading}
+              />
+            </div>
+
+            {certErr && <p className={styles.modalErr}>{certErr}</p>}
+
+            <p className={styles.modalNote}>
+              Your certificate will be generated and downloaded as a PDF. Each email address may download the certificate only once.
+            </p>
+
+            <button
+              className={styles.modalPrimaryBtn}
+              onClick={handleDownloadCert}
+              disabled={certLoading}
+            >
+              {certLoading ? 'Generating certificate...' : 'Download Certificate (PDF)'}
+            </button>
           </div>
         </div>
       )}

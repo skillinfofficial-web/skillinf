@@ -298,6 +298,13 @@
 .modalInput:focus { border-color: var(--main-brand, #2d6a4f); }
 .modalErr     { font-size: 0.8rem; color: #ef4444; margin: 2px 0; }
 .modalSuccess { font-size: 0.82rem; color: #16a34a; font-weight: 600; margin: 2px 0; }
+.modalLabelRed { color: #ef4444; font-weight: 700; }
+.modalNote {
+  font-size: 0.78rem; color: var(--secondary-text); margin: 2px 0;
+  line-height: 1.5; padding: 8px 12px;
+  background: var(--highlight); border-radius: 8px;
+  border: 1px solid var(--border);
+}
 .certPreviewCanvas {
   width: 100%; height: auto; border-radius: 10px;
   border: 1px solid var(--border); display: block; margin: 6px 0;
