@@ -63,6 +63,11 @@ function defaultContent(templateIndex: number): EvContent {
   };
 }
 
+/** Merge saved content with defaults so old docs missing new fields still work */
+function mergeContent(saved: Partial<EvContent>, idx: number): EvContent {
+  return { ...defaultContent(idx), ...saved, templateIndex: idx };
+}
+
 const CANVAS_W = 1123;
 const CANVAS_H = 794;
 
@@ -85,7 +90,6 @@ function PreviewCanvas({
       /* background */
       if (imageUrl) {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = () => {
           ctx.drawImage(img, 0, 0, CANVAS_W, CANVAS_H);
           drawText();
@@ -235,7 +239,7 @@ export default function EventCertsAdminPage() {
 
   /* ── Sync contents when templates change ────────────────────────── */
   const syncContents = useCallback((tmpls: EvTemplate[], prev: EvContent[]) =>
-    tmpls.map((_, i) => prev.find(c => c.templateIndex === i) ?? defaultContent(i)),
+    tmpls.map((_, i) => mergeContent(prev.find(c => c.templateIndex === i) ?? {}, i)),
   []);
 
   /* ── Template helpers ───────────────────────────────────────────── */
@@ -307,7 +311,7 @@ export default function EventCertsAdminPage() {
     setTemplates(doc.templates);
     setParticipants(doc.participants);
     setPrizes(doc.prizes);
-    setContents(doc.contents.length ? doc.contents : doc.templates.map((_, i) => defaultContent(i)));
+    setContents(doc.templates.map((_, i) => mergeContent(doc.contents[i] ?? {}, i)));
     setFormError(''); setFormSuccess(''); setOpenContent(0); setPreviewTemplate(0);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
-import fs   from 'fs';
 
-// Saves uploaded template image to /public/event-templates/
-// Returns the public URL.
+// Converts the uploaded image to a base64 data URL and returns it.
+// Storing as data URL in MongoDB means it works cross-origin on canvas
+// without CORS issues on both the admin preview and the user frontend.
 export async function POST(req: NextRequest) {
   try {
     const form = await req.formData();
@@ -15,20 +14,18 @@ export async function POST(req: NextRequest) {
     if (!allowedTypes.includes(file.type))
       return NextResponse.json({ success: false, message: 'Only JPEG, PNG, or WebP images are allowed.' }, { status: 400 });
 
-    const dir = path.join(process.cwd(), 'public', 'event-templates');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    // Limit to 4 MB
+    const MAX_BYTES = 4 * 1024 * 1024;
+    if (file.size > MAX_BYTES)
+      return NextResponse.json({ success: false, message: 'Image must be under 4 MB.' }, { status: 400 });
 
-    const ext      = file.name.split('.').pop() ?? 'png';
-    const safeName = `tpl_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const filePath = path.join(dir, safeName);
+    const buffer  = Buffer.from(await file.arrayBuffer());
+    const base64  = buffer.toString('base64');
+    const dataUrl = `data:${file.type};base64,${base64}`;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    fs.writeFileSync(filePath, buffer);
-
-    return NextResponse.json({ success: true, url: `/event-templates/${safeName}` });
+    return NextResponse.json({ success: true, url: dataUrl });
   } catch (err) {
     console.error('[POST /api/event-certificates/upload-template]', err);
     return NextResponse.json({ success: false, message: 'Server error.' }, { status: 500 });
   }
 }
-

@@ -18,17 +18,17 @@ export async function POST(req: NextRequest) {
     const normalised = email.trim().toLowerCase();
 
     // Check prizes first (higher precedence)
-    const prize = (doc.prizes as Array<{ prizeLabel: string; email: string; templateIndex: number }> | undefined)
+    const prize = (doc.prizes as Array<{ label: string; email: string; templateIndex: number }> | undefined)
       ?.find(p => p.email.trim().toLowerCase() === normalised);
 
     if (prize) {
       return NextResponse.json({
         success: true,
         found: true,
-        tier: prize.prizeLabel,
+        tier: prize.label,
         templateIndex: prize.templateIndex,
         eventName: doc.programName,
-        message: `Congratulations! You participated in ${doc.programName} and received the ${prize.prizeLabel}.`,
+        message: `Congratulations! You participated in ${doc.programName} and received the ${prize.label}.`,
       });
     }
 

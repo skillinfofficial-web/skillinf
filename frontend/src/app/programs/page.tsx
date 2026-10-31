@@ -177,7 +177,6 @@ function ProgramsInner() {
         c.width  = 1123;
         c.height = 794;
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.onload = async () => {
           const ctx = c.getContext('2d')!;
           ctx.drawImage(img, 0, 0, 1123, 794);
