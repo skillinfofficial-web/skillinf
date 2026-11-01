@@ -9,7 +9,7 @@ import styles from './Dashboard.module.css';
 
 const VerifyModalDynamic = dynamic(() => import('@/components/event-cert/VerifyModal'), { ssr: false });
 
-/* ΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* -- Types --------------------------------------------------------------- */
 interface UserDoc {
   _id: string; name: string; email: string; domain: string;
   mobileNumber?: string;  // stored since Sept 2026; may be absent for older accounts
@@ -33,7 +33,7 @@ interface UserDoc {
 }
 interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; projectGuidance?: string; }
 
-/* ΓöÇΓöÇ Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* -- Helpers ------------------------------------------------------------- */
 function addDays(dateStr: string, days: number) {
   const d = new Date(dateStr); d.setDate(d.getDate() + days); return d;
 }
@@ -166,7 +166,7 @@ async function downloadOfferLetter(user: UserDoc) {
   doc.save(`${safeName}_Skillinf_internship.pdf`);
 }
 
-/* ΓöÇΓöÇ Certificate PDF generator ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+/* -- Certificate PDF generator -------------------------------------------- */
 async function downloadCertificate(user: UserDoc) {
   const { jsPDF } = await import('jspdf');
   const QRCode = (await import('qrcode')).default;
@@ -277,9 +277,9 @@ interface EvCertInfo {
   contents: EvCertContent[];
 }
 
-/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+/* ======================================================================
    MAIN COMPONENT
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
+====================================================================== */
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<UserDoc | null>(null);
@@ -522,7 +522,7 @@ export default function DashboardPage() {
     }
   };
 
-  /* ΓöÇΓöÇ E-Certificate payment ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+  /* -- E-Certificate payment -------------------------------------------- */
   const handleCertificatePayment = async () => {
     if (!user) return;
     setPayLoad(true); setPayMsg('');
@@ -557,7 +557,7 @@ export default function DashboardPage() {
 
       cashfree.checkout({ paymentSessionId, redirectTarget: '_modal' }).then(async (result) => {
         if (result.error) { setPayMsg(result.error.message || 'Payment failed. Try again.'); setPayLoad(false); return; }
-        setPayMsg('Verifying paymentΓÇª');
+        setPayMsg('Verifying payment...');
         const verRes = await fetch('/api/payment/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -574,7 +574,7 @@ export default function DashboardPage() {
     }
   };
 
-  /* ΓöÇΓöÇ Physical Certificate payment ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+  /* -- Physical Certificate payment ------------------------------------- */
   const handlePhysicalCertificatePayment = async () => {
     if (!user) return;
     const { address, mobile, district, pincode } = physicalForm;
@@ -611,7 +611,7 @@ export default function DashboardPage() {
 
       cashfree.checkout({ paymentSessionId, redirectTarget: '_modal' }).then(async (result) => {
         if (result.error) { setPhysicalPayMsg(result.error.message || 'Payment failed. Try again.'); setPhysicalPayLoad(false); return; }
-        setPhysicalPayMsg('Verifying paymentΓÇª');
+        setPhysicalPayMsg('Verifying payment...');
         const verRes = await fetch('/api/payment/verify-physical', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -657,7 +657,7 @@ export default function DashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setProjectSubmitMsg('Γ£à ' + data.message);
+        setProjectSubmitMsg('SUCCESS: ' + data.message);
         await loadData();
         setTimeout(closeProjectModal, 2000);
       } else {
@@ -669,7 +669,7 @@ export default function DashboardPage() {
 
   /* Loading */
   if (loading) return (
-    <div className={styles.loader}><div className={styles.spin} /><p>Loading your dashboardΓÇª</p></div>
+    <div className={styles.loader}><div className={styles.spin} /><p>Loading your dashboard...</p></div>
   );
   if (!user) return null;
 
@@ -686,7 +686,7 @@ export default function DashboardPage() {
   return (
     <div className={styles.shell}>
 
-      {/* ΓòÉΓòÉ TOPBAR ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* == TOPBAR ======================================================== */}
       <header className={styles.topbar}>
         <Link href="/" className={styles.topLogo}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -707,10 +707,10 @@ export default function DashboardPage() {
 
       <div className={styles.pageBody}>
 
-        {/* ΓòÉΓòÉ HERO CARD ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == HERO CARD ================================================== */}
         <div className={styles.heroCard}>
 
-          {/* Left ΓÇö avatar + info + progress */}
+          {/* Left - avatar + info + progress */}
           <div className={styles.heroLeft}>
             <div className={styles.avatarWrap}>
               <div className={styles.avatar}>{initials}</div>
@@ -736,24 +736,24 @@ export default function DashboardPage() {
                 <span className={styles.progressPct}>{pct}%</span>
               </div>
               <p className={styles.progressMeta}>
-                Internship Progress ┬╖ {fmtDate(new Date(user.startDate))} ΓåÆ {fmtDate(new Date(user.endDate))}
+                Internship Progress | {fmtDate(new Date(user.startDate))} to {fmtDate(new Date(user.endDate))}
               </p>
 
 
             </div>
           </div>
 
-          {/* Right ΓÇö actions */}
+          {/* Right - actions */}
           <div className={styles.heroRight}>
             <div className={styles.heroActions}>
               {/* Download Offer Letter */}
               <button className={styles.heroActionBtn} onClick={() => downloadOfferLetter(user)}>
-                <span className={styles.haBtnIcon}>≡ƒôä</span>
+                <span className={styles.haBtnIcon}></span>
                 <span className={styles.haBtnLabel}>
                   <span className={styles.haBtnTop}>Download</span>
                   <span className={styles.haBtnSub}>Offer Letter</span>
                 </span>
-                <span className={styles.haBtnArrow}>ΓåÆ</span>
+                <span className={styles.haBtnArrow}>&rarr;</span>
               </button>
 
               {/* Get Physical Certificate */}
@@ -769,16 +769,16 @@ export default function DashboardPage() {
                     }
                   }}
                 >
-                  <span className={styles.haBtnIcon}>≡ƒôª</span>
+                  <span className={styles.haBtnIcon}></span>
                   <span className={styles.haBtnLabel}>
                     <span className={styles.haBtnTop}>{physicalCertPaid ? 'Requested' : 'Get Physical'}</span>
-                    <span className={styles.haBtnSub}>{physicalCertPaid ? 'Certificate Γ£ô' : 'Certificate'}</span>
+                    <span className={styles.haBtnSub}>{physicalCertPaid ? 'Certificate Done' : 'Certificate'}</span>
                   </span>
-                  <span className={styles.haBtnArrow}>{physicalCertEnabled ? (physicalCertPaid ? 'Γ£ô' : 'ΓåÆ') : '≡ƒöÆ'}</span>
+                  <span className={styles.haBtnArrow}>&rarr;</span>
                 </button>
                 {showLockMsg && (
                   <div className={styles.lockTooltip}>
-                    First complete all 4 steps and get your e-certificate ΓÇö only then this option will be enabled.
+                    First complete all 4 steps and get your e-certificate - only then this option will be enabled.
                   </div>
                 )}
               </div>
@@ -786,17 +786,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ΓòÉΓòÉ REFERRAL CARD ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == REFERRAL CARD ============================================== */}
         {user.myReferralCode && (
           <div className={styles.referralCard}>
             <div className={styles.referralCardLeft}>
               <div className={styles.referralCardIconBox}>
-                <span className={styles.referralCardIcon}>≡ƒÄü</span>
+                <span className={styles.referralCardIcon}></span>
               </div>
               <div>
                 <p className={styles.referralCardTitle}>Your Referral Code</p>
                 <p className={styles.referralCardSub}>
-                  Share this code with friends ΓÇö when they sign up using your code, you get credit!
+                  Share this code with friends - when they sign up using your code, you get credit!
                 </p>
               </div>
             </div>
@@ -807,36 +807,36 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ΓòÉΓòÉ PHYSICAL CERT SUCCESS BANNER ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == PHYSICAL CERT SUCCESS BANNER ============================== */}
         {physicalSuccess && (
           <div className={styles.physSuccessBanner}>
-            <span className={styles.physSuccessIcon}>≡ƒÄë</span>
+            <span className={styles.physSuccessIcon}></span>
             <div>
               <p className={styles.physSuccessTitle}>Physical Certificate Requested!</p>
-              <p className={styles.physSuccessSub}>Your certificate will be delivered to your registered address within <strong>2ΓÇô3 working days</strong>.</p>
+              <p className={styles.physSuccessSub}>Your certificate will be delivered to your registered address within <strong>2-3 working days</strong>.</p>
             </div>
-            <button className={styles.physSuccessClose} onClick={() => setPhysicalSuccess(false)}>Γ£ò</button>
+            <button className={styles.physSuccessClose} onClick={() => setPhysicalSuccess(false)}>x</button>
           </div>
         )}
 
-        {/* Already paid ΓÇö show persistent status */}
+        {/* Already paid - show persistent status */}
         {physicalCertPaid && !physicalSuccess && (
           <div className={styles.physSuccessBanner}>
-            <span className={styles.physSuccessIcon}>≡ƒôª</span>
+            <span className={styles.physSuccessIcon}></span>
             <div>
               <p className={styles.physSuccessTitle}>Physical Certificate On Its Way!</p>
-              <p className={styles.physSuccessSub}>Your certificate is being processed and will be delivered to your registered address within <strong>2ΓÇô3 working days</strong>.</p>
+              <p className={styles.physSuccessSub}>Your certificate is being processed and will be delivered to your registered address within <strong>2-3 working days</strong>.</p>
             </div>
           </div>
         )}
 
-        {/* ΓòÉΓòÉ LINKEDIN CARD ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == LINKEDIN CARD ============================================== */}
         {user.linkedinVerified !== true && (() => {
           const isRejected = user.linkedinVerified === false && !!user.linkedinPostUrl;
           const isPending  = user.linkedinVerified === 'pending';
 
           if (isRejected) {
-            /* ΓöÇΓöÇ REJECTED state ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+            /* -- REJECTED state ------------------------------------------- */
             return (
               <div className={styles.linkedinCard} style={{ borderColor: '#fca5a5', background: '#fff9f9' }}>
                 <div className={styles.liLeft}>
@@ -845,14 +845,14 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <p className={styles.liTitle} style={{ color: '#b91c1c' }}>
-                      ΓÜí LinkedIn Verification Failed ΓÇö Please resubmit after checking the rules below
+                      LinkedIn Verification Failed - Please resubmit after checking the rules below
                     </p>
                     <p className={styles.liSub} style={{ color: '#dc2626' }}>
                       Please recheck your post or article: it must contain your <strong>Skillinf Offer Letter</strong>, include the hashtag <strong>#Skillinf</strong>, and be posted on <strong>your own LinkedIn account</strong>.
                     </p>
                     {user.linkedinPostUrl && (
                       <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink} style={{ color: '#ef4444', marginTop: 4, display: 'inline-block' }}>
-                        View rejected post ΓåÆ
+                        View rejected post &rarr;
                       </a>
                     )}
                   </div>
@@ -862,7 +862,7 @@ export default function DashboardPage() {
                     <input
                       className={styles.liInput}
                       type="url"
-                      placeholder="Paste LinkedIn post / article URLΓÇª"
+                      placeholder="Paste LinkedIn post / article URL..."
                       value={liUrl}
                       onChange={e => setLiUrl(e.target.value)}
                     />
@@ -872,7 +872,7 @@ export default function DashboardPage() {
                       onClick={submitLinkedin}
                       disabled={liLoad || !liUrl.trim()}
                     >
-                      {liLoad ? 'SubmittingΓÇª' : 'Resubmit'}
+                      {liLoad ? 'Submitting...' : 'Resubmit'}
                     </button>
                   </div>
                   {liMsg && <p className={styles.liMsg}>{liMsg}</p>}
@@ -882,7 +882,7 @@ export default function DashboardPage() {
           }
 
 
-          /* ΓöÇΓöÇ PENDING / NOT-SUBMITTED state ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+          /* -- PENDING / NOT-SUBMITTED state ---------------------------- */
           return (
             <div className={styles.linkedinCard}>
               <div className={styles.liLeft}>
@@ -891,11 +891,11 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className={styles.liTitle}>
-                    {isPending ? 'ΓÅ│ LinkedIn Verification Under Review' : 'ΓÜí LinkedIn Verification Required'}
+                    {isPending ? 'LinkedIn Verification Under Review' : 'LinkedIn Verification Required'}
                   </p>
                   <p className={styles.liSub}>
                     {isPending
-                      ? 'Our team will verify within 3ΓÇô4 hours. Step 1 unlocks on approval.'
+                      ? 'Our team will verify within 3-4 hours. Step 1 unlocks on approval.'
                       : 'Share your offer letter on LinkedIn with #Skillinf to unlock your course steps.'}
                   </p>
                 </div>
@@ -904,10 +904,10 @@ export default function DashboardPage() {
                 <div className={styles.liRight}>
                   <div className={styles.liInputRow}>
                     <input className={styles.liInput} type="url"
-                      placeholder="Paste LinkedIn post / article URLΓÇª"
+                      placeholder="Paste LinkedIn post / article URL..."
                       value={liUrl} onChange={e => setLiUrl(e.target.value)} />
                     <button className={styles.liSubmitBtn} onClick={submitLinkedin} disabled={liLoad || !liUrl.trim()}>
-                      {liLoad ? 'SubmittingΓÇª' : 'Submit'}
+                      {liLoad ? 'Submitting...' : 'Submit'}
                     </button>
                   </div>
                   {liMsg && <p className={styles.liMsg}>{liMsg}</p>}
@@ -915,14 +915,14 @@ export default function DashboardPage() {
               )}
               {isPending && user.linkedinPostUrl && (
                 <a href={user.linkedinPostUrl} target="_blank" rel="noreferrer" className={styles.liViewLink}>
-                  View submitted post ΓåÆ
+                  View submitted post &rarr;
                 </a>
               )}
             </div>
           );
         })()}
 
-        {/* ΓòÉΓòÉ STEPS SECTION ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == STEPS SECTION ============================================== */}
         <div className={styles.stepsSection}>
           <div className={styles.stepsSectionHead}>
             <div>
@@ -936,7 +936,7 @@ export default function DashboardPage() {
 
           {noData ? (
             <div className={styles.noDataBox}>
-              <p>≡ƒôÜ No course content found for <strong>{user.domain}</strong>.</p>
+              <p> No course content found for <strong>{user.domain}</strong>.</p>
               <p>Ask your admin to add this domain in Company Internships.</p>
             </div>
           ) : (
@@ -952,27 +952,27 @@ export default function DashboardPage() {
                   <div key={n} className={`${styles.stepCard} ${done ? styles.stepDone : !available ? styles.stepLocked : styles.stepActive}`}>
 
                     <div className={styles.scTop}>
-                      <div className={`${styles.scNum} ${done ? styles.scNumDone : !available ? styles.scNumLocked : styles.scNumActive}`}>{done ? 'Γ£ô' : n}</div>
+                      <div className={`${styles.scNum} ${done ? styles.scNumDone : !available ? styles.scNumLocked : styles.scNumActive}`}>{done ? 'Done' : n}</div>
                       <span className={done ? styles.badgeDone : available ? styles.badgeAvail : styles.badgeLocked}>
                         {done ? 'Completed' : available ? 'Available' : 'Locked'}
                       </span>
                     </div>
 
                     <div className={styles.scDue}>
-                      <span className={styles.scDueIcon}>≡ƒôà</span>
+                      
                       <span className={styles.scDueText}>Due {fmtDate(dueDate)}</span>
                       {dl > 0 && !done && <span className={styles.scDaysLeft}>{dl}d left</span>}
                       {dl === 0 && !done && <span className={`${styles.scDaysLeft} ${styles.overdue}`}>Overdue</span>}
                     </div>
 
-                    <h3 className={styles.scTitle}>{user.domain} ΓÇö Week {n}</h3>
+                    <h3 className={styles.scTitle}>{user.domain} - Week {n}</h3>
 
                     <a
                       href={`/tutorial/${encodeURIComponent(user.domain)}/${n}`}
                       className={`${styles.ytBtn} ${!available ? styles.ytDisabled : ''}`}
                       onClick={e => !available && e.preventDefault()}
                     >
-                      <span className={styles.ytPlay}>Γû╢</span> Watch Task Tutorial
+                      <span className={styles.ytPlay}></span> Watch Task Tutorial
                     </a>
 
                     <p className={styles.scDesc}>{week.whatYouLearn}</p>
@@ -987,10 +987,10 @@ export default function DashboardPage() {
                     <div className={styles.scBottom}>
                       {done ? (
                         <div className={styles.doneRow}>
-                          <span className={styles.doneIcon}>Γ£ô</span> Work submitted &amp; verified
+                          <span className={styles.doneIcon}>Done</span> Work submitted &amp; verified
                           {user.submissions[`step${n}` as keyof typeof user.submissions] && (
                             <a href={user.submissions[`step${n}` as keyof typeof user.submissions]!}
-                              target="_blank" rel="noreferrer" className={styles.viewLink}>┬╖ View</a>
+                              target="_blank" rel="noreferrer" className={styles.viewLink}>- View</a>
                           )}
                         </div>
                       ) : user.submissions[`step${n}` as keyof typeof user.submissions] ? (
@@ -998,16 +998,16 @@ export default function DashboardPage() {
                         <div className={styles.verifyingRow}>
                           <span className={styles.verifyingDot} />
                           <div>
-                            <p className={styles.verifyingTitle}>Submitted ΓÇö Under Review</p>
+                            <p className={styles.verifyingTitle}>Submitted - Under Review</p>
                             <p className={styles.verifyingText}>Admin will verify your project and unlock the next step.</p>
                             <a href={user.submissions[`step${n}` as keyof typeof user.submissions]!}
-                              target="_blank" rel="noreferrer" className={styles.viewLink} style={{marginTop:4,display:'inline-block'}}>View submitted link ΓåÆ</a>
+                              target="_blank" rel="noreferrer" className={styles.viewLink} style={{marginTop:4,display:'inline-block'}}>View submitted link &rarr;</a>
                           </div>
                         </div>
                       ) : (
                         <>
                           {stepMsgs[idx] && <p className={styles.stepErrMsg}>{stepMsgs[idx]}</p>}
-                          {/* Project Guidance link ΓÇö shown when step is available and guidance exists */}
+                          {/* Project Guidance link - shown when step is available and guidance exists */}
                           {available && week.projectGuidance?.trim() && (
                             <a
                               href={`/guidance/${encodeURIComponent(user.domain)}/${n}`}
@@ -1025,10 +1025,10 @@ export default function DashboardPage() {
                           >
                             {stepLoads[idx] ? 'Submitting\u2026' : !available ? '\uD83D\uDD12 Locked' : 'Submit Project'}
                           </button>
-                          {/* WhatsApp mentor button ΓÇö only shown when step is available */}
+                          {/* WhatsApp mentor button - only shown when step is available */}
                           {available && (
                             <a
-                              href={`https://wa.me/919342637290?text=${encodeURIComponent(`Hi, I am ${user.name} (${user.domain} Internship)\n\nI have a doubt regarding:\nWeek ${n} ΓÇö ${week.projectTitle?.trim() || `Week ${n} Project`}\n\nPlease help me clarify my doubt.`)}`}
+                              href={`https://wa.me/919342637290?text=${encodeURIComponent(`Hi, I am ${user.name} (${user.domain} Internship)\n\nI have a doubt regarding:\nWeek ${n} - ${week.projectTitle?.trim() || `Week ${n} Project`}\n\nPlease help me clarify my doubt.`)}`}
                               target="_blank"
                               rel="noreferrer"
                               className={styles.mentorWaBtn}
@@ -1048,7 +1048,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* ΓòÉΓòÉ CERTIFICATE BANNER ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == CERTIFICATE BANNER ========================================= */}
 
         {/* Event Certificate Buttons -- rendered for programs that have a cert config */}
         {Object.keys(evCertMap).length > 0 && (
@@ -1207,14 +1207,14 @@ export default function DashboardPage() {
 
         <div className={styles.certBanner}>
           <div className={styles.certBannerLeft}>
-            <span className={styles.certBannerIcon}>≡ƒÄô</span>
+            <span className={styles.certBannerIcon}></span>
             <div>
               <p className={styles.certBannerTitle}>Get Your E-Certificate</p>
               <p className={styles.certBannerSub}>
                 {eCertPaid
-                  ? 'Payment complete ΓÇö click to download your certificate!'
+                  ? 'Payment complete - click to download your certificate!'
                   : allDone
-                    ? `All steps complete! Pay Γé╣${eCertPrice} to unlock your certificate.`
+                    ? `All steps complete! Pay Rs. ${eCertPrice} to unlock your certificate.`
                     : 'Complete all 4 course steps to unlock your certificate.'}
               </p>
             </div>
@@ -1247,36 +1247,36 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* ΓòÉΓòÉ E-CERT PAYMENT MODAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == E-CERT PAYMENT MODAL ======================================= */}
         {showPayModal && (
           <div className={styles.payOverlay} onClick={() => { if (!payLoad) setShowPayModal(false); }}>
             <div className={styles.payCard} onClick={e => e.stopPropagation()}>
-              <button className={styles.payClose} onClick={() => { if (!payLoad) { setShowPayModal(false); setPayMsg(''); setOfferCode(''); setOfferMsg(''); setAppliedDiscount(0); setAppliedOfferCode(''); } }}>Γ£ò</button>
-              <div className={styles.payIcon}>≡ƒÄô</div>
+              <button className={styles.payClose} onClick={() => { if (!payLoad) { setShowPayModal(false); setPayMsg(''); setOfferCode(''); setOfferMsg(''); setAppliedDiscount(0); setAppliedOfferCode(''); } }}>x</button>
+              <div className={styles.payIcon}></div>
               <h2 className={styles.payTitle}>Unlock Your Certificate</h2>
               <p className={styles.paySub}>One-time payment for your <strong>{user.domain}</strong> internship certificate</p>
 
-              {/* Price box ΓÇö shows original or discounted price */}
+              {/* Price box - shows original or discounted price */}
               <div className={styles.payPriceBox}>
                 {appliedDiscount > 0 ? (
                   <>
-                    <span className={styles.payAmountStrike}>Γé╣{eCertPrice}</span>
-                    <span className={styles.payAmount}>Γé╣{Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))}</span>
-                    <span className={styles.payPriceNote}>{appliedDiscount}% off applied ┬╖ One-time</span>
+                    <span className={styles.payAmountStrike}>Rs. {eCertPrice}</span>
+                    <span className={styles.payAmount}>Rs. {Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))}</span>
+                    <span className={styles.payPriceNote}>{appliedDiscount}% off applied - One-time</span>
                   </>
                 ) : (
                   <>
-                    <span className={styles.payAmount}>Γé╣{eCertPrice}</span>
-                    <span className={styles.payPriceNote}>One-time ┬╖ All inclusive</span>
+                    <span className={styles.payAmount}>Rs. {eCertPrice}</span>
+                    <span className={styles.payPriceNote}>One-time - All inclusive</span>
                   </>
                 )}
               </div>
 
               <ul className={styles.payFeatures}>
-                <li>Γ£à Verified Digital Certificate</li>
-                <li>Γ£à LinkedIn-shareable credential</li>
-                <li>Γ£à Instant download after payment</li>
-                <li>Γ£à Skillinf MSME-registered seal</li>
+                <li>SUCCESS: Verified Digital Certificate</li>
+                <li>SUCCESS: LinkedIn-shareable credential</li>
+                <li>SUCCESS: Instant download after payment</li>
+                <li>SUCCESS: Skillinf MSME-registered seal</li>
               </ul>
 
               {/* Offer code input */}
@@ -1307,7 +1307,7 @@ export default function DashboardPage() {
                   onClick={appliedDiscount > 0 ? () => { setAppliedDiscount(0); setAppliedOfferCode(''); setOfferCode(''); setOfferMsg(''); } : applyOfferCode}
                   disabled={payLoad || offerApplying}
                 >
-                  {offerApplying ? 'ΓÇª' : appliedDiscount > 0 ? 'Γ£ò Remove' : 'Apply'}
+                  {offerApplying ? '...' : appliedDiscount > 0 ? 'x Remove' : 'Apply'}
                 </button>
                 <button
                   id="pay-btn"
@@ -1317,34 +1317,34 @@ export default function DashboardPage() {
                   onClick={handleCertificatePayment}
                 >
                   {payLoad
-                    ? 'ProcessingΓÇª'
+                    ? 'Processing...'
                     : appliedDiscount > 0
-                      ? `Pay Γé╣${Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))} with Cashfree`
-                      : `Pay Γé╣${eCertPrice} with Cashfree`}
+                      ? `Pay Rs. ${Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))} with Cashfree`
+                      : `Pay Rs. ${eCertPrice} with Cashfree`}
                 </button>
               </div>
-              <p className={styles.payFooter}>≡ƒöÆ Secured by Cashfree ┬╖ UPI ┬╖ Cards ┬╖ Net Banking</p>
+              <p className={styles.payFooter}>Secured by Cashfree - UPI - Cards - Net Banking</p>
             </div>
           </div>
         )}
 
-        {/* ΓòÉΓòÉ PHYSICAL CERT MODAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == PHYSICAL CERT MODAL ======================================== */}
         {showPhysicalModal && (
           <div className={styles.payOverlay} onClick={() => { if (!physicalPayLoad) setShowPhysicalModal(false); }}>
             <div className={styles.physCard} onClick={e => e.stopPropagation()}>
-              <button className={styles.payClose} onClick={() => { if (!physicalPayLoad) { setShowPhysicalModal(false); setPhysicalPayMsg(''); } }}>Γ£ò</button>
-              <div className={styles.payIcon}>≡ƒôª</div>
+              <button className={styles.payClose} onClick={() => { if (!physicalPayLoad) { setShowPhysicalModal(false); setPhysicalPayMsg(''); } }}>x</button>
+              <div className={styles.payIcon}></div>
               <h2 className={styles.payTitle}>Get Physical Certificate</h2>
-              <p className={styles.paySub}>We&apos;ll courier your certificate directly to your address within <strong>2ΓÇô3 working days</strong>.</p>
+              <p className={styles.paySub}>We&apos;ll courier your certificate directly to your address within <strong>2-3 working days</strong>.</p>
               <div className={styles.payPriceBox}>
-                <span className={styles.payAmount}>Γé╣{physicalCertPrice}</span>
-                <span className={styles.payPriceNote}>Includes delivery ┬╖ All inclusive</span>
+                <span className={styles.payAmount}>Rs. {physicalCertPrice}</span>
+                <span className={styles.payPriceNote}>Includes delivery - All inclusive</span>
               </div>
               <div className={styles.physForm}>
                 <label className={styles.physLabel}>Full Delivery Address</label>
                 <textarea
                   className={styles.physTextarea}
-                  placeholder="House No., Street, Area, LandmarkΓÇª"
+                  placeholder="House No., Street, Area, Landmark..."
                   rows={3}
                   value={physicalForm.address}
                   onChange={e => setPhysicalForm(f => ({ ...f, address: e.target.value }))}
@@ -1384,14 +1384,14 @@ export default function DashboardPage() {
               </div>
               {physicalPayMsg && <p className={styles.payMsg}>{physicalPayMsg}</p>}
               <button className={styles.payBtn} disabled={physicalPayLoad} onClick={handlePhysicalCertificatePayment}>
-                {physicalPayLoad ? 'ProcessingΓÇª' : `Pay Γé╣${physicalCertPrice} & Get Physical Certificate`}
+                {physicalPayLoad ? 'Processing...' : `Pay Rs. ${physicalCertPrice} & Get Physical Certificate`}
               </button>
-              <p className={styles.payFooter}>≡ƒöÆ Secured by Cashfree ┬╖ UPI ┬╖ Cards ┬╖ Net Banking</p>
+              <p className={styles.payFooter}>Secured by Cashfree - UPI - Cards - Net Banking</p>
             </div>
           </div>
         )}
 
-        {/* ΓòÉΓòÉ MY INTERNSHIPS MODAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+        {/* == MY INTERNSHIPS MODAL ========================================== */}
         {showInternshipsModal && (
           <div className={styles.modalOverlay} onClick={() => setShowInternshipsModal(false)}>
             <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -1402,10 +1402,10 @@ export default function DashboardPage() {
                   <h2 className={styles.miTitle}>My Internships</h2>
                   <p className={styles.miSub}>Select a domain to switch your active internship</p>
                 </div>
-                <button className={styles.miClose} onClick={() => setShowInternshipsModal(false)}>Γ£ò</button>
+                <button className={styles.miClose} onClick={() => setShowInternshipsModal(false)}>x</button>
               </div>
 
-              {/* Internship list ΓÇö current first, then others */}
+              {/* Internship list - current first, then others */}
               <div className={styles.miList}>
                 {/* Current active domain */}
                 <div
@@ -1445,7 +1445,7 @@ export default function DashboardPage() {
                   disabled={!selectedInternship || selectedInternship === '__current__' || !!switchingTo}
                   onClick={() => selectedInternship && selectedInternship !== '__current__' && handleSwitchDomain(selectedInternship)}
                 >
-                  {switchingTo ? 'SwitchingΓÇª' : 'Switch to Selected'}
+                  {switchingTo ? 'Switching...' : 'Switch to Selected'}
                 </button>
 
                 <Link href="/sign-up?addDomain=1" className={styles.miAddBtn} onClick={() => setShowInternshipsModal(false)}>
@@ -1459,11 +1459,11 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* ΓòÉΓòÉ END-DATE GATE POPUP ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* == END-DATE GATE POPUP ========================================== */}
       {showEndDatePopup && (
         <div className={styles.edOverlay} onClick={() => setShowEndDatePopup(false)}>
           <div className={styles.edCard} onClick={e => e.stopPropagation()}>
-            <span className={styles.edIcon}>≡ƒùô∩╕Å</span>
+            <span className={styles.edIcon}></span>
             <p className={styles.edTitle}>Internship Not Yet Completed</p>
             <p className={styles.edBody}>
               Your certificate will be available for download once your internship end date is reached.
@@ -1494,17 +1494,17 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ΓòÉΓòÉ PROJECT SUBMIT MODAL ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
+      {/* == PROJECT SUBMIT MODAL ======================================== */}
       {projectModal?.open && (() => {
         const w = weeks[projectModal.weekIdx];
         return (
           <div className={styles.projOverlay} onClick={closeProjectModal}>
             <div className={styles.projModal} onClick={e => e.stopPropagation()}>
-              <button className={styles.projModalClose} onClick={closeProjectModal}>Γ£ò</button>
+              <button className={styles.projModalClose} onClick={closeProjectModal}>x</button>
 
               {/* Project info from admin */}
               <h2 className={styles.projModalTitle}>
-                {w.projectTitle?.trim() ? w.projectTitle : `Week ${projectModal.weekIdx + 1} ΓÇö Project Submission`}
+                {w.projectTitle?.trim() ? w.projectTitle : `Week ${projectModal.weekIdx + 1} - Project Submission`}
               </h2>
               {w.projectDescription?.trim() ? (
                 <p className={styles.projModalDesc}>{w.projectDescription}</p>
@@ -1522,14 +1522,14 @@ export default function DashboardPage() {
                 id="proj-drive-link"
                 type="url"
                 className={styles.projInput}
-                placeholder="Paste Google Drive / project linkΓÇª"
+                placeholder="Paste Google Drive / project link..."
                 value={projectDriveLink}
                 onChange={e => { setProjectDriveLink(e.target.value); setProjectSubmitMsg(''); }}
               />
 
 
               {projectSubmitMsg && (
-                <p className={projectSubmitMsg.startsWith('Γ£à') ? styles.projSuccess : styles.projError}>
+                <p className={projectSubmitMsg.startsWith('SUCCESS:') ? styles.projSuccess : styles.projError}>
                   {projectSubmitMsg}
                 </p>
               )}
@@ -1544,7 +1544,7 @@ export default function DashboardPage() {
                   disabled={projectSubmitting || !projectDriveLink.trim()}
                   onClick={() => submitStep(projectModal.weekIdx)}
                 >
-                  {projectSubmitting ? 'SubmittingΓÇª' : 'Submit for Review'}
+                  {projectSubmitting ? 'Submitting...' : 'Submit for Review'}
                 </button>
               </div>
             </div>
