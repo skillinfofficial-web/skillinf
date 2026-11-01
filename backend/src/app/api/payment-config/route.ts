@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/mongodb';
 
-const DEFAULT_CONFIG = { eCertPrice: 149, physicalCertPrice: 149 };
+const DEFAULT_CONFIG = {
+  eCertPrice: 149,
+  eCertDiscount: 0,
+  physicalCertPrice: 149,
+  physicalCertDiscount: 0,
+};
 
 // GET — fetch current prices
 export async function GET() {
@@ -17,14 +22,22 @@ export async function GET() {
 // PUT — admin updates prices
 export async function PUT(req: Request) {
   try {
-    const { eCertPrice, physicalCertPrice } = await req.json();
+    const { eCertPrice, eCertDiscount, physicalCertPrice, physicalCertDiscount } = await req.json();
     if (typeof eCertPrice !== 'number' || typeof physicalCertPrice !== 'number') {
       return NextResponse.json({ success: false, message: 'Invalid prices.' }, { status: 400 });
     }
     const db = await getDatabase();
     await db.collection('payment_config').updateOne(
       { _id: 'prices' as unknown as import('mongodb').ObjectId },
-      { $set: { eCertPrice, physicalCertPrice, updatedAt: new Date() } },
+      {
+        $set: {
+          eCertPrice,
+          eCertDiscount:        typeof eCertDiscount === 'number'        ? eCertDiscount        : 0,
+          physicalCertPrice,
+          physicalCertDiscount: typeof physicalCertDiscount === 'number' ? physicalCertDiscount : 0,
+          updatedAt: new Date(),
+        },
+      },
       { upsert: true },
     );
     return NextResponse.json({ success: true });

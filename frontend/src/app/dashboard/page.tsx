@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -307,9 +307,11 @@ export default function DashboardPage() {
   };
   const closeProjectModal = () => { setProjectModal(null); setProjectDriveLink(''); setProjectSubmitMsg(''); };
 
-  // Payment prices
-  const [eCertPrice, setECertPrice] = useState(149);
-  const [physicalCertPrice, setPhysicalCertPrice] = useState(149);
+  // Payment prices + discounts
+  const [eCertPrice,           setECertPrice]           = useState(149);
+  const [eCertDiscount,        setECertDiscount]        = useState(0);
+  const [physicalCertPrice,    setPhysicalCertPrice]    = useState(149);
+  const [physicalCertDiscount, setPhysicalCertDiscount] = useState(0);
 
   // E-cert payment modal
   const [showPayModal, setShowPayModal] = useState(false);
@@ -375,7 +377,9 @@ export default function DashboardPage() {
       .then(d => {
         if (d.success && d.config) {
           setECertPrice(d.config.eCertPrice ?? 149);
+          setECertDiscount(d.config.eCertDiscount ?? 0);
           setPhysicalCertPrice(d.config.physicalCertPrice ?? 149);
+          setPhysicalCertDiscount(d.config.physicalCertDiscount ?? 0);
         }
       })
       .catch(() => {/* use defaults */});
@@ -526,10 +530,10 @@ export default function DashboardPage() {
   const handleCertificatePayment = async () => {
     if (!user) return;
     setPayLoad(true); setPayMsg('');
-    // Calculate final price after offer discount
+    // Calculate final price: admin discount base, then offer code on top
     const finalPrice = appliedDiscount > 0
-      ? Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))
-      : eCertPrice;
+      ? Math.max(1, Math.round(eCertFinalPrice * (1 - appliedDiscount / 100)))
+      : eCertFinalPrice;
     try {
       const orderRes = await fetch('/api/payment/create-order', {
         method: 'POST',
@@ -590,7 +594,7 @@ export default function DashboardPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: physicalCertPrice,
+          amount: physFinalPrice,
           itemName: user.domain,
           itemType: 'physical-certificate',
           customerName: user.name,
@@ -679,6 +683,14 @@ export default function DashboardPage() {
   const physicalCertPaid = user.physicalCertificate?.paid === true;
   const physicalCertEnabled = eCertPaid && allDone;
   const initials = getInitials(user.name);
+
+  // Discounted prices (if admin set a discount)
+  const eCertFinalPrice = eCertDiscount > 0
+    ? Math.max(1, Math.round(eCertPrice * (1 - eCertDiscount / 100)))
+    : eCertPrice;
+  const physFinalPrice  = physicalCertDiscount > 0
+    ? Math.max(1, Math.round(physicalCertPrice * (1 - physicalCertDiscount / 100)))
+    : physicalCertPrice;
 
   let cumDays = 0;
   const dueDates = weeks.map(w => { cumDays += w.deadlineDays; return addDays(user.startDate, cumDays); });
@@ -791,7 +803,7 @@ export default function DashboardPage() {
           <div className={styles.referralCard}>
             <div className={styles.referralCardLeft}>
               <div className={styles.referralCardIconBox}>
-                <span className={styles.referralCardIcon}></span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color:'#6366f1'}}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               </div>
               <div>
                 <p className={styles.referralCardTitle}>Your Referral Code</p>
@@ -952,7 +964,7 @@ export default function DashboardPage() {
                   <div key={n} className={`${styles.stepCard} ${done ? styles.stepDone : !available ? styles.stepLocked : styles.stepActive}`}>
 
                     <div className={styles.scTop}>
-                      <div className={`${styles.scNum} ${done ? styles.scNumDone : !available ? styles.scNumLocked : styles.scNumActive}`}>{done ? 'Done' : n}</div>
+                      <div className={`${styles.scNum} ${done ? styles.scNumDone : !available ? styles.scNumLocked : styles.scNumActive}`}>{done ? (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>) : n}</div>
                       <span className={done ? styles.badgeDone : available ? styles.badgeAvail : styles.badgeLocked}>
                         {done ? 'Completed' : available ? 'Available' : 'Locked'}
                       </span>
@@ -1256,13 +1268,15 @@ export default function DashboardPage() {
               <h2 className={styles.payTitle}>Unlock Your Certificate</h2>
               <p className={styles.paySub}>One-time payment for your <strong>{user.domain}</strong> internship certificate</p>
 
-              {/* Price box - shows original or discounted price */}
+              {/* Price box - shows admin discount + offer code discount */}
               <div className={styles.payPriceBox}>
-                {appliedDiscount > 0 ? (
+                {(eCertDiscount > 0 || appliedDiscount > 0) ? (
                   <>
                     <span className={styles.payAmountStrike}>Rs. {eCertPrice}</span>
-                    <span className={styles.payAmount}>Rs. {Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))}</span>
-                    <span className={styles.payPriceNote}>{appliedDiscount}% off applied - One-time</span>
+                    <span className={styles.payAmount}>Rs. {Math.max(1, Math.round(eCertFinalPrice * (1 - appliedDiscount / 100)))}</span>
+                    <span className={styles.payPriceNote}>
+                      {appliedDiscount > 0 ? `Offer ${appliedDiscount}% + Admin discount applied` : `% off applied`} - One-time
+                    </span>
                   </>
                 ) : (
                   <>
@@ -1273,10 +1287,10 @@ export default function DashboardPage() {
               </div>
 
               <ul className={styles.payFeatures}>
-                <li>SUCCESS: Verified Digital Certificate</li>
-                <li>SUCCESS: LinkedIn-shareable credential</li>
-                <li>SUCCESS: Instant download after payment</li>
-                <li>SUCCESS: Skillinf MSME-registered seal</li>
+                <li>Verified Digital Certificate</li>
+                <li>LinkedIn-shareable credential</li>
+                <li>Instant download after payment</li>
+                <li>Skillinf MSME-registered seal</li>
               </ul>
 
               {/* Offer code input */}
@@ -1319,8 +1333,8 @@ export default function DashboardPage() {
                   {payLoad
                     ? 'Processing...'
                     : appliedDiscount > 0
-                      ? `Pay Rs. ${Math.max(1, Math.round(eCertPrice * (1 - appliedDiscount / 100)))} with Cashfree`
-                      : `Pay Rs. ${eCertPrice} with Cashfree`}
+                      ? `Pay Rs. ${Math.max(1, Math.round(eCertFinalPrice * (1 - appliedDiscount / 100)))} with Cashfree`
+                      : `Pay Rs. ${eCertFinalPrice} with Cashfree`}
                 </button>
               </div>
               <p className={styles.payFooter}>Secured by Cashfree - UPI - Cards - Net Banking</p>
@@ -1337,8 +1351,18 @@ export default function DashboardPage() {
               <h2 className={styles.payTitle}>Get Physical Certificate</h2>
               <p className={styles.paySub}>We&apos;ll courier your certificate directly to your address within <strong>2-3 working days</strong>.</p>
               <div className={styles.payPriceBox}>
-                <span className={styles.payAmount}>Rs. {physicalCertPrice}</span>
-                <span className={styles.payPriceNote}>Includes delivery - All inclusive</span>
+                {physicalCertDiscount > 0 ? (
+                  <>
+                    <span className={styles.payAmountStrike}>Rs. {physicalCertPrice}</span>
+                    <span className={styles.payAmount}>Rs. {physFinalPrice}</span>
+                    <span className={styles.payPriceNote}>{physicalCertDiscount}% off applied - Includes delivery</span>
+                  </>
+                ) : (
+                  <>
+                    <span className={styles.payAmount}>Rs. {physicalCertPrice}</span>
+                    <span className={styles.payPriceNote}>Includes delivery - All inclusive</span>
+                  </>
+                )}
               </div>
               <div className={styles.physForm}>
                 <label className={styles.physLabel}>Full Delivery Address</label>
@@ -1384,7 +1408,7 @@ export default function DashboardPage() {
               </div>
               {physicalPayMsg && <p className={styles.payMsg}>{physicalPayMsg}</p>}
               <button className={styles.payBtn} disabled={physicalPayLoad} onClick={handlePhysicalCertificatePayment}>
-                {physicalPayLoad ? 'Processing...' : `Pay Rs. ${physicalCertPrice} & Get Physical Certificate`}
+                {physicalPayLoad ? 'Processing...' : `Pay Rs. ${physFinalPrice} & Get Physical Certificate`}
               </button>
               <p className={styles.payFooter}>Secured by Cashfree - UPI - Cards - Net Banking</p>
             </div>
