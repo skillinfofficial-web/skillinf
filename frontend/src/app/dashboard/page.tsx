@@ -999,7 +999,7 @@ export default function DashboardPage() {
                     <div className={styles.scBottom}>
                       {done ? (
                         <div className={styles.doneRow}>
-                          <span className={styles.doneIcon}>Done</span> Work submitted &amp; verified
+                          <span className={styles.doneIcon}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Work submitted &amp; verified
                           {user.submissions[`step${n}` as keyof typeof user.submissions] && (
                             <a href={user.submissions[`step${n}` as keyof typeof user.submissions]!}
                               target="_blank" rel="noreferrer" className={styles.viewLink}>- View</a>
@@ -1275,7 +1275,7 @@ export default function DashboardPage() {
                     <span className={styles.payAmountStrike}>Rs. {eCertPrice}</span>
                     <span className={styles.payAmount}>Rs. {Math.max(1, Math.round(eCertFinalPrice * (1 - appliedDiscount / 100)))}</span>
                     <span className={styles.payPriceNote}>
-                      {appliedDiscount > 0 ? `Offer ${appliedDiscount}% + Admin discount applied` : `% off applied`} - One-time
+                      {appliedDiscount > 0 && eCertDiscount > 0 ? `Offer ${appliedDiscount}% + ${eCertDiscount}% admin discount applied` : appliedDiscount > 0 ? `${appliedDiscount}% offer applied` : `${eCertDiscount}% off applied`} - One-time
                     </span>
                   </>
                 ) : (

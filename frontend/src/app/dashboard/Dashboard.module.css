@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    DASHBOARD - Skillinf
    ============================================================ */
 
@@ -204,7 +204,9 @@
 .viewLink:hover { text-decoration: underline; }
 .stepErrMsg { font-size: 0.78rem; color: #ef4444; font-weight: 600; }
 .doneRow { display: flex; align-items: center; gap: 8px; }
-.doneIcon { font-size: 1.1rem; }
+.doneIcon { width: 26px; height: 26px; border-radius: 7px; background: #10b981; color: #fff; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.payFeatures li { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--main-text); font-weight: 500; padding: 3px 0; }
+.payFeatures li::before { content: '\2022'; color: #10b981; font-size: 1.3rem; line-height: 1; flex-shrink: 0; }
 
 /* NO DATA */
 .noDataBox { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 48px 24px; text-align: center; color: #64748b; font-size: 0.9rem; line-height: 1.8; }
