@@ -4,10 +4,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import styles from './Dashboard.module.css';
 
-const VerifyModalDynamic = dynamic(() => import('@/components/event-cert/VerifyModal'), { ssr: false });
 
 /* -- Types --------------------------------------------------------------- */
 interface UserDoc {
@@ -261,21 +259,6 @@ async function downloadCertificate(user: UserDoc) {
   doc.save(`${safeName}_Skillinf_certificate.pdf`);
 }
 
-/* -- Event Certificate types (module scope) --------------------------------- */
-interface EvCertContent {
-  templateIndex: number;
-  topText: string; topColor: string; topFontSize: number;
-  nameYPercent: number; nameColor: string; nameFontSize: number;
-  bodyText: string; bodyColor: string; bodyFontSize: number;
-}
-interface EvTemplate { label: string; imageUrl: string; order: number; }
-interface EvCertInfo {
-  _id: string; programId: string; programName: string;
-  templates: EvTemplate[];
-  participants: string[];
-  prizes: { prizeLabel: string; email: string; templateIndex: number }[];
-  contents: EvCertContent[];
-}
 
 /* ======================================================================
    MAIN COMPONENT
@@ -341,15 +324,7 @@ export default function DashboardPage() {
 
   // My Internships Switcher
   const [showInternshipsModal, setShowInternshipsModal] = useState(false);
-  // Event Certificates
-  const [evCertMap,   setEvCertMap]   = useState<Record<string, EvCertInfo>>({});
-  const [certModal,   setCertModal]   = useState<{ certId: string; certDoc: EvCertInfo } | null>(null);
-  const [certName,    setCertName]    = useState('');
-  const [certEmail,   setCertEmail]   = useState('');
-  const [certLoading, setCertLoading] = useState(false);
-  const [certErr,     setCertErr]     = useState('');
-  const [certCanvas,  setCertCanvas]  = useState<HTMLCanvasElement | null>(null);
-  const [verifyModal, setVerifyModal] = useState<{ certId: string; eventName: string } | null>(null);
+
 
   const [switchingTo, setSwitchingTo] = useState<string | null>(null);
   const [selectedInternship, setSelectedInternship] = useState<string>('__current__');
@@ -386,75 +361,7 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
-  // Fetch event certificate configs - map by programId
-  useEffect(() => {
-    fetch('/api/event-certificates')
-      .then(r => r.json())
-      .then(d => {
-        if (d.success) {
-          const map: Record<string, EvCertInfo> = {};
-          (d.data as EvCertInfo[]).forEach((ec: EvCertInfo) => { map[ec.programId] = ec; });
-          setEvCertMap(map);
-        }
-      })
-      .catch(() => {});
-  }, []);
 
-  const openCertModal = (certDoc: EvCertInfo) => {
-    setCertModal({ certId: certDoc._id, certDoc });
-    setCertName(''); setCertEmail(''); setCertErr(''); setCertCanvas(null);
-  };
-
-  const handleDownloadCert = async () => {
-    if (!certModal) return;
-    if (!certName.trim()) { setCertErr('Enter your name as it should appear on the certificate.'); return; }
-    if (!certEmail.trim()) { setCertErr('Enter your registered email address.'); return; }
-    setCertErr(''); setCertLoading(true);
-    try {
-      const res  = await fetch('/api/event-certificates/verify', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ certId: certModal.certId, email: certEmail.trim() }),
-      });
-      const data = await res.json();
-      if (!data.success || !data.found) { setCertErr(data.message || 'Email not registered for this event.'); return; }
-      const templateIndex = data.templateIndex || 0;
-      const template   = certModal.certDoc.templates[templateIndex] || certModal.certDoc.templates[0];
-      const contentCfg = certModal.certDoc.contents.find(c => c.templateIndex === templateIndex) || certModal.certDoc.contents[0];
-      if (!template || !contentCfg) { setCertErr('Certificate template not configured. Contact support.'); return; }
-      const qrVal = 'https://www.skillinf.in/programs?event=' + certModal.certId + '&verify=1&email=' + encodeURIComponent(certEmail.trim());
-      const container = document.createElement('div');
-      container.style.cssText = 'position:fixed;left:-9999px;top:0;';
-      document.body.appendChild(container);
-      const CertCanvasMod = await import('@/components/event-cert/CertCanvas');
-      const CertCanvas    = CertCanvasMod.default;
-      const { createRoot } = await import('react-dom/client');
-      const React = (await import('react')).default;
-      let resolveCanvas!: (c: HTMLCanvasElement) => void;
-      const canvasPromise = new Promise<HTMLCanvasElement>(r => { resolveCanvas = r; });
-      const root = createRoot(container);
-      root.render(React.createElement(CertCanvas, {
-        templateImageUrl: template.imageUrl,
-        content: contentCfg,
-        participantName: certName.trim(),
-        qrValue: qrVal,
-        onReady: (c: HTMLCanvasElement) => resolveCanvas(c),
-      }));
-      const canvas = await canvasPromise;
-      root.unmount(); document.body.removeChild(container);
-      setCertCanvas(canvas as HTMLCanvasElement);
-    } catch (e) { setCertErr('Error: ' + String(e)); }
-    finally { setCertLoading(false); }
-  };
-
-  const triggerDownload = () => {
-    if (!certCanvas || !certModal) return;
-    const evName   = certModal.certDoc.programName.replace(/[^a-zA-Z0-9]/g, '-');
-    const safeName = certName.trim().replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-');
-    const link = document.createElement('a');
-    link.download = evName + '-' + safeName + '-certificate.png';
-    link.href = certCanvas.toDataURL('image/png');
-    link.click();
-  };
 
 
   const signOut = async () => { await fetch('/api/auth/logout', { method: 'POST' }); router.push('/'); };
@@ -1061,161 +968,6 @@ export default function DashboardPage() {
         </div>
 
         {/* == CERTIFICATE BANNER ========================================= */}
-
-        {/* Event Certificate Buttons -- rendered for programs that have a cert config */}
-        {Object.keys(evCertMap).length > 0 && (
-          <div style={{ marginBottom: 20 }}>
-            {Object.values(evCertMap).map(ec => (
-              <div key={ec._id} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                flexWrap: 'wrap', gap: 12,
-                background: 'var(--highlight,#e8f0ea)', border: '1.5px solid var(--border,#e2e8f0)',
-                borderRadius: 12, padding: '14px 18px', marginBottom: 10,
-              }}>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--foreground,#0f172a)', marginBottom: 2 }}>
-                    {ec.programName}
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                    Event certificate available
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button
-                    onClick={() => openCertModal(ec)}
-                    style={{
-                      padding: '8px 18px', background: 'var(--brand-dark,#0f172a)', color: '#fff',
-                      border: 'none', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600,
-                      cursor: 'pointer', fontFamily: 'inherit',
-                    }}
-                  >
-                    Get Certificate
-                  </button>
-                  <button
-                    onClick={() => setVerifyModal({ certId: ec._id, eventName: ec.programName })}
-                    style={{
-                      padding: '8px 18px', background: '#fff', color: 'var(--brand-dark,#0f172a)',
-                      border: '1.5px solid var(--border,#e2e8f0)', borderRadius: 8,
-                      fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-                    }}
-                  >
-                    Verify
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Certificate download modal */}
-        {certModal && (
-          <div style={{
-            position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.55)',
-            zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
-          }} onClick={() => setCertModal(null)}>
-            <div style={{
-              background: 'var(--background,#fff)', border: '1px solid var(--border,#e2e8f0)',
-              borderRadius: 16, padding: '32px 28px', width: '100%', maxWidth: 540, position: 'relative',
-              boxShadow: '0 8px 40px rgba(15,23,42,0.14)', maxHeight: '90vh', overflowY: 'auto',
-            }} onClick={e => e.stopPropagation()}>
-              <button
-                style={{ position: 'absolute', top: 12, right: 14, background: 'none', border: 'none', fontSize: '1.1rem', cursor: 'pointer', color: '#64748b' }}
-                onClick={() => setCertModal(null)}
-              >&#x2715;</button>
-              <h2 style={{ margin: '0 0 4px', fontSize: '1.15rem', fontWeight: 700, color: 'var(--foreground,#0f172a)' }}>
-                Get Certificate
-              </h2>
-              <p style={{ margin: '0 0 20px', fontSize: '0.83rem', color: '#64748b' }}>
-                {certModal.certDoc.programName}
-              </p>
-
-              {!certCanvas ? (
-                <>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: 6 }}>
-                    Your name (as it will appear on the certificate)
-                  </label>
-                  <input
-                    style={{
-                      width: '100%', padding: '10px 12px', border: '1.5px solid var(--border,#e2e8f0)',
-                      borderRadius: 8, fontSize: '0.9rem', fontFamily: 'inherit', boxSizing: 'border-box',
-                      marginBottom: 14, outline: 'none', background: '#f8fafc', color: 'var(--foreground,#0f172a)',
-                    }}
-                    placeholder="Enter your full name"
-                    value={certName}
-                    onChange={e => setCertName(e.target.value)}
-                  />
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: '#475569', marginBottom: 6 }}>
-                    Registered email address
-                  </label>
-                  <input
-                    style={{
-                      width: '100%', padding: '10px 12px', border: '1.5px solid var(--border,#e2e8f0)',
-                      borderRadius: 8, fontSize: '0.9rem', fontFamily: 'inherit', boxSizing: 'border-box',
-                      marginBottom: 6, outline: 'none', background: '#f8fafc', color: 'var(--foreground,#0f172a)',
-                    }}
-                    type="email"
-                    placeholder="you@example.com"
-                    value={certEmail}
-                    onChange={e => setCertEmail(e.target.value)}
-                  />
-                  {certErr && <p style={{ fontSize: '0.8rem', color: '#ef4444', margin: '6px 0 10px' }}>{certErr}</p>}
-                  <button
-                    style={{
-                      width: '100%', padding: 11, marginTop: 8, background: 'var(--brand-dark,#0f172a)',
-                      color: '#fff', border: 'none', borderRadius: 8, fontSize: '0.92rem', fontWeight: 700,
-                      cursor: certLoading ? 'not-allowed' : 'pointer', opacity: certLoading ? 0.65 : 1, fontFamily: 'inherit',
-                    }}
-                    onClick={handleDownloadCert}
-                    disabled={certLoading}
-                  >
-                    {certLoading ? 'Generating...' : 'Preview Certificate'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p style={{ fontSize: '0.82rem', color: '#22c55e', fontWeight: 600, marginBottom: 12 }}>
-                    Certificate ready. Review below and download.
-                  </p>
-                  <canvas
-                    ref={el => { if (el && certCanvas) { el.width = certCanvas.width; el.height = certCanvas.height; el.getContext('2d')?.drawImage(certCanvas, 0, 0); } }}
-                    style={{ width: '100%', height: 'auto', borderRadius: 8, border: '1px solid var(--border,#e2e8f0)', display: 'block' }}
-                  />
-                  <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                    <button
-                      style={{
-                        flex: 1, padding: 11, background: 'var(--brand-dark,#0f172a)', color: '#fff',
-                        border: 'none', borderRadius: 8, fontSize: '0.9rem', fontWeight: 700,
-                        cursor: 'pointer', fontFamily: 'inherit',
-                      }}
-                      onClick={triggerDownload}
-                    >
-                      Download Certificate
-                    </button>
-                    <button
-                      style={{
-                        padding: '11px 16px', background: '#f1f5f9', border: '1.5px solid var(--border,#e2e8f0)',
-                        borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
-                        color: '#334155', fontFamily: 'inherit',
-                      }}
-                      onClick={() => setCertCanvas(null)}
-                    >
-                      Re-enter details
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Verify modal */}
-        {verifyModal && (
-          <VerifyModalDynamic
-            certId={verifyModal.certId}
-            eventName={verifyModal.eventName}
-            onClose={() => setVerifyModal(null)}
-          />
-        )}
 
         <div className={styles.certBanner}>
           <div className={styles.certBannerLeft}>
