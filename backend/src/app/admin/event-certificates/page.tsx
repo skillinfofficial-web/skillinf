@@ -343,6 +343,24 @@ export default function EventCertsAdminPage() {
   const setContent = (i: number, patch: Partial<EvContent>) =>
     setContents(prev => prev.map((c, idx) => idx === i ? { ...c, ...patch } : c));
 
+  /* ── Copy all content settings from the template above ─────────── */
+  const copyFromPrev = (i: number) => {
+    if (i === 0 || !contents[i - 1]) return;
+    const src = contents[i - 1];
+    setContent(i, {
+      topText: src.topText, topColor: src.topColor,
+      topXPct: src.topXPct, topYPct: src.topYPct,
+      topFontSize: src.topFontSize, topFont: src.topFont,
+      nameColor: src.nameColor, nameXPct: src.nameXPct,
+      nameYPct: src.nameYPct, nameFontSize: src.nameFontSize,
+      nameFont: src.nameFont,
+      bodyText: src.bodyText, bodyColor: src.bodyColor,
+      bodyXPct: src.bodyXPct, bodyYPct: src.bodyYPct,
+      bodyFontSize: src.bodyFontSize, bodyFont: src.bodyFont,
+      qrXPct: src.qrXPct, qrYPct: src.qrYPct,
+    });
+  };
+
   /* ── Reset ──────────────────────────────────────────────────────── */
   const resetForm = () => {
     setForm({ programId: '', programName: '' });
@@ -603,6 +621,19 @@ export default function EventCertsAdminPage() {
 
                       {openContent === i && (
                         <div className={styles.contentCardBody}>
+
+                          {/* ── COPY FROM PREVIOUS ── */}
+                          {i > 0 && (
+                            <div className={styles.copyFromRow}>
+                              <button
+                                type="button"
+                                className={styles.copyFromBtn}
+                                onClick={() => copyFromPrev(i)}
+                              >
+                                Copy all settings from &ldquo;{templates[i - 1]?.label || `Template ${i}`}&rdquo;
+                              </button>
+                            </div>
+                          )}
 
                           {/* ── TOP TEXT ── */}
                           <div className={styles.sectionDivider}>Top Content (above name)</div>
