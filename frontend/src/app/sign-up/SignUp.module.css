@@ -168,6 +168,34 @@
   color: #0f4f7a;
 }
 
+/* Terms & Conditions checkbox row */
+.termsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #f0faf7;
+  border: 1.5px solid #a7e7d4;
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+.termsCheckbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: #00b894;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.termsLabel {
+  font-size: 0.84rem;
+  color: #334155;
+  line-height: 1.55;
+  cursor: pointer;
+  user-select: none;
+}
+
 /* Mobile */
 @media (max-width: 480px) {
   .card    { padding: 28px 20px; }

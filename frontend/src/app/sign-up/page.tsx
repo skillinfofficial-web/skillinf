@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -33,6 +33,7 @@ export default function SignUpPage() {
   const [success,      setSuccess]      = useState(false);
   const [successMsg,   setSuccessMsg]   = useState('');
   const [isAdditional, setIsAdditional] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   // Dynamic domains state
   const [domains,        setDomains]        = useState<string[]>(FALLBACK_DOMAINS);
@@ -85,6 +86,10 @@ export default function SignUpPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!termsAccepted) {
+      setError('Please accept the Terms & Conditions and Privacy Policy to continue.');
+      return;
+    }
     setLoading(true);
     try {
       const res  = await fetch('/api/auth/register', {
@@ -137,7 +142,7 @@ export default function SignUpPage() {
 
           {/* ── Multi-domain info banner ── */}
           <div className={styles.multiDomainBanner}>
-            <span className={styles.mdbIcon}>🎯</span>
+            <span className={styles.mdbIcon}>*</span>
             <div>
               <p className={styles.mdbTitle}>Multiple Domain Internships Supported!</p>
               <p className={styles.mdbText}>
@@ -149,7 +154,7 @@ export default function SignUpPage() {
 
           {success ? (
             <div className={`${styles.successBox} ${isAdditional ? styles.successBoxMulti : ''}`}>
-              <span className={styles.successIcon}>{isAdditional ? '🎓' : '✓'}</span>
+              <span className={styles.successIcon}>{isAdditional ? "+" : "Done"}</span>
               <p>{successMsg}</p>
             </div>
           ) : (
@@ -160,7 +165,7 @@ export default function SignUpPage() {
                 <label className={styles.label} htmlFor="su-name">Full Name</label>
                 <input id="su-name" className={styles.input} type="text" placeholder="Arun Kumar"
                   value={form.name} onChange={update('name')} required autoComplete="name" />
-                <p className={styles.fieldNote}>📋 This name will be printed on your certificate. Please enter your correct full name.</p>
+                <p className={styles.fieldNote}>Note: This name will be printed on your certificate. Please enter your correct full name.</p>
               </div>
 
               <div className={styles.field}>
@@ -226,17 +231,27 @@ export default function SignUpPage() {
                   autoComplete="off" />
               </div>
 
-              <button id="su-submit" className={styles.submitBtn} type="submit" disabled={loading}>
-                {loading ? 'Enrolling…' : isChangeDomain ? 'Enroll in New Domain' : 'Create Account'}
-              </button>
+              {/* ── Terms & Conditions checkbox ── */}
+              <div className={styles.termsRow}>
+                <input
+                  id="terms-checkbox"
+                  type="checkbox"
+                  className={styles.termsCheckbox}
+                  checked={termsAccepted}
+                  onChange={e => { setTermsAccepted(e.target.checked); setError(''); }}
+                />
+                <label htmlFor="terms-checkbox" className={styles.termsLabel}>
+                  I agree to the{' '}
+                  <Link href="/terms" className={styles.consentLink} target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</Link>
+                  {' '}and{' '}
+                  <Link href="/privacy-policy" className={styles.consentLink} target="_blank" rel="noopener noreferrer">Privacy Policy</Link>
+                  {' '}of Skillinf.
+                </label>
+              </div>
 
-              {/* ── Terms & Privacy consent note ── */}
-              <p className={styles.consentNote}>
-                By creating an account or registering for the internship, you agree to our{' '}
-                <Link href="/terms" className={styles.consentLink}>Terms</Link>
-                {' '}and{' '}
-                <Link href="/privacy-policy" className={styles.consentLink}>Privacy Policy</Link>.
-              </p>
+              <button id="su-submit" className={styles.submitBtn} type="submit" disabled={loading || !termsAccepted}>
+                {loading ? 'Enrolling...' : isChangeDomain ? 'Enroll in New Domain' : 'Create Account'}
+              </button>
             </form>
           )}
 
