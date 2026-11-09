@@ -2,45 +2,66 @@ import { MongoClient, Db, MongoClientOptions, ServerApiVersion } from 'mongodb';
 
 declare global {
   // eslint-disable-next-line no-var
+  var _mongoClient: MongoClient | undefined;
+  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-// ── Connection pool tuned for MongoDB Atlas M0 (500-connection limit) ────────
-// M0 free tier: max 500 connections total across ALL clients.
-// Rule of thumb: maxPoolSize × (number of serverless instances) must stay
-// well under 500. With 2-4 instances and maxPoolSize=3 that is 6-12 total.
-// minPoolSize=0 means idle connections are released rather than held open,
-// which is the single most effective fix for the "connections near limit"
-// Atlas alert on serverless / Next.js deployments.
+// ── Connection pool — Atlas M0 hard limit: 500 connections across ALL clients ─
+//
+// PROBLEM: Next.js `next start` spawns one worker per CPU core. Each worker
+// is a separate OS process — the global singleton is NOT shared between them.
+// With N workers × maxPoolSize connections each, the total can easily hit 500.
+// Additionally, Atlas keeps stale connections alive for ~10 min after a server
+// restart, so old + new connections double-count during deploys.
+//
+// FIX STRATEGY:
+//  1. maxPoolSize: 1  — absolute worst case: 1 conn per worker × N workers
+//  2. minPoolSize: 0  — never hold idle connections open
+//  3. maxIdleTimeMS: 5000 — aggressively release idle connections after 5 s
+//  4. waitQueueTimeoutMS — requests queue for a free connection rather than
+//     opening a new one, preventing connection storms under bursts
+//  5. SIGTERM handler — actively close connection on process exit so Atlas
+//     reclaims the slot immediately (not after the 10-min keepalive timeout)
 const mongoOptions: MongoClientOptions = {
-  maxPoolSize: 3,              // Max connections per process / serverless worker
-  minPoolSize: 0,              // Release idle connections — do NOT keep any warm
-  maxIdleTimeMS: 10000,        // Close a connection after 10 s of idle time
-  connectTimeoutMS: 10000,     // Fail fast if Atlas is unreachable
-  socketTimeoutMS: 45000,      // Abort stalled in-flight operations after 45 s
-  serverSelectionTimeoutMS: 10000,
+  maxPoolSize: 1,              // 1 connection per worker process — the minimum
+  minPoolSize: 0,              // Release idle connections immediately
+  maxIdleTimeMS: 5_000,        // Drop idle connection after 5 s
+  waitQueueTimeoutMS: 10_000,  // Queue requests instead of opening new conns
+  connectTimeoutMS: 10_000,
+  socketTimeoutMS: 45_000,
+  serverSelectionTimeoutMS: 10_000,
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: false,             // Allow non-stable commands (aggregation helpers)
+    strict: false,
     deprecationErrors: true,
   },
 };
 
-function getClientPromise(): Promise<MongoClient> {
+function buildClient(): MongoClient {
   const uri = process.env.MONGODB_URI;
   if (!uri || uri === 'your_mongodb_connection_string_here') {
-    throw new Error(
-      'MONGODB_URI is not configured. Add it to backend/.env.local'
-    );
+    throw new Error('MONGODB_URI is not configured. Add it to backend/.env.local');
+  }
+  const client = new MongoClient(uri, mongoOptions);
+
+  // ── Graceful shutdown: close connection immediately on process exit ──────
+  // Without this, Atlas keeps the slot reserved for ~10 minutes after a
+  // deploy/restart, causing the "double-count" spike you see in the graph.
+  if (process.env.NODE_ENV === 'production') {
+    const close = () => { client.close().catch(() => {}); };
+    process.once('SIGTERM', close);
+    process.once('SIGINT',  close);
+    process.once('beforeExit', close);
   }
 
-  // Single cached promise shared across the entire Node.js process lifetime.
-  // ─ Development  : survives hot-module reloads (global persists on the VM).
-  // ─ Production   : one pool per serverless worker; workers share nothing,
-  //   so the pool stays small and Atlas connection counts stay low.
+  return client;
+}
+
+function getClientPromise(): Promise<MongoClient> {
   if (!global._mongoClientPromise) {
-    const client = new MongoClient(uri, mongoOptions);
-    global._mongoClientPromise = client.connect();
+    global._mongoClient      = buildClient();
+    global._mongoClientPromise = global._mongoClient.connect();
   }
   return global._mongoClientPromise;
 }
