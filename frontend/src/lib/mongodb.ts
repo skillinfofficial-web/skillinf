@@ -29,7 +29,7 @@ const mongoOptions: MongoClientOptions = {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: false,
-    deprecationErrors: true,
+    deprecationErrors: false,   // Don't throw on deprecated ops — some driver helpers use them
   },
 };
 
