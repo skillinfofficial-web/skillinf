@@ -79,6 +79,7 @@
 .referralCardIcon { font-size: 1.25rem; }
 .referralCardTitle { font-size: 0.9rem; font-weight: 800; color: #0f172a; margin: 0 0 3px; }
 .referralCardSub { font-size: 0.78rem; color: #64748b; line-height: 1.5; margin: 0; }
+.referralNote { color: #d97706; font-weight: 700; }
 .referralCardRight { display: flex; align-items: center; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
 .referralCardCode { font-size: 1rem; font-weight: 800; color: #0f172a; background: #f1f5f9; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px 18px; letter-spacing: 0.16em; font-family: monospace; }
 .referralCardShareBtn { padding: 9px 22px; background: #6366f1; color: #fff; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.18s, transform 0.15s; white-space: nowrap; }

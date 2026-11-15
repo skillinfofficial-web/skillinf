@@ -11,6 +11,7 @@ interface TrendingCarouselProps {
   title?: string;
 }
 
+
 export default function TrendingCarousel({
   items,
   type,

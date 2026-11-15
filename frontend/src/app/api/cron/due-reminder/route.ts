@@ -14,7 +14,6 @@ const istNow = () => new Date().toLocaleString('en-IN', {
 function fmtIST(d: Date): string {
   return fmtISTLong(d);
 }
-
 /* ─────────────────────────────────────────────────────────────────────────────
    Email: normal reminder — this step is due tomorrow, previous step done
 ───────────────────────────────────────────────────────────────────────────── */
