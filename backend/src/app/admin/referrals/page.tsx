@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Users, Loader2, AlertCircle, Search, Gift, Ticket, Send, CheckCircle2 } from 'lucide-react';
 import styles from './Referrals.module.css';
 
@@ -13,9 +13,9 @@ interface ReferralEntry {
 }
 
 interface CouponState {
-  pct: string;             // input value (string so user can type freely)
+  pct: string;             // kept as string so the user can type freely
   generating: boolean;
-  generatedCode: string;   // set after successful generation
+  generatedCode: string;
   genError: string;
   sending: boolean;
   sendResult: { ok: boolean; msg: string } | null;
@@ -25,6 +25,82 @@ const defaultCoupon = (): CouponState => ({
   pct: '', generating: false, generatedCode: '',
   genError: '', sending: false, sendResult: null,
 });
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CouponPanel is a TOP-LEVEL component (outside ReferralsPage) so React never
+   unmounts / remounts it on parent re-renders — which was causing the input to
+   lose focus after every keystroke.
+───────────────────────────────────────────────────────────────────────────── */
+interface CouponPanelProps {
+  email: string;
+  name: string;
+  coupon: CouponState;
+  onPctChange: (email: string, pct: string) => void;
+  onGenerate: (email: string) => void;
+  onSend: (email: string) => void;
+}
+
+function CouponPanel({ email, name, coupon: c, onPctChange, onGenerate, onSend }: CouponPanelProps) {
+  return (
+    <div className={styles.couponPanel}>
+      <p className={styles.couponTitle}><Ticket size={13} /> Generate Referral Coupon</p>
+
+      <div className={styles.couponRow}>
+        <div className={styles.couponInputWrap}>
+          <input
+            type="number"
+            min={1}
+            max={100}
+            className={styles.couponInput}
+            placeholder="Discount %"
+            value={c.pct}
+            onChange={e => onPctChange(email, e.target.value)}
+          />
+          <span className={styles.couponPctLabel}>%</span>
+        </div>
+        <button
+          className={styles.generateBtn}
+          onClick={() => onGenerate(email)}
+          disabled={c.generating || !c.pct}
+        >
+          {c.generating
+            ? <><Loader2 size={13} className={styles.spin} /> Generating…</>
+            : 'Generate Coupon'}
+        </button>
+      </div>
+
+      {c.genError && <p className={styles.couponErr}>{c.genError}</p>}
+
+      {c.generatedCode && (
+        <div className={styles.generatedWrap}>
+          <div className={styles.generatedCode}>
+            <span className={styles.generatedLabel}>Coupon Code</span>
+            <span className={styles.generatedValue}>{c.generatedCode}</span>
+            <span className={styles.generatedPct}>{c.pct}% OFF · One-time use</span>
+          </div>
+          <button
+            className={styles.sendMailBtn}
+            onClick={() => onSend(email)}
+            disabled={c.sending || c.sendResult?.ok === true}
+          >
+            {c.sending
+              ? <><Loader2 size={13} className={styles.spin} /> Sending…</>
+              : c.sendResult?.ok
+                ? <><CheckCircle2 size={13} /> Mail Sent</>
+                : <><Send size={13} /> Send Coupon Mail</>}
+          </button>
+          {c.sendResult && (
+            <p className={`${styles.sendResult} ${c.sendResult.ok ? styles.sendOk : styles.sendErr}`}>
+              {c.sendResult.msg}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<ReferralEntry[]>([]);
@@ -39,11 +115,25 @@ export default function ReferralsPage() {
   const getCoupon = (email: string): CouponState =>
     coupons[email] ?? defaultCoupon();
 
-  const patchCoupon = (email: string, patch: Partial<CouponState>) =>
+  const patchCoupon = useCallback((email: string, patch: Partial<CouponState>) =>
     setCoupons(prev => ({
       ...prev,
       [email]: { ...(prev[email] ?? defaultCoupon()), ...patch },
+    })), []);
+
+  /* ── Only update pct — reset generated code when user changes the % ── */
+  const handlePctChange = useCallback((email: string, pct: string) => {
+    setCoupons(prev => ({
+      ...prev,
+      [email]: {
+        ...(prev[email] ?? defaultCoupon()),
+        pct,
+        genError: '',
+        generatedCode: '',
+        sendResult: null,
+      },
     }));
+  }, []);
 
   useEffect(() => {
     fetch('/api/referrals')
@@ -65,117 +155,61 @@ export default function ReferralsPage() {
   const totalReferrals = referrals.reduce((s, r) => s + r.referredCount, 0);
 
   /* ── Generate coupon ── */
-  const generateCoupon = async (r: ReferralEntry) => {
-    const c = getCoupon(r.email);
+  const handleGenerate = useCallback(async (email: string) => {
+    const entry = referrals.find(r => r.email === email);
+    if (!entry) return;
+    const c   = getCoupon(email);  // read current state via closure — fine for one-shot action
     const pct = Number(c.pct);
     if (!pct || pct < 1 || pct > 100) {
-      patchCoupon(r.email, { genError: 'Enter a discount between 1 and 100.' });
+      patchCoupon(email, { genError: 'Enter a discount between 1 and 100.' });
       return;
     }
-    patchCoupon(r.email, { generating: true, genError: '', generatedCode: '', sendResult: null });
+    patchCoupon(email, { generating: true, genError: '', generatedCode: '', sendResult: null });
     try {
       const res  = await fetch('/api/referrals/generate-coupon', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: r.email, name: r.name, discountPercent: pct }),
+        body: JSON.stringify({ email: entry.email, name: entry.name, discountPercent: pct }),
       });
       const data = await res.json();
       if (data.success) {
-        patchCoupon(r.email, { generatedCode: data.code, genError: '' });
+        patchCoupon(email, { generatedCode: data.code, genError: '' });
       } else {
-        patchCoupon(r.email, { genError: data.message || 'Failed to generate coupon.' });
+        patchCoupon(email, { genError: data.message || 'Failed to generate coupon.' });
       }
     } catch {
-      patchCoupon(r.email, { genError: 'Network error.' });
+      patchCoupon(email, { genError: 'Network error.' });
     } finally {
-      patchCoupon(r.email, { generating: false });
+      patchCoupon(email, { generating: false });
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referrals, coupons, patchCoupon]);
 
   /* ── Send coupon email ── */
-  const sendCouponMail = async (r: ReferralEntry) => {
-    const c = getCoupon(r.email);
+  const handleSend = useCallback(async (email: string) => {
+    const entry = referrals.find(r => r.email === email);
+    if (!entry) return;
+    const c = getCoupon(email);
     if (!c.generatedCode) return;
-    patchCoupon(r.email, { sending: true, sendResult: null });
+    patchCoupon(email, { sending: true, sendResult: null });
     try {
       const res  = await fetch('/api/referrals/send-coupon-mail', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: r.email, name: r.name,
+          email: entry.email, name: entry.name,
           code: c.generatedCode, discountPercent: Number(c.pct),
         }),
       });
       const data = await res.json();
-      patchCoupon(r.email, { sendResult: { ok: data.success, msg: data.message } });
+      patchCoupon(email, { sendResult: { ok: data.success, msg: data.message } });
     } catch {
-      patchCoupon(r.email, { sendResult: { ok: false, msg: 'Network error.' } });
+      patchCoupon(email, { sendResult: { ok: false, msg: 'Network error.' } });
     } finally {
-      patchCoupon(r.email, { sending: false });
+      patchCoupon(email, { sending: false });
     }
-  };
-
-  /* ── Coupon panel rendered inside each row ── */
-  const CouponPanel = ({ r }: { r: ReferralEntry }) => {
-    const c = getCoupon(r.email);
-    return (
-      <div className={styles.couponPanel}>
-        <p className={styles.couponTitle}><Ticket size={13}/> Generate Referral Coupon</p>
-        <div className={styles.couponRow}>
-          <div className={styles.couponInputWrap}>
-            <input
-              type="number"
-              min={1}
-              max={100}
-              className={styles.couponInput}
-              placeholder="Discount %"
-              value={c.pct}
-              onChange={e => patchCoupon(r.email, { pct: e.target.value, genError: '', generatedCode: '', sendResult: null })}
-            />
-            <span className={styles.couponPctLabel}>%</span>
-          </div>
-          <button
-            className={styles.generateBtn}
-            onClick={() => generateCoupon(r)}
-            disabled={c.generating || !c.pct}
-          >
-            {c.generating
-              ? <><Loader2 size={13} className={styles.spin}/> Generating…</>
-              : 'Generate Coupon'}
-          </button>
-        </div>
-
-        {c.genError && <p className={styles.couponErr}>{c.genError}</p>}
-
-        {c.generatedCode && (
-          <div className={styles.generatedWrap}>
-            <div className={styles.generatedCode}>
-              <span className={styles.generatedLabel}>Coupon Code</span>
-              <span className={styles.generatedValue}>{c.generatedCode}</span>
-              <span className={styles.generatedPct}>{c.pct}% OFF · One-time use</span>
-            </div>
-            <button
-              className={styles.sendMailBtn}
-              onClick={() => sendCouponMail(r)}
-              disabled={c.sending || (c.sendResult?.ok === true)}
-            >
-              {c.sending
-                ? <><Loader2 size={13} className={styles.spin}/> Sending…</>
-                : c.sendResult?.ok
-                  ? <><CheckCircle2 size={13}/> Mail Sent</>
-                  : <><Send size={13}/> Send Coupon Mail</>
-              }
-            </button>
-            {c.sendResult && (
-              <p className={`${styles.sendResult} ${c.sendResult.ok ? styles.sendOk : styles.sendErr}`}>
-                {c.sendResult.msg}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referrals, coupons, patchCoupon]);
 
   return (
     <div className={styles.page}>
@@ -189,8 +223,8 @@ export default function ReferralsPage() {
           </div>
         </div>
         <div className={styles.statPills}>
-          <div className={styles.pill}><Users size={14}/> {referrals.length} Members</div>
-          <div className={`${styles.pill} ${styles.pillGreen}`}><Gift size={14}/> {totalReferrals} Referrals</div>
+          <div className={styles.pill}><Users size={14} /> {referrals.length} Members</div>
+          <div className={`${styles.pill} ${styles.pillGreen}`}><Gift size={14} /> {totalReferrals} Referrals</div>
         </div>
       </div>
 
@@ -207,11 +241,11 @@ export default function ReferralsPage() {
 
       {/* Content */}
       {loading ? (
-        <div className={styles.center}><Loader2 size={28} className={styles.spin}/><p>Loading referrals…</p></div>
+        <div className={styles.center}><Loader2 size={28} className={styles.spin} /><p>Loading referrals…</p></div>
       ) : error ? (
-        <div className={styles.center}><AlertCircle size={28} color="#ef4444"/><p>{error}</p></div>
+        <div className={styles.center}><AlertCircle size={28} color="#ef4444" /><p>{error}</p></div>
       ) : filtered.length === 0 ? (
-        <div className={styles.center}><Users size={40} color="#cbd5e1"/><p>No referral data found.</p></div>
+        <div className={styles.center}><Users size={40} color="#cbd5e1" /><p>No referral data found.</p></div>
       ) : (
         <>
           {/* Desktop — table */}
@@ -255,7 +289,7 @@ export default function ReferralsPage() {
                           className={styles.couponToggleBtn}
                           onClick={() => setExpanded(expanded === `cp_${r.email}` ? null : `cp_${r.email}`)}
                         >
-                          <Ticket size={13}/> {expanded === `cp_${r.email}` ? 'Hide' : 'Coupon'}
+                          <Ticket size={13} /> {expanded === `cp_${r.email}` ? 'Hide' : 'Coupon'}
                         </button>
                       </td>
                     </tr>
@@ -276,7 +310,14 @@ export default function ReferralsPage() {
                     {expanded === `cp_${r.email}` && (
                       <tr className={styles.expandedRow}>
                         <td colSpan={7}>
-                          <CouponPanel r={r} />
+                          <CouponPanel
+                            email={r.email}
+                            name={r.name}
+                            coupon={getCoupon(r.email)}
+                            onPctChange={handlePctChange}
+                            onGenerate={handleGenerate}
+                            onSend={handleSend}
+                          />
                         </td>
                       </tr>
                     )}
@@ -288,7 +329,7 @@ export default function ReferralsPage() {
 
           {/* Mobile — cards */}
           <div className={styles.cardList}>
-            {filtered.map((r, i) => (
+            {filtered.map(r => (
               <div key={r.email} className={styles.card}>
                 <div className={styles.cardTop}>
                   <div>
@@ -323,7 +364,7 @@ export default function ReferralsPage() {
                         className={styles.couponToggleBtn}
                         onClick={() => setExpanded(expanded === `cp_${r.email}` ? null : `cp_${r.email}`)}
                       >
-                        <Ticket size={13}/> {expanded === `cp_${r.email}` ? 'Hide' : 'Generate'}
+                        <Ticket size={13} /> {expanded === `cp_${r.email}` ? 'Hide' : 'Generate'}
                       </button>
                     </span>
                   </div>
@@ -336,7 +377,14 @@ export default function ReferralsPage() {
                 )}
                 {expanded === `cp_${r.email}` && (
                   <div style={{ marginTop: 12 }}>
-                    <CouponPanel r={r} />
+                    <CouponPanel
+                      email={r.email}
+                      name={r.name}
+                      coupon={getCoupon(r.email)}
+                      onPctChange={handlePctChange}
+                      onGenerate={handleGenerate}
+                      onSend={handleSend}
+                    />
                   </div>
                 )}
               </div>
