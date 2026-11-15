@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "skillinf",
+  "compatibility_date": "2026-11-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": false,
+    "logs": {
+      "enabled": false
+    }
+  },
+  "vars": {
+    "CASHFREE_APP_ID": "14095521255f4a5112a7d862ae02559041",
+    "CASHFREE_ENV": "production",
+    "MONGODB_DATABASE": "skillinf_course_data",
+    "NEXT_PUBLIC_BASE_URL": "https://skillinf-backend.onrender.com"
+  }
+}
