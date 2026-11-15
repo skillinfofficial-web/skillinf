@@ -981,7 +981,7 @@ export default function DashboardPage() {
                 {eCertPaid
                   ? 'Payment complete - click to download your certificate!'
                   : allDone
-                    ? `All steps complete! Pay Rs. ${eCertPrice} to unlock your certificate.`
+                    ? 'All steps complete! Click to unlock your certificate.'
                     : 'Complete all 4 course steps to unlock your certificate.'}
               </p>
             </div>
