@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -717,8 +717,8 @@ export default function DashboardPage() {
                 <p className={styles.referralCardSub}>
                   Share this code with friends - when they sign up using your code, you get credit!
                 </p>
-                <p className={styles.referralCardNote}>
-                  Note: Referred member must participate and complete the tasks — only then the referral is counted as valid.
+                <p className={styles.referralCardSub}>
+                  <span className={styles.referralNote}>Note:</span> Referred member must complete the tasks for the referral to be valid.
                 </p>
               </div>
             </div>
