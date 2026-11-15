@@ -1,9 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "skillinf",
+  "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-15",
   "workers_dev": false,
   "preview_urls": false,
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
   "observability": {
     "enabled": false,
     "logs": {
