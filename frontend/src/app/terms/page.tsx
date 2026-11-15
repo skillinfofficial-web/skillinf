@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import styles from '../privacy-policy/PrivacyPolicy.module.css';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Terms & Conditions | Skillinf',
   description: 'Read the Skillinf Terms & Conditions for using our internship programs, training services, certificates, and website.',
@@ -44,7 +46,7 @@ export default function TermsPage() {
           </section>
           <section className={styles.section}>
             <h2>6. LinkedIn Post Verification</h2>
-            <p>For programs where LinkedIn posting is part of the required process, participants may be required to publish a LinkedIn post according to instructions provided by Skillinf. The next stage of the program, including access to certain course or learning sections, may be made available <strong>only after the required LinkedIn post has been successfully verified</strong>. Participants are responsible for ensuring that their LinkedIn post meets the stated requirements.</p>
+            <p>For programs where LinkedIn posting is part of the required process, participants may be required to publish a LinkedIn post according to instructions provided by Skillinf. The next stage of the program, including access to certain course or learning sections, may be made available only after the required LinkedIn post has been <strong>successfully verified</strong>. Participants are responsible for ensuring that their LinkedIn post meets the stated requirements.</p>
           </section>
           <section className={styles.section}>
             <h2>7. Course and Learning Access</h2>

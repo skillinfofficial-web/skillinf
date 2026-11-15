@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import styles from './PrivacyPolicy.module.css';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: 'Privacy Policy | Skillinf',
   description: 'Read the Skillinf Privacy Policy. Learn how we collect, use, and protect your personal information when you use our internship platform.',

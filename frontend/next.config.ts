@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      /* ── Static pages — cache at Cloudflare CDN for 1 hour ── */
+      {
+        source: '/:path(about|terms|privacy-policy|careers|services|services/website|services/ai-automation|services/ui-ux-design|services/3d-design)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      /* ── All routes — security headers ── */
       {
         source: "/(.*)",
         headers: [

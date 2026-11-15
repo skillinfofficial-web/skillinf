@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageClient from "./page-client";
 
+export const dynamic = 'force-static';
+
 const BASE_URL = "https://www.skillinf.in";
 
 export const metadata: Metadata = {

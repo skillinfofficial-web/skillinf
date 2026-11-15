@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import CareersClient from './CareersClient';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: { absolute: 'Careers at Skillinf | Join Our Team' },
   description:

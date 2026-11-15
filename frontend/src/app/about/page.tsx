@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import styles from "./AboutPage.module.css";
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: { absolute: 'About Skillinf — Our Mission & Story' },
   description: 'Learn about Skillinf — our mission to help students gain real-world internship experience and become career-ready through structured programs.',
