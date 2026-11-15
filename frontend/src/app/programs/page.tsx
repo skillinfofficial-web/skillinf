@@ -334,6 +334,7 @@ function ProgramsInner() {
       <Navbar />
       <AnnouncementBar />
       <main className={styles.main}>
+        <h1 className="sr-only">Internship Programs — Skillinf</h1>
 
         {/* Hero */}
         <section className={styles.hero}>

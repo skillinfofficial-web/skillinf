@@ -4,9 +4,9 @@ import PageClient from "./page-client";
 const BASE_URL = "https://www.skillinf.in";
 
 export const metadata: Metadata = {
-  title: "3D Design & Rendering Services — Architecture, Products & Animations",
+  title: "3D Design & Rendering Services | Skillinf",
   description:
-    "Photorealistic 3D designs by Skillinf for architecture visualization, product modeling, and animated walkthroughs. From floor plans and elevations to full cinematic 3D animations — delivered in 4K.",
+    "Photorealistic 3D designs by Skillinf for architecture visualization, product modelling and animated walkthroughs. Floor plans to 4K cinematic animations.",
   keywords: [
     "3D design services India",
     "architectural visualization India",

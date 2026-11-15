@@ -16,11 +16,11 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Skillinf Tech India | Transforming Ideas into Digital Solutions",
-    template: "%s | Skillinf Tech India",
+    default: "Skillinf | Digital Services & Free Internships India",
+    template: "%s | Skillinf",
   },
   description:
-    "Skillinf builds premium websites, AI automation tools, UI/UX designs, and 3D renders for businesses — and runs virtual internship programs to help students build real-world skills.",
+    "Skillinf builds websites, AI automation, UI/UX designs and 3D renders for businesses, and offers free virtual internship programs for students across India.",
   keywords: [
     "digital agency India",
     "website development company",

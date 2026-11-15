@@ -4,9 +4,9 @@ import PageClient from "./page-client";
 const BASE_URL = "https://www.skillinf.in";
 
 export const metadata: Metadata = {
-  title: "Website Development Services — Landing Pages to SaaS Platforms",
+  title: "Website Development Services | Skillinf",
   description:
-    "Skillinf builds fast, secure, and beautiful websites tailored for your business. From simple landing pages to full-stack SaaS platforms using React and Next.js. Transparent pricing, delivered on time.",
+    "Skillinf builds fast, secure websites for businesses — from landing pages to full-stack SaaS platforms using React and Next.js. Transparent pricing, on time.",
   keywords: [
     "custom website development India",
     "React Next.js development",

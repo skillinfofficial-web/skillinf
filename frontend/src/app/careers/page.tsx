@@ -4,7 +4,7 @@ import CareersClient from './CareersClient';
 export const metadata: Metadata = {
   title: { absolute: 'Careers at Skillinf | Join Our Team' },
   description:
-    'Explore open job opportunities at Skillinf. We are building premium digital products and a world-class internship platform. Browse open roles and apply today.',
+    'Explore open roles at Skillinf. We build premium digital products and a leading internship platform. Browse jobs and apply today.',
   keywords: [
     'Skillinf careers', 'jobs at Skillinf', 'work at Skillinf',
     'Skillinf hiring', 'tech jobs India', 'digital agency jobs',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: 'Skillinf',
     title: 'Careers at Skillinf | Join Our Team',
     description:
-      'Explore open job opportunities at Skillinf. We are building premium digital products and a world-class internship platform. Browse open roles and apply today.',
+      'Explore open roles at Skillinf. We build premium digital products and a leading internship platform. Browse jobs and apply today.',
     images: [{ url: 'https://www.skillinf.in/og-image.png', width: 1200, height: 630, alt: 'Skillinf Careers' }],
   },
   twitter: {

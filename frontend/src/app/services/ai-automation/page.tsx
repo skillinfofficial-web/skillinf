@@ -4,9 +4,9 @@ import PageClient from "./page-client";
 const BASE_URL = "https://www.skillinf.in";
 
 export const metadata: Metadata = {
-  title: "AI Automation Services — Custom AI Agents & Workflow Automation",
+  title: "AI Automation Services | Custom AI Agents | Skillinf",
   description:
-    "Save hundreds of manual hours. Skillinf builds custom AI agents, chatbots, and n8n automation workflows for sales, marketing, HR, and operations teams across India.",
+    "Skillinf builds custom AI agents, chatbots and n8n automation workflows for sales, marketing, HR and operations teams across India.",
   keywords: [
     "AI automation services India",
     "custom AI agents",

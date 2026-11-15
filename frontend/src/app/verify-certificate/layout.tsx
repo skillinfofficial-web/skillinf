@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Verify Your Skillinf Certificate Online' },
-  description: 'Verify the authenticity of a Skillinf internship certificate. Enter your certificate ID to confirm its validity instantly.',
+  title: { absolute: 'Verify Skillinf Certificate | Skillinf' },
+  description: 'Verify your Skillinf internship certificate online. Enter your certificate ID to confirm its authenticity instantly.',
   alternates: { canonical: 'https://www.skillinf.in/verify-certificate' },
   openGraph: { url: 'https://www.skillinf.in/verify-certificate' },
 };
