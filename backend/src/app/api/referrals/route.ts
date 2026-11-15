@@ -31,9 +31,16 @@ export async function GET() {
       }
     }
 
-    // Count referrals per code
+    // Count referrals per code — also fetch full referred user docs for step data
     const referred = await db.collection('users')
       .find({ referredBy: { $exists: true, $ne: null } })
+      .project({
+        email: 1, name: 1, referredBy: 1, domain: 1,
+        linkedinVerified: 1,
+        'steps.step1': 1, 'steps.step2': 1,
+        'steps.step3': 1, 'steps.step4': 1,
+        paymentDone: 1,
+      })
       .toArray();
 
     for (const r of referred) {
@@ -42,8 +49,21 @@ export async function GET() {
         if (entry.myReferralCode === code) {
           entry.referredCount++;
           const refEmail = r.email as string;
-          if (!entry.referredMembers.includes(refEmail)) {
-            entry.referredMembers.push(refEmail);
+          if (!entry.referredMembers.find((m: string | object) =>
+            typeof m === 'string' ? m === refEmail : (m as { email: string }).email === refEmail
+          )) {
+            // Push full member detail object instead of just email
+            (entry.referredMembers as unknown as object[]).push({
+              email:            refEmail,
+              name:             (r.name as string) || refEmail,
+              domain:           (r.domain as string) || '',
+              linkedinVerified: !!(r.linkedinVerified === true || r.linkedinVerified === 'approved'),
+              step1:            !!(r.steps?.step1),
+              step2:            !!(r.steps?.step2),
+              step3:            !!(r.steps?.step3),
+              step4:            !!(r.steps?.step4),
+              eCertPaid:        !!(r.paymentDone),
+            });
           }
         }
       }

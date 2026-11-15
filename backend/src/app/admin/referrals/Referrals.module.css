@@ -242,3 +242,69 @@
 }
 .sendOk { color: #15803d; }
 .sendErr { color: #dc2626; }
+
+/* ── Referred members progress table ─────────────────────────────────────── */
+.membersTable {
+  display: flex; flex-direction: column; gap: 2px; margin-top: 4px;
+}
+
+.membersTableHead {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  background: #f8fafc; border-radius: 8px;
+  font-size: 0.68rem; font-weight: 800; color: #64748b;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.membersTableRow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background 0.12s;
+}
+.membersTableRow:hover { background: #f8fafc; }
+
+.memberCol {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.memberName  { font-size: 0.82rem; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.memberEmail { font-size: 0.72rem; color: #6366f1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.memberDomain { font-size: 0.68rem; color: #94a3b8; }
+
+.tickCol {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; flex-shrink: 0;
+}
+
+.progressCol {
+  display: flex; align-items: center; gap: 6px;
+  width: 90px; flex-shrink: 0;
+}
+.progressBar {
+  flex: 1; height: 6px; background: #e2e8f0;
+  border-radius: 100px; overflow: hidden;
+}
+.progressFill {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #059669);
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+.progressLabel {
+  font-size: 0.72rem; font-weight: 800; color: #475569;
+  white-space: nowrap;
+}
+
+/* Mobile card rows for referred members */
+.membersTableRowMobile {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.membersTableRowMobile:last-child { border-bottom: none; }
+.memberMobileTop { display: flex; align-items: center; gap: 8px; }
+.tickRowMobile {
+  display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  margin-top: 4px;
+}

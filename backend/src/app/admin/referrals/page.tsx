@@ -4,12 +4,54 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Users, Loader2, AlertCircle, Search, Gift, Ticket, Send, CheckCircle2 } from 'lucide-react';
 import styles from './Referrals.module.css';
 
+interface ReferredMember {
+  email: string;
+  name: string;
+  domain: string;
+  linkedinVerified: boolean;
+  step1: boolean;
+  step2: boolean;
+  step3: boolean;
+  step4: boolean;
+  eCertPaid: boolean;
+}
+
 interface ReferralEntry {
   email: string;
   name: string;
   myReferralCode: string;
   referredCount: number;
-  referredMembers: string[];
+  referredMembers: ReferredMember[];
+}
+
+const STEP_COLS = [
+  { key: 'linkedinVerified' as const, short: 'LI',  title: 'LinkedIn Verified', color: '#0a66c2' },
+  { key: 'step1'            as const, short: 'W1',  title: 'Week 1 Done',       color: '#7c3aed' },
+  { key: 'step2'            as const, short: 'W2',  title: 'Week 2 Done',       color: '#7c3aed' },
+  { key: 'step3'            as const, short: 'W3',  title: 'Week 3 Done',       color: '#7c3aed' },
+  { key: 'step4'            as const, short: 'W4',  title: 'Week 4 Done',       color: '#7c3aed' },
+  { key: 'eCertPaid'        as const, short: 'Cert',title: 'Certificate Paid',  color: '#059669' },
+];
+
+function Tick({ done, color, title }: { done: boolean; color: string; title: string }) {
+  return (
+    <div
+      title={title + (done ? ': Done' : ': Pending')}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 22, height: 22, borderRadius: 6, flexShrink: 0,
+        background: done ? color : '#f1f5f9',
+        border: `1.5px solid ${done ? color : '#e2e8f0'}`,
+        transition: 'background 0.15s',
+      }}
+    >
+      {done && (
+        <svg viewBox="0 0 12 10" fill="none" width={10} height={10}>
+          <path d="M1 5l3 4 7-8" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
+    </div>
+  );
 }
 
 interface CouponState {
@@ -300,7 +342,43 @@ export default function ReferralsPage() {
                         <td colSpan={7}>
                           <div className={styles.membersList}>
                             <p className={styles.membersTitle}>Members who used <strong>{r.myReferralCode}</strong>:</p>
-                            <ul>{r.referredMembers.map(m => <li key={m}>{m}</li>)}</ul>
+                            <div className={styles.membersTable}>
+                              {/* Header */}
+                              <div className={styles.membersTableHead}>
+                                <span className={styles.memberCol}>Member</span>
+                                {STEP_COLS.map(s => (
+                                  <span key={s.key} className={styles.tickCol} title={s.title}>{s.short}</span>
+                                ))}
+                                <span className={styles.progressCol}>Progress</span>
+                              </div>
+                              {/* Rows */}
+                              {r.referredMembers.map(m => {
+                                const done = STEP_COLS.filter(s => m[s.key]).length;
+                                return (
+                                  <div key={m.email} className={styles.membersTableRow}>
+                                    <span className={styles.memberCol}>
+                                      <span className={styles.memberName}>{m.name}</span>
+                                      <span className={styles.memberEmail}>{m.email}</span>
+                                      {m.domain && <span className={styles.memberDomain}>{m.domain}</span>}
+                                    </span>
+                                    {STEP_COLS.map((s, idx) => (
+                                      <span key={s.key} className={styles.tickCol}>
+                                        <Tick done={m[s.key]} color={s.color} title={s.title} />
+                                      </span>
+                                    ))}
+                                    <span className={styles.progressCol}>
+                                      <span className={styles.progressBar}>
+                                        <span
+                                          className={styles.progressFill}
+                                          style={{ width: `${Math.round(done / STEP_COLS.length * 100)}%` }}
+                                        />
+                                      </span>
+                                      <span className={styles.progressLabel}>{done}/{STEP_COLS.length}</span>
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -372,7 +450,26 @@ export default function ReferralsPage() {
                 {expanded === r.email && r.referredMembers.length > 0 && (
                   <div className={styles.membersList} style={{ marginTop: 12 }}>
                     <p className={styles.membersTitle}>Members who used <strong>{r.myReferralCode}</strong>:</p>
-                    <ul>{r.referredMembers.map(m => <li key={m}>{m}</li>)}</ul>
+                    <div className={styles.membersTable}>
+                      {r.referredMembers.map(m => {
+                        const done = STEP_COLS.filter(s => m[s.key]).length;
+                        return (
+                          <div key={m.email} className={styles.membersTableRowMobile}>
+                            <div className={styles.memberMobileTop}>
+                              <span className={styles.memberName}>{m.name}</span>
+                              {m.domain && <span className={styles.memberDomain}>{m.domain}</span>}
+                            </div>
+                            <span className={styles.memberEmail}>{m.email}</span>
+                            <div className={styles.tickRowMobile}>
+                              {STEP_COLS.map(s => (
+                                <Tick key={s.key} done={m[s.key]} color={s.color} title={s.title} />
+                              ))}
+                              <span className={styles.progressLabel}>{done}/{STEP_COLS.length}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
                 {expanded === `cp_${r.email}` && (
