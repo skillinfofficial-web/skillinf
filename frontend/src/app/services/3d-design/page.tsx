@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "3D Design & Rendering Services | Skillinf",
   description:
-    "Photorealistic 3D designs by Skillinf for architecture visualization, product modelling and animated walkthroughs. Floor plans to 4K cinematic animations.",
+    "Photorealistic 3D designs by Skillinf for architecture, product modelling and animated walkthroughs. Floor plans to 4K cinematic animations.",
   keywords: [
     "3D design services India",
     "architectural visualization India",

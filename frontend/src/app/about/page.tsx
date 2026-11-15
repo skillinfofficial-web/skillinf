@@ -198,6 +198,7 @@ export default function AboutPage() {
     <>
       <Navbar />
       <main className={styles.main}>
+        <span className="sr-only">The story of Skillinf — our mission and journey to help students across India.</span>
 
         {/* ── Hero ── */}
         <section className={styles.hero}>

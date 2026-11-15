@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Programs | Skillinf' },
-  description: 'Explore Skillinf programs in AI, Web Development, Data Science and more. Build practical, job-ready skills with guided projects.',
+  title: { absolute: 'Skill Development Programs | Skillinf' },
+  description: 'Explore Skillinf programs in AI, Web Development, Data Science and more. Build practical job-ready skills with guided projects.',
   alternates: { canonical: 'https://www.skillinf.in/programs' },
   openGraph: { url: 'https://www.skillinf.in/programs' },
 };

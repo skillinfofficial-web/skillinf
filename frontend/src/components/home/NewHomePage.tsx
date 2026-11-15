@@ -483,7 +483,7 @@ export default function NewHomePage() {
                 Ready to Begin <span className={s.gradText}>Your Journey?</span>
               </h2>
               <p className={s.ctaP}>
-                Whether you need a premium digital product for your business or you are a student ready to build
+                Whether you need a premium digital product for your business or you are a student in India ready to build
                 real skills — Skillinf is where it starts.
               </p>
               <div className={s.ctaRow}>

@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "Digital Services — Website, AI, UI/UX & 3D Design",
   description:
-    "Skillinf offers premium digital services: custom website development, AI automation, UI/UX design, and 3D rendering. Built for startups, SMEs and enterprises in India.",
+    "Skillinf offers premium digital services: website development, AI automation, UI/UX design and 3D rendering for startups, SMEs and enterprises.",
   keywords: [
     "digital services India",
     "website development India",

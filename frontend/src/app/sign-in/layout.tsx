@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Sign In to Your Skillinf Account' },
+  title: { absolute: 'Welcome Back | Sign In to Skillinf' },
   description: 'Sign in to access your Skillinf internship dashboard, track course steps, and download your certificate.',
   alternates: { canonical: 'https://www.skillinf.in/sign-in' },
   openGraph: { url: 'https://www.skillinf.in/sign-in' },

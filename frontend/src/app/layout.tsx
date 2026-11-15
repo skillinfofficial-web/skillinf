@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Skillinf",
   },
   description:
-    "Skillinf builds websites, AI automation, UI/UX designs and 3D renders for businesses, and offers free virtual internship programs for students across India.",
+    "Skillinf builds websites, AI automation, UI/UX and 3D renders for businesses, and runs free virtual internship programs for students in India.",
   keywords: [
     "digital agency India",
     "website development company",

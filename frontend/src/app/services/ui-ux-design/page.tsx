@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "UI/UX Design Services | Figma & App Design | Skillinf",
   description:
-    "Pixel-perfect UI/UX designs by Skillinf for mobile apps, web apps, dashboards and SaaS products. User research, wireframes, prototypes and Figma handoffs.",
+    "Pixel-perfect UI/UX designs by Skillinf for mobile apps, dashboards and SaaS products. User research, wireframes, prototypes and Figma handoffs.",
   keywords: [
     "UI UX design services India",
     "Figma design agency India",

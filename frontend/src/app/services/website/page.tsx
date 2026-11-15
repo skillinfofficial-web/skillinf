@@ -6,7 +6,7 @@ const BASE_URL = "https://www.skillinf.in";
 export const metadata: Metadata = {
   title: "Website Development Services | Skillinf",
   description:
-    "Skillinf builds fast, secure websites for businesses — from landing pages to full-stack SaaS platforms using React and Next.js. Transparent pricing, on time.",
+    "Skillinf builds fast, secure websites for businesses — from landing pages to full-stack SaaS platforms using React and Next.js. On time.",
   keywords: [
     "custom website development India",
     "React Next.js development",
