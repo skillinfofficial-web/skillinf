@@ -128,6 +128,7 @@ export default function SignUpPage() {
 
       {/* ── Card ── */}
       <main className={styles.main}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '520px' }}>
         <div className={styles.card}>
           <div className={styles.cardHead}>
             <h1 className={styles.title}>
@@ -262,20 +263,21 @@ export default function SignUpPage() {
         </div>
 
         {/* SEO: benefits section for crawlers */}
-        <section style={{ marginTop: '40px', padding: '0 16px', maxWidth: '520px', width: '100%' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '12px', color: 'var(--main-text)' }}>
+        <section style={{ marginTop: '28px', padding: '24px 28px', width: '100%', background: '#fff', border: '1px solid #e4ebe7', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,122,99,0.05)' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '10px', color: '#0f172a' }}>
             Why Join Skillinf Today?
           </h2>
-          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.9rem' }}>
-            Create your free Skillinf account today and start your virtual internship journey. Skillinf offers free, structured 30-day internship programs across domains including AI and Machine Learning, Data Science, Web Development, Full Stack Development, Python, Cloud Computing, Cybersecurity, UI/UX Design, and Automation.
+          <p style={{ color: '#66736d', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.875rem' }}>
+            Create your free Skillinf account today and start your virtual internship journey. We offer structured 30-day programs across AI &amp; ML, Data Science, Web Development, Full Stack, Python, Cloud Computing, Cybersecurity, UI/UX Design, and Automation.
           </p>
-          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.9rem' }}>
-            Once enrolled, you will get access to your personalized dashboard, guided project tasks, and a verifiable digital certificate upon successful completion. Your Skillinf internship certificate can be shared on LinkedIn and with employers to demonstrate your skills.
+          <p style={{ color: '#66736d', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.875rem' }}>
+            Once enrolled, access your dashboard, guided project tasks, and earn a verifiable digital certificate you can share on LinkedIn and with employers.
           </p>
-          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, fontSize: '0.9rem' }}>
-            Our internship programs are open to students, freshers, and working professionals across India. No prior experience is required &mdash; just your enthusiasm to learn and grow. Sign up today and take the first step toward a stronger professional profile.
+          <p style={{ color: '#66736d', lineHeight: 1.75, fontSize: '0.875rem' }}>
+            Open to students, freshers, and working professionals across India. No prior experience required &mdash; sign up today and take the first step toward a stronger career profile.
           </p>
         </section>
+        </div>
 
       </main>
     </div>

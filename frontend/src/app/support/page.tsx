@@ -283,7 +283,7 @@ export default function SupportPage() {
               <strong>How long does it take to get a reply?</strong> We aim to respond within 24 hours on working days. For urgent matters, use the direct WhatsApp link provided on this page.
             </p>
             <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
-              <strong>Can I get support in Hindi or regional languages?</strong> Yes, our support team can assist in English, Hindi, and Tamil.
+              <strong>Can I get support in regional languages?</strong> Yes, our support team can assist in English and Tamil.
             </p>
             <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
               <strong>What if I have not received my certificate?</strong> If your 30-day internship is complete and your LinkedIn verification post has been approved, your certificate will be available from your dashboard. If not, contact our support centre with your registered email address and we will resolve it promptly.

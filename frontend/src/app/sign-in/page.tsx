@@ -92,6 +92,7 @@ export default function SignInPage() {
       </div>
 
       <main className={styles.main}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '480px' }}>
         <div className={styles.card}>
           <div className={styles.cardHead}>
             <h1 className={styles.title}>
@@ -181,17 +182,18 @@ export default function SignInPage() {
         </div>
 
         {/* SEO: benefits section for crawlers */}
-        <section style={{ marginTop: '48px', padding: '0 16px', maxWidth: '480px', width: '100%' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '12px', color: 'var(--main-text)' }}>
+        <section style={{ marginTop: '32px', padding: '24px 28px', width: '100%', background: '#fff', border: '1px solid #e4ebe7', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,122,99,0.05)' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '10px', color: '#0f172a' }}>
             Your Skillinf Internship Dashboard
           </h2>
-          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.9rem' }}>
-            Sign in to your Skillinf account to access your personalized internship dashboard. Track your 30-day program progress, download your verifiable internship certificate, view your assigned projects, and manage your profile.
+          <p style={{ color: '#66736d', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.875rem' }}>
+            Sign in to access your personalized internship dashboard. Track your 30-day program progress, download your verifiable certificate, view project tasks, and manage your profile.
           </p>
-          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, fontSize: '0.9rem' }}>
-            New to Skillinf? <Link href="/sign-up" style={{ color: 'var(--brand)' }}>Create a free account today</Link> and enroll in one of our virtual internship programs across domains including AI, Web Development, Data Science, Python, Cybersecurity, and UI/UX Design.
+          <p style={{ color: '#66736d', lineHeight: 1.75, fontSize: '0.875rem' }}>
+            New to Skillinf? <Link href="/sign-up" style={{ color: '#00b894', fontWeight: 700 }}>Create a free account today</Link> and enroll in a virtual internship — AI, Web Development, Data Science, Python, Cybersecurity, or UI/UX Design.
           </p>
         </section>
+        </div>
 
       </main>
     </div>
