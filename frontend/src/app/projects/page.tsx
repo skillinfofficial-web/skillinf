@@ -93,6 +93,18 @@ export default function ProjectsPage() {
           </div>
         </section>
 
+        {/* SEO: static intro for crawlers */}
+        <section style={{ padding: '24px 0 0', background: 'var(--background)' }}>
+          <div className="container">
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              This showcase features real-world projects built by Skillinf interns across domains including Artificial Intelligence, Web Development, Data Science, Python Development, Cybersecurity, and UI/UX Design. Each project represents hands-on work completed during a structured 30-day virtual internship program.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+              Interns apply their learning to build functional, portfolio-ready projects inspired by real industry problems. Browse the project showcase by domain or search by name to explore what our community of learners has built. Every project listed here is linked to its GitHub repository so you can review the code and outcomes directly.
+            </p>
+          </div>
+        </section>
+
         <div className="container">
 
           {/* ── Filter Bar ── */}

@@ -506,6 +506,24 @@ function ProgramsInner() {
             </div>
           )}
 
+          {/* SEO: static intro for crawlers */}
+          <section style={{ padding: '32px 0 0', background: 'var(--background)' }}>
+            <div className="container">
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+                Skill Development Programs at Skillinf
+              </h2>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+                Explore our structured skill development programs designed to help students and professionals build practical, job-ready expertise. Each program covers a focused technical domain &mdash; from Artificial Intelligence and Machine Learning to Web Development, Data Science, Cybersecurity, and UI/UX Design.
+              </p>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+                Programs include guided learning content, hands-on project tasks, and a verifiable certificate upon completion. Our 30-day virtual internship format is designed for students, freshers, and working professionals who want to gain domain experience without leaving home.
+              </p>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+                Browse the available programs below, filter by domain, and enroll to start building your skills today. All programs are free to join and open to students across India.
+              </p>
+            </div>
+          </section>
+
           <div className={styles.bottomSpacer} />
         </div>
       </main>

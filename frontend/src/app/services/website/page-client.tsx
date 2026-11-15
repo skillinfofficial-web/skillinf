@@ -157,6 +157,25 @@ export default function WebsiteServices() {
             Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
+
+        {/* SEO: methodology and process */}
+        <div style={{ padding: '32px 24px 0' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+            Our Website Development Process
+          </h2>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Skillinf delivers premium website development services for businesses of all sizes — from startups building their first online presence to enterprises modernising complex digital platforms. Our development process starts with a detailed brief to understand your business goals, target audience, and design preferences before a single line of code is written.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            We specialise in building websites using modern technologies including Next.js, React, Node.js, and cloud hosting platforms such as Vercel and AWS. Every website we build is fully mobile-responsive, optimised for performance and Core Web Vitals, and configured with on-page SEO to help your business rank on search engines from day one.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Our website packages cover a wide range of needs: informational business websites, service-based websites with booking forms, e-commerce stores with payment gateway integration, SaaS platforms with user dashboards and authentication, portfolio websites, blog and content platforms, and more. We also offer website redesign and speed optimisation services for businesses with existing sites.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+            After launch, we provide ongoing maintenance, security updates, content edits, and performance monitoring to ensure your website continues to deliver results. Our transparent pricing and dedicated project communication ensure you always know exactly where your project stands. Contact us on WhatsApp for a free consultation and custom quote.
+          </p>
+        </div>
       </div>
     </>
   );

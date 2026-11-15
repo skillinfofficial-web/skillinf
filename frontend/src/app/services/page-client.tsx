@@ -51,6 +51,22 @@ export default function ServicesHomeClient() {
           </div>
         ))}
       </div>
+
+      {/* SEO: services overview text */}
+      <div style={{ padding: '32px 24px 0', maxWidth: '800px', margin: '0 auto' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+          Digital Services by Skillinf
+        </h2>
+        <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+          Skillinf is a full-service digital agency offering website development, AI automation, UI/UX design, and 3D design services to startups, SMEs, and enterprises across India and globally. Our team of experienced designers, developers, and AI specialists deliver premium digital solutions tailored to your business goals.
+        </p>
+        <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+          Whether you need a high-converting landing page, a scalable SaaS platform, an AI-powered automation workflow, or pixel-perfect brand design, Skillinf has the expertise to bring your vision to life. We work with clients across diverse industries including e-commerce, education, healthcare, real estate, and technology.
+        </p>
+        <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+          Every project we take on is built with performance, scalability, and user experience at its core. Our transparent pricing, fast turnaround, and dedicated project support make Skillinf the preferred digital partner for businesses looking to grow online. Explore our individual service pages to view detailed pricing packages and deliverables.
+        </p>
+      </div>
     </div>
   );
 }

@@ -183,6 +183,25 @@ export default function UIUXDesign() {
             Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
+
+        {/* SEO: methodology and process */}
+        <div style={{ padding: '32px 24px 0' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+            Our UI/UX Design Process
+          </h2>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Skillinf delivers UI/UX design services that go beyond aesthetics — we design digital products that are genuinely easy and satisfying to use. Our design process starts with user research and competitive analysis to understand your audience and what they expect from your product, then progresses through wireframing, visual design, and interactive prototyping before final handoff.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            We work with Figma and Adobe XD to create pixel-perfect, component-driven design systems that scale across screen sizes and product updates. All deliverables include source files, design tokens, and developer-ready specifications so your engineering team can implement the designs accurately and efficiently.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Our UI/UX design work covers websites, mobile apps (iOS and Android), SaaS dashboards, admin panels, e-commerce platforms, and onboarding flows. We apply accessibility standards (WCAG 2.1) and performance-first design principles to ensure your product works for every user and loads fast on every device.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+            Whether you are building a new product from scratch, redesigning an existing one, or need a fresh landing page design to improve conversions, Skillinf has the experience and creative capability to deliver exceptional results. Contact us on WhatsApp to share your project brief and receive a custom quote within 24 hours.
+          </p>
+        </div>
       </div>
     </>
   );

@@ -155,6 +155,25 @@ export default function AIAutomation() {
             Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
+
+        {/* SEO: methodology and use cases */}
+        <div style={{ padding: '32px 24px 0' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+            Our AI Automation Approach
+          </h2>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            At Skillinf, our AI automation process begins with a thorough discovery and audit of your existing workflows. We identify repetitive, time-consuming tasks that can be replaced or enhanced with intelligent automation — from lead capture and CRM updates to invoice generation, appointment scheduling, and customer support.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            We build custom automation workflows using industry-leading tools including n8n, Zapier, Make (Integromat), OpenAI APIs, and custom webhook integrations. Our solutions connect your existing tools — CRMs like HubSpot or Zoho, communication tools like WhatsApp and email, payment platforms, Google Workspace, and databases — into seamless automated pipelines.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            For businesses that require advanced intelligence, we develop custom AI agents powered by large language models (LLMs) such as GPT-4 and Claude. These agents can handle customer queries, process documents, generate reports, classify leads, and perform complex multi-step reasoning — all autonomously.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+            Our AI automation solutions are used by e-commerce businesses to automate order processing and customer follow-ups, by real estate agencies to qualify leads automatically, by educational platforms to onboard and communicate with students at scale, and by service businesses to handle appointment bookings and reminders without manual effort. Every automation we build is documented, monitored, and supported to ensure it keeps delivering value over time.
+          </p>
+        </div>
       </div>
     </>
   );

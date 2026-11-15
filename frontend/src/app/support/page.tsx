@@ -260,6 +260,40 @@ export default function SupportPage() {
           </div>
         </section>
 
+        {/* SEO: FAQ / info section for crawlers */}
+        <section style={{ padding: '48px 0', background: 'var(--background)' }}>
+          <div className="container">
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '20px', color: 'var(--main-text)' }}>
+              Help &amp; Support Centre &mdash; Frequently Asked Questions
+            </h2>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+              Our support centre is available to help students, interns, and clients with any queries related to Skillinf programs, certificates, payments, and services. Whether you have a question about enrolling in an internship, downloading your certificate, or understanding our services, our team is here to assist you.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '24px' }}>
+              Skillinf offers free virtual internship programs across domains such as AI and Machine Learning, Web Development, Data Science, Python, Cybersecurity, UI/UX Design, and more. Our students receive a verifiable digital certificate upon successful completion of their 30-day internship program.
+            </p>
+            <h3 style={{ fontWeight: 700, marginTop: '24px', marginBottom: '12px', color: 'var(--main-text)' }}>Common Questions</h3>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              <strong>How do I contact support?</strong> Fill in the form above or message us directly on WhatsApp. Our team responds within 24 hours on working days.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              <strong>What can the support centre help me with?</strong> Internship enrollment issues, certificate downloads, payment queries, program access problems, account login issues, and service enquiries from clients.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              <strong>How long does it take to get a reply?</strong> We aim to respond within 24 hours on working days. For urgent matters, use the direct WhatsApp link provided on this page.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              <strong>Can I get support in Hindi or regional languages?</strong> Yes, our support team can assist in English, Hindi, and Tamil.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+              <strong>What if I have not received my certificate?</strong> If your 30-day internship is complete and your LinkedIn verification post has been approved, your certificate will be available from your dashboard. If not, contact our support centre with your registered email address and we will resolve it promptly.
+            </p>
+            <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+              <strong>Are Skillinf internship certificates valid for placement?</strong> Yes. Skillinf certificates are digitally verifiable and can be shared with employers and on LinkedIn. Each certificate has a unique ID that can be verified on our certificate verification page.
+            </p>
+          </div>
+        </section>
+
       </main>
       <Footer />
     </>

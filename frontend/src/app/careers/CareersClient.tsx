@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
@@ -107,6 +107,20 @@ export default function CareersClient() {
               We build premium digital products and grow careers. If you love what you do
               and want to work with a passionate team — you&apos;re in the right place.
             </p>
+
+            {/* SEO: company overview for crawlers */}
+            <div style={{ marginTop: '20px', marginBottom: '8px', textAlign: 'left', maxWidth: '700px' }}>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+                Skillinf is a digital services and virtual internship platform based in India. We offer premium services including website development, AI automation, UI/UX design, and 3D design to businesses across India and globally. Alongside our client services, we run a free virtual internship program that has helped thousands of students build practical skills and earn verifiable certificates.
+              </p>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px' }}>
+                At Skillinf, we believe in building careers through real work. Our team is passionate about technology, design, and education. We are always looking for talented individuals who share our mission of transforming how people learn and work in the digital age.
+              </p>
+              <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+                Benefits of joining our team include remote-friendly work, fast career growth, collaborative culture, direct impact on thousands of students across India, and the opportunity to work on diverse, high-impact digital projects. We are a small and fast-moving team where every member makes a real difference.
+              </p>
+            </div>
+
             <div className={styles.heroStats}>
               <div className={styles.heroStat}><span className={styles.heroStatN}>{jobs.length}</span><span>Open Roles</span></div>
               <div className={styles.heroStatDiv} />

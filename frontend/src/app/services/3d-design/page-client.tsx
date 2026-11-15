@@ -184,6 +184,31 @@ export default function ThreeDDesign() {
             Prices may vary based on your requirements. For the exact price, contact Skillinf via WhatsApp.
           </div>
         </div>
+
+        {/* SEO: methodology and use cases — substantial content for thin-content fix */}
+        <div style={{ padding: '32px 24px 0' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '12px', color: 'var(--main-text)' }}>
+            Professional 3D Design Services in India
+          </h2>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Skillinf offers a comprehensive range of 3D design and visualisation services for architects, builders, product companies, e-commerce brands, game studios, and marketing teams. Our 3D specialists use industry-standard software including Blender, 3ds Max, Cinema 4D, and V-Ray to create photorealistic renders, animated walkthroughs, and production-ready 3D assets.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            For the architecture and construction industry, we produce detailed building exterior renders, interior design visualisations, floor plan 3D models, site construction renders, and virtual walkthroughs that help clients present their projects to buyers, investors, and approving authorities before construction begins. Our architectural renders are indistinguishable from photography — with accurate lighting, materials, vegetation, and human-scale context.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            For product companies and e-commerce brands, we create photorealistic product 3D models for use in advertising, packaging design, Amazon listings, Shopify stores, and marketing collateral. Industries we serve include consumer electronics, furniture, jewellery, fashion and apparel, food and beverage packaging, automotive components, and industrial equipment. Product 3D renders eliminate the cost and logistics of product photography while delivering studio-quality visuals at any angle.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            Our 3D animation and motion graphics services bring products, brands, and architectural projects to life with compelling animated sequences — from 30-second product reveal animations for social media to 3-minute architectural walkthrough videos for property marketing. We also produce 360-degree panoramic renders and VR-ready asset packages for immersive client presentations.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '12px' }}>
+            For the gaming and digital entertainment industry, we model game-ready 3D character assets, environment props, and vehicle models optimised for real-time engines including Unity and Unreal Engine. Our game asset pipeline covers concept art interpretation, high-poly sculpting, retopology, UV unwrapping, PBR texturing, and LOD generation — delivering assets that are performance-optimised and engine-ready.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75 }}>
+            Every 3D project at Skillinf begins with a detailed brief to understand your use case, delivery format, style reference, and timeline. We provide revision rounds at each stage of the process — initial block-out, detailed modelling, texturing, lighting, and final compositing — to ensure the final output meets your exact expectations. Output formats include PNG, JPEG, EXR, MP4, MOV, OBJ, FBX, STL, and GLTF depending on project requirements. Contact us on WhatsApp to share your project brief and receive a custom quote.
+          </p>
+        </div>
       </div>
     </>
   );

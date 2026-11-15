@@ -260,6 +260,23 @@ export default function SignUpPage() {
             <Link href="/sign-in" className={styles.link}>Sign in</Link>
           </p>
         </div>
+
+        {/* SEO: benefits section for crawlers */}
+        <section style={{ marginTop: '40px', padding: '0 16px', maxWidth: '520px', width: '100%' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '12px', color: 'var(--main-text)' }}>
+            Why Join Skillinf Today?
+          </h2>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.9rem' }}>
+            Create your free Skillinf account today and start your virtual internship journey. Skillinf offers free, structured 30-day internship programs across domains including AI and Machine Learning, Data Science, Web Development, Full Stack Development, Python, Cloud Computing, Cybersecurity, UI/UX Design, and Automation.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, marginBottom: '10px', fontSize: '0.9rem' }}>
+            Once enrolled, you will get access to your personalized dashboard, guided project tasks, and a verifiable digital certificate upon successful completion. Your Skillinf internship certificate can be shared on LinkedIn and with employers to demonstrate your skills.
+          </p>
+          <p style={{ color: 'var(--secondary-text)', lineHeight: 1.75, fontSize: '0.9rem' }}>
+            Our internship programs are open to students, freshers, and working professionals across India. No prior experience is required &mdash; just your enthusiasm to learn and grow. Sign up today and take the first step toward a stronger professional profile.
+          </p>
+        </section>
+
       </main>
     </div>
   );
