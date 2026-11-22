@@ -19,6 +19,7 @@ interface WeekPayload {
   projectTitle?: string;
   projectDescription?: string;
   projectGuidance?: string;
+  quizQuestions?: { question: string; options: [string, string, string, string]; correctIndex: number }[];
 }
 
 interface CompanyInternshipPayload {
@@ -93,6 +94,11 @@ export async function POST(req: NextRequest) {
         projectTitle:       (w.projectTitle ?? '').trim(),
         projectDescription: (w.projectDescription ?? '').trim(),
         projectGuidance:    (w.projectGuidance ?? '').trim(),
+        quizQuestions:      (w.quizQuestions ?? []).map(q => ({
+          question:     q.question.trim(),
+          options:      q.options.map(o => o.trim()) as [string, string, string, string],
+          correctIndex: Number(q.correctIndex),
+        })),
       })),
       createdAt: now,
       updatedAt: now,

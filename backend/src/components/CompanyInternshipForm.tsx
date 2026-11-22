@@ -6,6 +6,12 @@ import { Plus, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import styles from './CompanyInternshipForm.module.css';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+interface QuizQuestion {
+  question: string;
+  options: [string, string, string, string];
+  correctIndex: number; // 0-3
+}
+
 interface WeekData {
   deadlineDays: string;
   tutorialUrl: string;
@@ -15,6 +21,7 @@ interface WeekData {
   projectTitle: string;
   projectDescription: string;
   projectGuidance: string;
+  quizQuestions: QuizQuestion[];
 }
 
 interface InitialWeek {
@@ -27,6 +34,7 @@ interface InitialWeek {
   projectTitle?: string;
   projectDescription?: string;
   projectGuidance?: string;
+  quizQuestions?: QuizQuestion[];
 }
 
 interface Props {
@@ -47,7 +55,11 @@ const YOUTUBE_REGEX =
   /^https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)[\w-]{11}|youtu\.be\/[\w-]{11})(?:[?&].*)?$/;
 
 function makeBlankWeek(): WeekData {
-  return { deadlineDays: '7', tutorialUrl: '', embedUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '', projectGuidance: '' };
+  return { deadlineDays: '7', tutorialUrl: '', embedUrl: '', keyFeatures: ['', '', '', ''], whatYouLearn: '', projectTitle: '', projectDescription: '', projectGuidance: '', quizQuestions: [] };
+}
+
+function makeBlankQuestion(): QuizQuestion {
+  return { question: '', options: ['', '', '', ''], correctIndex: 0 };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
@@ -60,6 +72,7 @@ function weekFromInitial(w: InitialWeek): WeekData {
     projectTitle: w.projectTitle ?? '',
     projectDescription: w.projectDescription ?? '',
     projectGuidance: w.projectGuidance ?? '',
+    quizQuestions: w.quizQuestions ?? [],
   };
 }
 
@@ -149,7 +162,7 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
   const currentWeek = weeks[step - 1];
 
   // ── Week state helpers ──────────────────────────────────────────────────
-  const updateWeek = (field: keyof WeekData, value: string | string[]) => {
+  const updateWeek = (field: keyof WeekData, value: string | string[] | QuizQuestion[] | number) => {
     setWeeks((prev) => {
       const next = [...prev];
       next[step - 1] = { ...next[step - 1], [field]: value };
@@ -167,6 +180,30 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
   const removeFeature = (idx: number) => {
     if (idx < 4) return;
     updateWeek('keyFeatures', currentWeek.keyFeatures.filter((_, i) => i !== idx));
+  };
+
+  // ── Quiz question helpers ──────────────────────────────────────────────────
+  const addQuestion = () =>
+    updateWeek('quizQuestions', [...currentWeek.quizQuestions, makeBlankQuestion()]);
+
+  const removeQuestion = (qi: number) =>
+    updateWeek('quizQuestions', currentWeek.quizQuestions.filter((_, i) => i !== qi));
+
+  const updateQuestion = (qi: number, field: keyof QuizQuestion, value: string | number) => {
+    const updated = currentWeek.quizQuestions.map((q, i) =>
+      i === qi ? { ...q, [field]: value } : q
+    );
+    updateWeek('quizQuestions', updated);
+  };
+
+  const updateOption = (qi: number, optIdx: number, value: string) => {
+    const updated = currentWeek.quizQuestions.map((q, i) => {
+      if (i !== qi) return q;
+      const opts = [...q.options] as [string, string, string, string];
+      opts[optIdx] = value;
+      return { ...q, options: opts };
+    });
+    updateWeek('quizQuestions', updated);
   };
 
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,6 +243,11 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
           projectTitle:       w.projectTitle.trim(),
           projectDescription: w.projectDescription.trim(),
           projectGuidance:    w.projectGuidance.trim(),
+          quizQuestions:      w.quizQuestions.map(q => ({
+            question:     q.question.trim(),
+            options:      q.options.map(o => o.trim()) as [string, string, string, string],
+            correctIndex: q.correctIndex,
+          })),
         })),
       };
 
@@ -447,6 +489,80 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
             rows={4}
           />
           {errors.projectGuidance && <p className={styles.errorText}>{errors.projectGuidance}</p>}
+        </div>
+
+        {/* ── Quiz Questions ── */}
+        <div className={styles.fieldGroup}>
+          <label className={styles.label}>
+            Quiz Questions <span className={styles.optionalBadge}>optional</span>
+          </label>
+
+          {currentWeek.quizQuestions.map((q, qi) => (
+            <div key={qi} className={styles.quizCard}>
+              {/* Question header */}
+              <div className={styles.quizHeader}>
+                <span className={styles.quizNum}>Q{qi + 1}</span>
+                <button
+                  type="button"
+                  className={styles.removeBtn}
+                  onClick={() => removeQuestion(qi)}
+                  aria-label={`Remove question ${qi + 1}`}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {/* Question text */}
+              <input
+                type="text"
+                className={`${styles.input} ${errors[`q_${qi}_question`] ? styles.inputError : ''}`}
+                value={q.question}
+                onChange={e => updateQuestion(qi, 'question', e.target.value)}
+                placeholder={`Question ${qi + 1}…`}
+                id={`q-${step}-${qi}-text`}
+              />
+              {errors[`q_${qi}_question`] && (
+                <p className={styles.errorText}>{errors[`q_${qi}_question`]}</p>
+              )}
+
+              {/* Four options */}
+              <div className={styles.quizOptions}>
+                {(['A', 'B', 'C', 'D'] as const).map((letter, optIdx) => (
+                  <div key={optIdx} className={styles.quizOptionRow}>
+                    <label
+                      className={`${styles.quizOptionLabel} ${q.correctIndex === optIdx ? styles.quizOptionCorrect : ''}`}
+                      title="Mark as correct answer"
+                    >
+                      <input
+                        type="radio"
+                        name={`correct-${step}-${qi}`}
+                        checked={q.correctIndex === optIdx}
+                        onChange={() => updateQuestion(qi, 'correctIndex', optIdx)}
+                        className={styles.quizRadio}
+                      />
+                      <span className={styles.quizOptionLetter}>{letter}</span>
+                    </label>
+                    <input
+                      type="text"
+                      className={`${styles.input} ${errors[`q_${qi}_opt_${optIdx}`] ? styles.inputError : ''}`}
+                      value={q.options[optIdx]}
+                      onChange={e => updateOption(qi, optIdx, e.target.value)}
+                      placeholder={`Option ${letter}`}
+                      id={`q-${step}-${qi}-opt-${optIdx}`}
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className={styles.helperText}>Select the radio button next to the correct answer.</p>
+              {errors[`q_${qi}_options`] && (
+                <p className={styles.errorText}>{errors[`q_${qi}_options`]}</p>
+              )}
+            </div>
+          ))}
+
+          <button type="button" className={styles.addBtn} onClick={addQuestion}>
+            <Plus size={15} /> Add Question
+          </button>
         </div>
 
         {/* Navigation */}
