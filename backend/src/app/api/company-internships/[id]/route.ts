@@ -9,6 +9,12 @@ function isValidYouTubeUrl(url: string): boolean {
   return YOUTUBE_REGEX.test(url.trim());
 }
 
+interface QuizOption {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+
 interface WeekPayload {
   week: number;
   deadlineDays: number;
@@ -19,6 +25,7 @@ interface WeekPayload {
   projectTitle?: string;
   projectDescription?: string;
   projectGuidance?: string;
+  quizQuestions?: QuizOption[];
 }
 
 function validateWeek(w: WeekPayload, weekNum: number): string | null {
@@ -93,6 +100,11 @@ export async function PUT(
         projectTitle:       (w.projectTitle ?? '').trim(),
         projectDescription: (w.projectDescription ?? '').trim(),
         projectGuidance:    (w.projectGuidance ?? '').trim(),
+        quizQuestions:      (w.quizQuestions ?? []).map((q: QuizOption) => ({
+          question:     q.question,
+          options:      q.options,
+          correctIndex: q.correctIndex,
+        })),
       })),
       updatedAt: new Date(),
     };
