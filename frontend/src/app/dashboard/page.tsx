@@ -289,6 +289,34 @@ function GuidanceLockLink({ domain, week }: { domain: string; week: number }) {
 }
 
 /* ======================================================================
+   SUBMIT LOCK LINK — shows locked Submit Project button until quiz passed
+====================================================================== */
+function SubmitLockLink({ week }: { week: number }) {
+  const [showNote, setShowNote] = useState(false);
+  useEffect(() => {
+    if (!showNote) return;
+    const t = setTimeout(() => setShowNote(false), 5000);
+    return () => clearTimeout(t);
+  }, [showNote]);
+  return (
+    <div className={styles.guidanceLockWrap}>
+      <button
+        className={styles.submitBtnQuizLocked}
+        onClick={() => setShowNote(true)}
+        type="button"
+      >
+        Submit Project
+      </button>
+      {showNote && (
+        <p className={styles.guidanceLockNote}>
+          Complete the Week {week} quiz successfully to unlock project submission.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ======================================================================
    MAIN COMPONENT
 ====================================================================== */
 export default function DashboardPage() {  const router = useRouter();
@@ -998,13 +1026,24 @@ export default function DashboardPage() {  const router = useRouter();
                             return <GuidanceLockLink domain={user.domain} week={n} />;
                           })()}
 
-                          <button
-                            className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
-                            disabled={!available || stepLoads[idx]}
-                            onClick={() => available && openProjectModal(idx)}
-                          >
-                            {stepLoads[idx] ? 'Submitting\u2026' : !available ? '\uD83D\uDD12 Locked' : 'Submit Project'}
-                          </button>
+                          {(() => {
+                            const hasQuiz    = (week.quizQuestions?.length ?? 0) > 0;
+                            const quizPassed = !hasQuiz || quizPassedWeeks.has(n);
+                            const quizLocked = available && !quizPassed;
+
+                            if (quizLocked) {
+                              return <SubmitLockLink week={n} />;
+                            }
+                            return (
+                              <button
+                                className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
+                                disabled={!available || stepLoads[idx]}
+                                onClick={() => available && openProjectModal(idx)}
+                              >
+                                {stepLoads[idx] ? 'Submitting\u2026' : !available ? '\uD83D\uDD12 Locked' : 'Submit Project'}
+                              </button>
+                            );
+                          })()}
                           {/* WhatsApp mentor button - only shown when step is available */}
                           {available && (
                             <a

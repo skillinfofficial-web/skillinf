@@ -631,3 +631,26 @@
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Submit locked by quiz ──────────────────────────────────────────────── */
+.submitBtnQuizLocked {
+  width: 100%;
+  padding: 11px;
+  background: #e2e8f0;
+  color: #94a3b8;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
+  font-family: inherit;
+  position: relative;
+}
+.submitBtnQuizLocked:hover {
+  background: #f1f5f9;
+  border-color: #dc2626;
+  color: #dc2626;
+}
