@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './quiz.module.css';
@@ -17,7 +17,6 @@ type Stage = 'gate' | 'quiz' | 'result';
 
 const PASS_THRESHOLD = 60; // percent
 
-/* ── Helpers ────────────────────────────────────────────────────────────── */
 function fmtTimer(secs: number) {
   const m = Math.floor(secs / 60);
   const s = secs % 60;
@@ -26,6 +25,7 @@ function fmtTimer(secs: number) {
 
 /* ════════════════════════════════════════════════════════════════════════
    MAIN PAGE
+   Uses refs for mutable quiz state so timer callbacks never go stale.
 ═════════════════════════════════════════════════════════════════════════ */
 export default function QuizPage() {
   const params  = useParams();
@@ -38,20 +38,37 @@ export default function QuizPage() {
   const [loading,   setLoading]   = useState(true);
   const [fetchErr,  setFetchErr]  = useState('');
 
-  /* ── Quiz flow state ───────────────────────────────────────────────── */
-  const [stage,     setStage]     = useState<Stage>('gate');
-  const [current,   setCurrent]   = useState(0);
-  const [answers,   setAnswers]   = useState<(number | null)[]>([]);
-  const [selected,  setSelected]  = useState<number | null>(null);
-  const [timeLeft,  setTimeLeft]  = useState(0);
-  const [score,     setScore]     = useState(0);
+  /* ── Render-driving state ──────────────────────────────────────────── */
+  const [stage,     setStage]    = useState<Stage>('gate');
+  const [current,   setCurrent]  = useState(0);       // current question index
+  const [selected,  setSelected] = useState<number | null>(null); // chosen option
+  const [timeLeft,  setTimeLeft] = useState(0);
+  const [score,     setScore]    = useState(0);
   const [fsWarning, setFsWarning] = useState(false);
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  /* ── Mutable refs (always current, safe inside setInterval) ────────── */
+  const questionsRef = useRef<QuizQuestion[]>([]);
+  const answersRef   = useRef<(number | null)[]>([]);
+  const currentRef   = useRef(0);
+  const selectedRef  = useRef<number | null>(null);
+  const timerRef     = useRef<ReturnType<typeof setInterval> | null>(null);
+  const domainRef    = useRef(domain);
+  const weekNumRef   = useRef(weekNum);
+
+  // Keep refs in sync with render state
+  useEffect(() => { domainRef.current  = domain;  }, [domain]);
+  useEffect(() => { weekNumRef.current = weekNum; }, [weekNum]);
+
+  /* ── Sync selected to ref ──────────────────────────────────────────── */
+  useEffect(() => { selectedRef.current = selected; }, [selected]);
 
   /* ── Fetch questions ───────────────────────────────────────────────── */
   useEffect(() => {
-    if (!domain || isNaN(weekNum)) { setFetchErr('Invalid quiz link.'); setLoading(false); return; }
+    if (!domain || isNaN(weekNum)) {
+      setFetchErr('Invalid quiz link.');
+      setLoading(false);
+      return;
+    }
     fetch(`/api/course?domain=${encodeURIComponent(domain)}`)
       .then(r => r.json())
       .then(d => {
@@ -60,9 +77,13 @@ export default function QuizPage() {
           ?.find(w => w.week === weekNum);
         if (!week) { setFetchErr(`Week ${weekNum} not found.`); return; }
         const qs = week.quizQuestions ?? [];
-        if (qs.length === 0) { setFetchErr('No quiz questions have been added for this week yet.'); return; }
+        if (qs.length === 0) {
+          setFetchErr('No quiz questions have been added for this week yet.');
+          return;
+        }
+        questionsRef.current = qs;
+        answersRef.current   = new Array(qs.length).fill(null);
         setQuestions(qs);
-        setAnswers(new Array(qs.length).fill(null));
       })
       .catch(() => setFetchErr('Failed to load quiz. Please try again.'))
       .finally(() => setLoading(false));
@@ -71,101 +92,107 @@ export default function QuizPage() {
   /* ── Fullscreen change listener ────────────────────────────────────── */
   useEffect(() => {
     const onFsChange = () => {
-      if (stage === 'quiz' && !document.fullscreenElement) {
-        setFsWarning(true);
-      } else {
-        setFsWarning(false);
-      }
+      if (!document.fullscreenElement) setFsWarning(true);
+      else setFsWarning(false);
     };
     document.addEventListener('fullscreenchange', onFsChange);
     return () => document.removeEventListener('fullscreenchange', onFsChange);
-  }, [stage]);
+  }, []);
 
-  /* ── Per-question timer ────────────────────────────────────────────── */
-  const startTimer = useCallback((secs: number) => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    setTimeLeft(secs);
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!);
-          // Auto-advance: treat as unanswered (null already)
-          setAnswers(ans => {
-            const copy = [...ans];
-            // keep whatever was selected or null
-            return copy;
-          });
-          goNext(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  /* ── Advance to next question or finish — stable, uses refs ────────── */
+  const advance = useCallback((saveSelected: boolean) => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+
+    const qs  = questionsRef.current;
+    const idx = currentRef.current;
+
+    // Record answer
+    if (saveSelected && selectedRef.current !== null) {
+      answersRef.current[idx] = selectedRef.current;
+    }
+
+    const nextIdx = idx + 1;
+
+    if (nextIdx < qs.length) {
+      // Go to next question
+      currentRef.current = nextIdx;
+      setCurrent(nextIdx);
+      setSelected(null);
+      selectedRef.current = null;
+      startQuestion(nextIdx);
+    } else {
+      // All questions answered — compute result
+      const answers = answersRef.current;
+      const correct = answers.filter((a, i) => a === qs[i].correctIndex).length;
+      const pct     = Math.round((correct / qs.length) * 100);
+
+      if (pct >= PASS_THRESHOLD) {
+        localStorage.setItem(
+          `quiz_passed_${domainRef.current}_week_${weekNumRef.current}`,
+          '1'
+        );
+      }
+
+      setScore(pct);
+      setStage('result');
+      try { document.exitFullscreen(); } catch { /* ok */ }
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ── Go to question ────────────────────────────────────────────────── */
-  const goToQuestion = useCallback((idx: number, qs: QuizQuestion[]) => {
-    setCurrent(idx);
-    setSelected(null);
-    startTimer(qs[idx]?.timerSeconds ?? 30);
-  }, [startTimer]);
+  /* ── Start a question's timer — stable, calls advance via ref ──────── */
+  const startQuestion = useCallback((idx: number) => {
+    const qs = questionsRef.current;
+    const secs = qs[idx]?.timerSeconds ?? 30;
+    setTimeLeft(secs);
+
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+
+    let remaining = secs;
+    timerRef.current = setInterval(() => {
+      remaining -= 1;
+      setTimeLeft(remaining);
+      if (remaining <= 0) {
+        clearInterval(timerRef.current!);
+        timerRef.current = null;
+        // Auto-advance without saving (time expired)
+        advance(false);
+      }
+    }, 1000);
+  }, [advance]);
 
   /* ── Begin quiz ────────────────────────────────────────────────────── */
   const beginQuiz = async () => {
-    try {
-      await document.documentElement.requestFullscreen();
-    } catch {/* fullscreen may be denied; continue anyway */}
+    try { await document.documentElement.requestFullscreen(); } catch { /* ok */ }
+    currentRef.current  = 0;
+    answersRef.current  = new Array(questionsRef.current.length).fill(null);
     setStage('quiz');
-    goToQuestion(0, questions);
+    setCurrent(0);
+    setSelected(null);
+    selectedRef.current = null;
+    startQuestion(0);
   };
 
-  /* ── Next / Submit ─────────────────────────────────────────────────── */
-  const goNext = useCallback((autoAdvance = false) => {
-    if (timerRef.current) clearInterval(timerRef.current);
-
-    setAnswers(prev => {
-      const copy = [...prev];
-      if (!autoAdvance && selected !== null) copy[current] = selected;
-      return copy;
-    });
-
-    setQuestions(qs => {
-      const nextIdx = current + 1;
-      if (nextIdx < qs.length) {
-        setCurrent(nextIdx);
-        setSelected(null);
-        startTimer(qs[nextIdx]?.timerSeconds ?? 30);
-      } else {
-        // Calculate result using latest answers
-        setAnswers(finalAnswers => {
-          const correctCount = finalAnswers.filter((a, i) => a === qs[i].correctIndex).length;
-          const pct = Math.round((correctCount / qs.length) * 100);
-          setScore(pct);
-          if (pct >= PASS_THRESHOLD) {
-            localStorage.setItem(`quiz_passed_${domain}_week_${weekNum}`, '1');
-          }
-          setStage('result');
-          try { document.exitFullscreen(); } catch {/* ignore */}
-          return finalAnswers;
-        });
-      }
-      return qs;
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, selected, domain, weekNum, startTimer]);
+  /* ── Next button click ─────────────────────────────────────────────── */
+  const handleNext = () => advance(true);
 
   /* ── Retry ─────────────────────────────────────────────────────────── */
   const retry = async () => {
-    setAnswers(new Array(questions.length).fill(null));
+    currentRef.current  = 0;
+    answersRef.current  = new Array(questionsRef.current.length).fill(null);
     setScore(0);
     setStage('quiz');
-    try { await document.documentElement.requestFullscreen(); } catch {/* ok */}
-    goToQuestion(0, questions);
+    setCurrent(0);
+    setSelected(null);
+    selectedRef.current = null;
+    try { await document.documentElement.requestFullscreen(); } catch { /* ok */ }
+    startQuestion(0);
   };
 
   /* ── Cleanup ───────────────────────────────────────────────────────── */
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  }, []);
 
   /* ════════════════════════════════════════════════════════════════════
      RENDER: Loading / Error
@@ -191,10 +218,10 @@ export default function QuizPage() {
     </div>
   );
 
-  const q = questions[current];
+  const q      = questions[current];
   const isLast = current === questions.length - 1;
-  const correctCount = answers.filter((a, i) => a === questions[i].correctIndex).length;
   const passed = score >= PASS_THRESHOLD;
+  const correctCount = answersRef.current.filter((a, i) => a === questions[i].correctIndex).length;
 
   /* ════════════════════════════════════════════════════════════════════
      STAGE: Gate (Rules)
@@ -203,7 +230,13 @@ export default function QuizPage() {
     <div className={styles.shell}>
       <div className={styles.gateWrap}>
         <div className={styles.gateCard}>
-          <Image src="/skillinf-logo.png" alt="Skillinf" width={130} height={44} className={styles.gateLogo} />
+          <Image
+            src="/skillinf-logo.png"
+            alt="Skillinf"
+            width={130}
+            height={44}
+            className={styles.gateLogo}
+          />
           <h1 className={styles.gateTitle}>Quiz Rules</h1>
           <p className={styles.gateSub}>{domain} — Week {weekNum} Quiz</p>
 
@@ -231,7 +264,8 @@ export default function QuizPage() {
           </ul>
 
           <p className={styles.gateNote}>
-            {questions.length} question{questions.length !== 1 ? 's' : ''} total. The quiz will open in fullscreen.
+            {questions.length} question{questions.length !== 1 ? 's' : ''} total.
+            The quiz will open in fullscreen.
           </p>
 
           <button className={styles.acceptBtn} onClick={beginQuiz}>
@@ -265,7 +299,12 @@ export default function QuizPage() {
             <p className={styles.fsSub}>Please return to fullscreen to continue the quiz.</p>
             <button
               className={styles.fsResumeBtn}
-              onClick={() => document.documentElement.requestFullscreen().then(() => setFsWarning(false)).catch(() => setFsWarning(false))}
+              onClick={() =>
+                document.documentElement
+                  .requestFullscreen()
+                  .then(() => setFsWarning(false))
+                  .catch(() => setFsWarning(false))
+              }
             >
               Resume Fullscreen
             </button>
@@ -301,16 +340,13 @@ export default function QuizPage() {
 
           <div className={styles.navRow}>
             {isLast ? (
-              <button
-                className={styles.submitQuizBtn}
-                onClick={() => goNext(false)}
-              >
+              <button className={styles.submitQuizBtn} onClick={handleNext}>
                 Save and Submit
               </button>
             ) : (
               <button
                 className={styles.nextBtn}
-                onClick={() => goNext(false)}
+                onClick={handleNext}
                 disabled={selected === null}
               >
                 Next →
@@ -329,7 +365,7 @@ export default function QuizPage() {
   return (
     <div className={styles.shell}>
       <header className={styles.topbar}>
-        <span className={styles.topTitle}>{domain} — Week {weekNum} Quiz Result</span>
+        <span className={styles.topTitle}>{domain} — Week {weekNum} · Quiz Result</span>
       </header>
 
       <main className={styles.resultBody}>
@@ -343,7 +379,8 @@ export default function QuizPage() {
             {passed ? 'Quiz Passed!' : 'Quiz Not Passed'}
           </h1>
           <p className={styles.resultSub}>
-            You answered <strong>{correctCount}</strong> out of <strong>{questions.length}</strong> questions correctly.
+            You answered <strong>{correctCount}</strong> out of{' '}
+            <strong>{questions.length}</strong> questions correctly.
           </p>
           {!passed && (
             <p className={styles.resultNote}>
@@ -363,7 +400,7 @@ export default function QuizPage() {
               </button>
             )}
             <button className={styles.dashBackBtn} onClick={() => router.push('/dashboard')}>
-              {passed ? 'Back to Dashboard' : 'Back to Dashboard'}
+              Back to Dashboard
             </button>
           </div>
 
