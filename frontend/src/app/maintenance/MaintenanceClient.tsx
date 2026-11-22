@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import styles from './maintenance.module.css';
 
 export default function MaintenanceClient({ message }: { message: string }) {
@@ -18,34 +19,31 @@ export default function MaintenanceClient({ message }: { message: string }) {
 
   return (
     <div className={styles.page}>
-      {/* Animated background blobs */}
-      <div className={styles.blob1} />
-      <div className={styles.blob2} />
-      <div className={styles.blob3} />
+      {/* Fixed top brand bar — same as sign-in / sign-up */}
+      <div className={styles.brand}>
+        <Image
+          src="/skillinf-logo.png"
+          alt="Skillinf — Learn Built Grow"
+          width={160}
+          height={48}
+          priority
+          className={styles.logoImg}
+        />
+      </div>
 
+      {/* Centre card */}
       <div className={styles.card}>
-        {/* Logo / Brand */}
-        <div className={styles.logoRow}>
-          <div className={styles.logoIcon}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="url(#g1)" />
-              <path d="M8 22L16 10L24 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="16" cy="10" r="2" fill="white" />
-              <defs>
-                <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#00b894" />
-                  <stop offset="1" stopColor="#0a66c2" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-          <span className={styles.logoText}>Skillinf</span>
-        </div>
 
-        {/* Animated gear/wrench icon */}
+        {/* Animated gear icon */}
         <div className={styles.iconWrap}>
           <div className={styles.iconBg}>
-            <svg className={styles.gearIcon} width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <svg
+              className={styles.gearIcon}
+              width="48"
+              height="48"
+              viewBox="0 0 56 56"
+              fill="none"
+            >
               <path
                 d="M28 18a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM28 22a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"
                 fill="currentColor"

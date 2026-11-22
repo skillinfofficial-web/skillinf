@@ -1,100 +1,62 @@
+/* ── Maintenance page — matches site theme (light, green brand) ── */
+
 .page {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f2027 100%);
+  background: #f7faf9;
   font-family: var(--font-inter, 'Inter', system-ui, sans-serif);
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
+  padding: 24px 16px;
 }
 
-/* Animated background blobs */
-.blob1, .blob2, .blob3 {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.18;
-  pointer-events: none;
-  animation: float 8s ease-in-out infinite;
-}
-.blob1 {
-  width: 400px; height: 400px;
-  background: #00b894;
-  top: -100px; left: -100px;
-  animation-delay: 0s;
-}
-.blob2 {
-  width: 350px; height: 350px;
-  background: #0a66c2;
-  bottom: -80px; right: -80px;
-  animation-delay: -3s;
-}
-.blob3 {
-  width: 250px; height: 250px;
-  background: #7c3aed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  animation-delay: -6s;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%       { transform: translateY(-30px) scale(1.06); }
-}
-.blob3 {
-  animation-name: floatCenter;
-}
-@keyframes floatCenter {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50%       { transform: translate(-50%, -60%) scale(1.05); }
-}
-
-/* Card */
-.card {
-  position: relative;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 48px 40px 36px;
-  max-width: 520px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.04);
-}
-
-/* Logo row */
-.logoRow {
+/* Top brand bar — same as sign-in / sign-up pages */
+.brand {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e4ebe7;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 32px;
+  padding: 0 24px;
+  z-index: 100;
 }
-.logoIcon { display: flex; }
-.logoText {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.02em;
+.logoImg {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
 }
 
-/* Gear icon */
+/* Centre card */
+.card {
+  margin-top: 64px; /* clear the fixed brand bar */
+  background: #ffffff;
+  border: 1px solid #e4ebe7;
+  border-radius: 20px;
+  padding: 48px 40px 36px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 32px rgba(0, 122, 99, 0.08);
+}
+
+/* Gear / wrench icon */
 .iconWrap {
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
 }
 .iconBg {
-  width: 96px; height: 96px;
+  width: 88px; height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(0,184,148,0.15), rgba(10,102,194,0.15));
-  border: 1px solid rgba(0,184,148,0.3);
+  background: linear-gradient(135deg, #e6faf6 0%, #f0fdf8 100%);
+  border: 1.5px solid #a7f3d0;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 40px rgba(0,184,148,0.15);
+  box-shadow: 0 4px 24px rgba(0, 184, 148, 0.12);
 }
 .gearIcon {
   color: #00b894;
@@ -104,72 +66,72 @@
 
 /* Titles */
 .title {
-  font-size: 1.75rem;
+  font-size: 1.7rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   margin: 0 0 8px;
   letter-spacing: -0.03em;
 }
 .subtitle {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.55);
-  margin: 0 0 24px;
+  font-size: 0.95rem;
+  color: #66736d;
+  margin: 0 0 28px;
   min-height: 1.5em;
 }
 
 /* Divider */
 .divider {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
+  background: linear-gradient(to right, transparent, #e4ebe7, transparent);
   margin: 0 0 24px;
 }
 
-/* Message */
+/* Message box */
 .messageBox {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 28px;
+  background: #f7faf9;
+  border: 1px solid #e4ebe7;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
   text-align: left;
 }
 .messageLine {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.65;
-  margin: 0 0 8px;
+  font-size: 0.875rem;
+  color: #3d4f47;
+  line-height: 1.7;
+  margin: 0 0 6px;
 }
 .messageLine:last-child { margin-bottom: 0; }
 
-/* Email button */
+/* Contact support button */
 .emailBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #00b894, #0a66c2);
-  color: #fff;
+  background: #00b894;
+  color: #ffffff;
   text-decoration: none;
-  padding: 12px 28px;
-  border-radius: 100px;
-  font-size: 0.88rem;
+  padding: 13px 28px;
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-bottom: 28px;
-  transition: opacity 0.15s, transform 0.15s;
-  box-shadow: 0 4px 20px rgba(0,184,148,0.3);
+  margin-bottom: 24px;
+  transition: background 0.18s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(0, 184, 148, 0.25);
 }
-.emailBtn:hover { opacity: 0.9; transform: translateY(-2px); }
+.emailBtn:hover { background: #007a63; transform: translateY(-1px); }
 
 /* Footer */
 .footer {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: #9eaaa5;
   margin: 0;
 }
 
 /* Mobile */
 @media (max-width: 480px) {
-  .card { padding: 36px 20px 28px; border-radius: 20px; }
-  .title { font-size: 1.5rem; }
-  .messageBox { padding: 16px 16px; }
-  .blob1, .blob2 { width: 200px; height: 200px; }
+  .card { padding: 36px 20px 28px; border-radius: 16px; margin-top: 64px; }
+  .title { font-size: 1.45rem; }
+  .messageBox { padding: 14px 16px; }
+  .iconBg { width: 72px; height: 72px; }
 }
