@@ -13,6 +13,7 @@ interface QuizOption {
   question: string;
   options: string[];
   correctIndex: number;
+  timerSeconds?: number;
 }
 
 interface WeekPayload {
@@ -104,6 +105,7 @@ export async function PUT(
           question:     q.question,
           options:      q.options,
           correctIndex: q.correctIndex,
+          timerSeconds: Number(q.timerSeconds ?? 30),
         })),
       })),
       updatedAt: new Date(),

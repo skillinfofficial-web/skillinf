@@ -10,6 +10,7 @@ interface QuizQuestion {
   question: string;
   options: [string, string, string, string];
   correctIndex: number; // 0-3
+  timerSeconds: number; // 5-300, default 30
 }
 
 interface WeekData {
@@ -59,7 +60,7 @@ function makeBlankWeek(): WeekData {
 }
 
 function makeBlankQuestion(): QuizQuestion {
-  return { question: '', options: ['', '', '', ''], correctIndex: 0 };
+  return { question: '', options: ['', '', '', ''], correctIndex: 0, timerSeconds: 30 };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
@@ -524,6 +525,23 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
               {errors[`q_${qi}_question`] && (
                 <p className={styles.errorText}>{errors[`q_${qi}_question`]}</p>
               )}
+
+              {/* Timer per question */}
+              <div className={styles.fieldGroup} style={{ marginTop: 8 }}>
+                <label className={styles.label} htmlFor={`q-${step}-${qi}-timer`}>
+                  Time Limit (seconds) <span className={styles.optionalBadge}>shown to user during quiz</span>
+                </label>
+                <input
+                  id={`q-${step}-${qi}-timer`}
+                  type="number"
+                  min={5}
+                  max={300}
+                  className={styles.input}
+                  value={q.timerSeconds}
+                  onChange={e => updateQuestion(qi, 'timerSeconds', Math.min(300, Math.max(5, Number(e.target.value) || 30)))}
+                  style={{ maxWidth: 160 }}
+                />
+              </div>
 
               {/* Four options */}
               <div className={styles.quizOptions}>

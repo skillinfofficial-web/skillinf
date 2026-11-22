@@ -29,7 +29,7 @@ interface UserDoc {
     registeredAt?: string;
   } | null;
 }
-interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; projectGuidance?: string; }
+interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; projectGuidance?: string; quizQuestions?: { question: string; options: [string,string,string,string]; correctIndex: number; timerSeconds: number }[]; }
 
 /* -- Helpers ------------------------------------------------------------- */
 function addDays(dateStr: string, days: number) {
@@ -261,10 +261,37 @@ async function downloadCertificate(user: UserDoc) {
 
 
 /* ======================================================================
+   GUIDANCE LOCK LINK — shows locked red link until quiz passed
+====================================================================== */
+function GuidanceLockLink({ domain, week }: { domain: string; week: number }) {
+  const [showNote, setShowNote] = useState(false);
+  useEffect(() => {
+    if (!showNote) return;
+    const t = setTimeout(() => setShowNote(false), 5000);
+    return () => clearTimeout(t);
+  }, [showNote]);
+  return (
+    <div className={styles.guidanceLockWrap}>
+      <button
+        className={styles.guidanceLinkLocked}
+        onClick={() => setShowNote(true)}
+        type="button"
+      >
+        Project Guidance Details &rarr; View
+      </button>
+      {showNote && (
+        <p className={styles.guidanceLockNote}>
+          Complete the week quiz successfully to access project guidance.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ======================================================================
    MAIN COMPONENT
 ====================================================================== */
-export default function DashboardPage() {
-  const router = useRouter();
+export default function DashboardPage() {  const router = useRouter();
   const [user, setUser] = useState<UserDoc | null>(null);
   const [otherInternships, setOtherInternships] = useState<{id: string, domain: string}[]>([]);
   const [weeks, setWeeks] = useState<Week[]>([]);
@@ -325,6 +352,8 @@ export default function DashboardPage() {
   // My Internships Switcher
   const [showInternshipsModal, setShowInternshipsModal] = useState(false);
 
+  // Quiz passed weeks (from localStorage per domain)
+  const [quizPassedWeeks, setQuizPassedWeeks] = useState<Set<number>>(new Set());
 
   const [switchingTo, setSwitchingTo] = useState<string | null>(null);
   const [selectedInternship, setSelectedInternship] = useState<string>('__current__');
@@ -361,6 +390,16 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  // Load quiz pass state from localStorage whenever user/weeks change
+  useEffect(() => {
+    if (!user) return;
+    const passed = new Set<number>();
+    [1, 2, 3, 4].forEach(n => {
+      if (localStorage.getItem(`quiz_passed_${user.domain}_week_${n}`) === '1') passed.add(n);
+    });
+    setQuizPassedWeeks(passed);
+  }, [user]);
 
 
 
@@ -929,17 +968,36 @@ export default function DashboardPage() {
                       ) : (
                         <>
                           {stepMsgs[idx] && <p className={styles.stepErrMsg}>{stepMsgs[idx]}</p>}
-                          {/* Project Guidance link - shown when step is available and guidance exists */}
-                          {available && week.projectGuidance?.trim() && (
+
+                          {/* Take a Quiz button — shown if week has questions and step is available */}
+                          {available && (week.quizQuestions?.length ?? 0) > 0 && (
                             <a
-                              href={`/guidance/${encodeURIComponent(user.domain)}/${n}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className={styles.guidanceLink}
+                              href={`/quiz/${encodeURIComponent(user.domain)}/${n}`}
+                              className={styles.quizBtn}
                             >
-                              Project Guidance Details &rarr; View
+                              Take a Quiz
                             </a>
                           )}
+
+                          {/* Project Guidance link — locked (red) until quiz passed */}
+                          {available && week.projectGuidance?.trim() && (() => {
+                            const hasQuiz = (week.quizQuestions?.length ?? 0) > 0;
+                            const unlocked = !hasQuiz || quizPassedWeeks.has(n);
+                            if (unlocked) {
+                              return (
+                                <a
+                                  href={`/guidance/${encodeURIComponent(user.domain)}/${n}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={styles.guidanceLink}
+                                >
+                                  Project Guidance Details &rarr; View
+                                </a>
+                              );
+                            }
+                            return <GuidanceLockLink domain={user.domain} week={n} />;
+                          })()}
+
                           <button
                             className={`${styles.submitBtn} ${!available ? styles.submitBtnLocked : ''}`}
                             disabled={!available || stepLoads[idx]}

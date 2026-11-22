@@ -19,7 +19,7 @@ interface WeekPayload {
   projectTitle?: string;
   projectDescription?: string;
   projectGuidance?: string;
-  quizQuestions?: { question: string; options: [string, string, string, string]; correctIndex: number }[];
+  quizQuestions?: { question: string; options: [string, string, string, string]; correctIndex: number; timerSeconds?: number }[];
 }
 
 interface CompanyInternshipPayload {
@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
           question:     q.question.trim(),
           options:      q.options.map(o => o.trim()) as [string, string, string, string],
           correctIndex: Number(q.correctIndex),
+          timerSeconds: Number(q.timerSeconds ?? 30),
         })),
       })),
       createdAt: now,
