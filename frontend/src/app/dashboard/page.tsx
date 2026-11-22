@@ -8,6 +8,13 @@ import styles from './Dashboard.module.css';
 
 
 /* -- Types --------------------------------------------------------------- */
+interface QuizWeekStatus {
+  passed:        boolean;
+  score:         number;
+  attempts:      number;
+  lastAttemptAt: string;
+  passedAt?:     string;
+}
 interface UserDoc {
   _id: string; name: string; email: string; domain: string;
   mobileNumber?: string;  // stored since Sept 2026; may be absent for older accounts
@@ -28,6 +35,8 @@ interface UserDoc {
     pincode: string;
     registeredAt?: string;
   } | null;
+  // Cross-device quiz status stored in DB
+  quizStatus?: { [weekKey: string]: QuizWeekStatus };
 }
 interface Week { week: number; deadlineDays: number; tutorialUrl: string; embedUrl?: string; keyFeatures: string[]; whatYouLearn: string; projectTitle?: string; projectDescription?: string; projectGuidance?: string; quizQuestions?: { question: string; options: [string,string,string,string]; correctIndex: number; timerSeconds: number }[]; }
 
@@ -419,12 +428,16 @@ export default function DashboardPage() {  const router = useRouter();
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // Load quiz pass state from localStorage whenever user/weeks change
+  // Load quiz pass state: DB (quizStatus) is source of truth; localStorage is instant local fallback
   useEffect(() => {
     if (!user) return;
     const passed = new Set<number>();
     [1, 2, 3, 4].forEach(n => {
-      if (localStorage.getItem(`quiz_passed_${user.domain}_week_${n}`) === '1') passed.add(n);
+      // Check DB first (cross-device), then localStorage as fallback
+      const dbPassed = user.quizStatus?.[`week_${n}`]?.passed === true;
+      const lsPassed = typeof window !== 'undefined' &&
+        localStorage.getItem(`quiz_passed_${user.domain}_week_${n}`) === '1';
+      if (dbPassed || lsPassed) passed.add(n);
     });
     setQuizPassedWeeks(passed);
   }, [user]);

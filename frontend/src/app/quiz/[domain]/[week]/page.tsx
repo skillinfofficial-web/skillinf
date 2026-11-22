@@ -126,7 +126,21 @@ export default function QuizPage() {
       const correct = answers.filter((a, i) => a === qs[i].correctIndex).length;
       const pct     = Math.round((correct / qs.length) * 100);
 
-      if (pct >= PASS_THRESHOLD) {
+      const didPass = pct >= PASS_THRESHOLD;
+
+      // Persist to DB (cross-device) — fire and forget, never block result UI
+      fetch('/api/quiz/result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          week:   weekNumRef.current,
+          passed: didPass,
+          score:  pct,
+        }),
+      }).catch(() => { /* silent — result page still shows */ });
+
+      // Keep localStorage as instant local fallback
+      if (didPass) {
         localStorage.setItem(
           `quiz_passed_${domainRef.current}_week_${weekNumRef.current}`,
           '1'
