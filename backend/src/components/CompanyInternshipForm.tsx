@@ -513,13 +513,13 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
               </div>
 
               {/* Question text */}
-              <input
-                type="text"
-                className={`${styles.input} ${errors[`q_${qi}_question`] ? styles.inputError : ''}`}
+              <textarea
+                className={`${styles.textarea} ${errors[`q_${qi}_question`] ? styles.inputError : ''}`}
                 value={q.question}
                 onChange={e => updateQuestion(qi, 'question', e.target.value)}
                 placeholder={`Question ${qi + 1}…`}
                 id={`q-${step}-${qi}-text`}
+                rows={2}
               />
               {errors[`q_${qi}_question`] && (
                 <p className={styles.errorText}>{errors[`q_${qi}_question`]}</p>
