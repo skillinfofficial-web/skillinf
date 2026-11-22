@@ -14,6 +14,11 @@ const ALLOWED_PATHS = [
   '/sitemap.xml',
 ];
 
+// Use the backend Render URL — Cloudflare Workers cannot self-fetch their own
+// origin (causes a WORKER_SELF_REFERENCE error), so we call the backend API
+// which connects to the same MongoDB database.
+const BACKEND_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://skillinf-backend.onrender.com';
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -23,11 +28,12 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Build absolute URL to the site-settings API on the same origin
-    const apiUrl = new URL('/api/site-settings', request.nextUrl.origin);
-    const res    = await fetch(apiUrl.toString(), {
-      // Bypass edge cache — we want the live value from MongoDB
+    // Fetch site settings from the backend (Render) — avoids Cloudflare
+    // Worker self-reference restriction when calling the same-origin API.
+    const res = await fetch(`${BACKEND_URL}/api/site-settings`, {
       headers: { 'cache-control': 'no-store' },
+      // 3-second timeout so a slow Render cold-start doesn't block every request
+      signal: AbortSignal.timeout(3000),
     });
 
     if (res.ok) {
@@ -39,7 +45,8 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch {
-    // If check fails, allow traffic through (fail-open)
+    // If the backend is unreachable, fail-open (let traffic through)
+    // so a backend outage never takes down the frontend
   }
 
   return NextResponse.next();
