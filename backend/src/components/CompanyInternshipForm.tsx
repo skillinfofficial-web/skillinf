@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle, Loader2, Upload } from 'lucide-react';
 import styles from './CompanyInternshipForm.module.css';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -61,6 +61,72 @@ function makeBlankWeek(): WeekData {
 
 function makeBlankQuestion(): QuizQuestion {
   return { question: '', options: ['', '', '', ''], correctIndex: 0, timerSeconds: 30 };
+}
+
+// ── cURL / plain-text bulk question parser ────────────────────────────────────
+// Accepted format (blank line separates questions):
+//
+//   Q: What is the capital of France?
+//   A: Berlin
+//   B: Madrid
+//   C: Paris
+//   D: Rome
+//   Correct: C
+//   Timer: 30
+//
+// Lines are trimmed; "Q:" / "Question:" both accepted.
+// "Correct:" accepts A/B/C/D (case-insensitive) or 0/1/2/3.
+// "Timer:" is optional — defaults to 30.
+function parseBulkQuestions(raw: string): { questions: QuizQuestion[]; errors: string[] } {
+  const blocks = raw.trim().split(/\n\s*\n/).filter(b => b.trim());
+  const questions: QuizQuestion[] = [];
+  const errors: string[] = [];
+
+  blocks.forEach((block, bi) => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    let question = '';
+    const options: [string, string, string, string] = ['', '', '', ''];
+    let correctIndex = 0;
+    let timerSeconds = 30;
+    let hasCorrect = false;
+
+    for (const line of lines) {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx === -1) continue;
+      const key = line.slice(0, colonIdx).trim().toUpperCase();
+      const val = line.slice(colonIdx + 1).trim();
+
+      if (key === 'Q' || key === 'QUESTION') {
+        question = val;
+      } else if (key === 'A') {
+        options[0] = val;
+      } else if (key === 'B') {
+        options[1] = val;
+      } else if (key === 'C') {
+        options[2] = val;
+      } else if (key === 'D') {
+        options[3] = val;
+      } else if (key === 'CORRECT' || key === 'ANSWER') {
+        const v = val.toUpperCase();
+        if      (v === 'A' || v === '0') { correctIndex = 0; hasCorrect = true; }
+        else if (v === 'B' || v === '1') { correctIndex = 1; hasCorrect = true; }
+        else if (v === 'C' || v === '2') { correctIndex = 2; hasCorrect = true; }
+        else if (v === 'D' || v === '3') { correctIndex = 3; hasCorrect = true; }
+        else { errors.push(`Q${bi + 1}: "Correct:" must be A, B, C, or D — got "${val}".`); }
+      } else if (key === 'TIMER' || key === 'TIME') {
+        const t = parseInt(val, 10);
+        if (!isNaN(t) && t >= 5 && t <= 300) timerSeconds = t;
+      }
+    }
+
+    if (!question) { errors.push(`Block ${bi + 1}: Missing "Q:" line.`); return; }
+    if (options.some(o => !o)) { errors.push(`Q${bi + 1}: All four options A, B, C, D are required.`); return; }
+    if (!hasCorrect) { errors.push(`Q${bi + 1}: Missing "Correct:" line.`); return; }
+
+    questions.push({ question, options, correctIndex, timerSeconds });
+  });
+
+  return { questions, errors };
 }
 
 function weekFromInitial(w: InitialWeek): WeekData {
@@ -137,6 +203,12 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
   const [submitStatus,   setSubmitStatus]   = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [submitMsg,      setSubmitMsg]      = useState('');
 
+  // ── Bulk upload state ────────────────────────────────────────────────────
+  const [showBulkModal,  setShowBulkModal]  = useState(false);
+  const [bulkText,       setBulkText]       = useState('');
+  const [bulkErrors,     setBulkErrors]     = useState<string[]>([]);
+  const [bulkPreview,    setBulkPreview]    = useState<QuizQuestion[]>([]);
+
   // ── Domains ──────────────────────────────────────────────────────────────
   const [domains,        setDomains]        = useState<string[]>([]);
   const [domainsLoading, setDomainsLoading] = useState(true);
@@ -210,6 +282,38 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
   const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     if (raw === '' || /^\d+$/.test(raw)) updateWeek('deadlineDays', raw);
+  };
+
+  // ── Bulk upload handlers ──────────────────────────────────────────────────
+  const handleBulkParse = () => {
+    setBulkErrors([]);
+    setBulkPreview([]);
+    const { questions, errors: parseErrors } = parseBulkQuestions(bulkText);
+    if (parseErrors.length > 0) {
+      setBulkErrors(parseErrors);
+      return;
+    }
+    if (questions.length === 0) {
+      setBulkErrors(['No valid question blocks found. Check the format and try again.']);
+      return;
+    }
+    setBulkPreview(questions);
+  };
+
+  const handleBulkConfirm = () => {
+    // Append parsed questions to existing list
+    updateWeek('quizQuestions', [...currentWeek.quizQuestions, ...bulkPreview]);
+    setShowBulkModal(false);
+    setBulkText('');
+    setBulkErrors([]);
+    setBulkPreview([]);
+  };
+
+  const handleBulkClose = () => {
+    setShowBulkModal(false);
+    setBulkText('');
+    setBulkErrors([]);
+    setBulkPreview([]);
   };
 
   // ── Navigation ────────────────────────────────────────────────────────────
@@ -581,7 +685,123 @@ export default function CompanyInternshipForm({ editMode = false, editId, initia
           <button type="button" className={styles.addBtn} onClick={addQuestion}>
             <Plus size={15} /> Add Question
           </button>
+          <button type="button" className={styles.bulkUploadBtn} onClick={() => setShowBulkModal(true)}>
+            <Upload size={15} /> Bulk Upload
+          </button>
         </div>
+
+        {/* ── Bulk Upload Modal ── */}
+        {showBulkModal && (
+          <div className={styles.bulkOverlay}>
+            <div className={styles.bulkModal}>
+              <div className={styles.bulkModalHeader}>
+                <h3 className={styles.bulkModalTitle}>Bulk Upload Quiz Questions</h3>
+                <button type="button" className={styles.removeBtn} onClick={handleBulkClose} aria-label="Close">
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Format guide */}
+              <div className={styles.bulkFormatGuide}>
+                <p className={styles.bulkFormatTitle}>Paste questions in this format (blank line between questions):</p>
+                <pre className={styles.bulkFormatExample}>{`Q: What is the capital of France?
+A: Berlin
+B: Madrid
+C: Paris
+D: Rome
+Correct: C
+Timer: 30
+
+Q: Which data structure uses LIFO?
+A: Queue
+B: Stack
+C: Array
+D: Tree
+Correct: B
+Timer: 20`}</pre>
+                <p className={styles.bulkFormatNote}>
+                  Correct: accepts A / B / C / D &nbsp;|&nbsp; Timer: is optional (default 30 sec, max 300)
+                </p>
+              </div>
+
+              {/* Textarea */}
+              <textarea
+                className={styles.bulkTextarea}
+                value={bulkText}
+                onChange={e => { setBulkText(e.target.value); setBulkErrors([]); setBulkPreview([]); }}
+                placeholder="Paste your questions here…"
+                rows={12}
+                spellCheck={false}
+              />
+
+              {/* Parse errors */}
+              {bulkErrors.length > 0 && (
+                <div className={styles.bulkErrorBox}>
+                  {bulkErrors.map((err, i) => (
+                    <p key={i} className={styles.bulkErrorLine}>{err}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Preview — shown after successful parse */}
+              {bulkPreview.length > 0 && (
+                <div className={styles.bulkPreview}>
+                  <p className={styles.bulkPreviewTitle}>
+                    Preview — {bulkPreview.length} question{bulkPreview.length !== 1 ? 's' : ''} parsed successfully
+                  </p>
+                  {bulkPreview.map((q, qi) => (
+                    <div key={qi} className={styles.bulkPreviewCard}>
+                      <div className={styles.quizHeader}>
+                        <span className={styles.quizNum}>Q{qi + 1}</span>
+                        <span className={styles.bulkPreviewTimer}>Timer: {q.timerSeconds}s</span>
+                      </div>
+                      <p className={styles.bulkPreviewQuestion}>{q.question}</p>
+                      <div className={styles.quizOptions}>
+                        {(['A', 'B', 'C', 'D'] as const).map((letter, optIdx) => (
+                          <div key={optIdx} className={styles.quizOptionRow}>
+                            <span className={`${styles.quizOptionLabel} ${q.correctIndex === optIdx ? styles.quizOptionCorrect : ''}`}>
+                              <span className={styles.quizOptionLetter}>{letter}</span>
+                            </span>
+                            <span className={`${styles.bulkPreviewOpt} ${q.correctIndex === optIdx ? styles.bulkPreviewOptCorrect : ''}`}>
+                              {q.options[optIdx]}
+                              {q.correctIndex === optIdx && <span className={styles.bulkCorrectTag}> (correct)</span>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className={styles.bulkActions}>
+                {bulkPreview.length === 0 ? (
+                  <button
+                    type="button"
+                    className={styles.nextBtn}
+                    onClick={handleBulkParse}
+                    disabled={!bulkText.trim()}
+                  >
+                    Parse and Preview
+                  </button>
+                ) : (
+                  <>
+                    <button type="button" className={styles.backBtn} onClick={() => setBulkPreview([])}>
+                      Edit Text
+                    </button>
+                    <button type="button" className={styles.submitBtn} onClick={handleBulkConfirm}>
+                      Add {bulkPreview.length} Question{bulkPreview.length !== 1 ? 's' : ''}
+                    </button>
+                  </>
+                )}
+                <button type="button" className={styles.backBtn} onClick={handleBulkClose}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Navigation */}
         <div className={`${styles.navRow} ${step === 1 ? styles.navRowEnd : ''}`}>
