@@ -396,3 +396,127 @@
   .searchWrap { max-width: 100%; }
   .header { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── Marketing Filters Row ─────────────────────────────────────────────────── */
+.marketingFilters {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid var(--border, #e4ebe7);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+
+.mfItem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 160px;
+}
+
+.mfLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--secondary-text, #4a6560);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mfSelect {
+  font-size: 0.84rem;
+  color: var(--main-text, #1a2e28);
+  background: #f7faf9;
+  border: 1.5px solid var(--border, #d8ece5);
+  border-radius: 8px;
+  padding: 7px 10px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.mfSelect:focus { border-color: var(--primary, #3d6b5e); }
+
+/* ── View toggle (By Month / Show All) ─────────────────────────────────────── */
+.viewToggle {
+  display: flex;
+  border: 1.5px solid var(--border, #d8ece5);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.viewToggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--secondary-text, #4a6560);
+  background: #f7faf9;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.viewToggleBtn:not(:last-child) {
+  border-right: 1.5px solid var(--border, #d8ece5);
+}
+.viewToggleBtn:hover {
+  background: #e6f4f1;
+  color: var(--primary, #3d6b5e);
+}
+.viewToggleBtnActive {
+  background: var(--primary, #3d6b5e) !important;
+  color: #fff !important;
+}
+
+/* ── Marketing Stats Bar ───────────────────────────────────────────────────── */
+.statBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  background: #fff;
+  border: 1px solid var(--border, #e4ebe7);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+}
+
+.statNum {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--primary, #3d6b5e);
+  line-height: 1;
+}
+
+.statLbl {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--secondary-text, #4a6560);
+  white-space: nowrap;
+}
+
+.statDivider {
+  width: 1px;
+  height: 36px;
+  background: var(--border, #e4ebe7);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+@media (max-width: 768px) {
+  .marketingFilters { flex-direction: column; align-items: stretch; }
+  .mfItem { min-width: unset; }
+  .statBar { gap: 4px; }
+  .statItem { padding: 4px 8px; }
+}
