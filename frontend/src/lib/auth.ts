@@ -2,9 +2,12 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-const SECRET  = process.env.JWT_SECRET || 'Skillinf_dev_secret_change_in_prod';
 export const COOKIE_NAME = 'Skillinf_token';
 export const MAX_AGE     = 7 * 24 * 60 * 60; // 7 days in seconds
+
+function getJwtSecret(): string {
+  return process.env.JWT_SECRET || 'Skillinf_dev_secret_change_in_prod';
+}
 
 export interface TokenPayload {
   userId: string;
@@ -15,12 +18,12 @@ export interface TokenPayload {
 }
 
 export function signToken(payload: Omit<TokenPayload, 'iat' | 'exp'>): string {
-  return jwt.sign(payload, SECRET, { expiresIn: MAX_AGE });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: MAX_AGE });
 }
 
 export function verifyToken(token: string): TokenPayload | null {
   try {
-    return jwt.verify(token, SECRET) as TokenPayload;
+    return jwt.verify(token, getJwtSecret()) as TokenPayload;
   } catch {
     return null;
   }

@@ -68,55 +68,105 @@ export async function POST(req: Request) {
       }
     );
 
-    // Send email notification to admins (non-blocking but logs errors)
+    // Send email notification to admins — awaited so Cloudflare Workers does not kill it
     const istTime = nowIST;
+    let mailSent = false;
+    let mailError: string | undefined;
 
-    void sendMail({
-      to: ['arunkumar.s202006@gmail.com', 'Skillinfofficial@gmail.com'],
-      subject: `🔔 New LinkedIn Verification Request — ${user.name}`,
+    console.log('[LinkedIn] Sending admin notification email... RESEND_API_KEY set?', !!process.env.RESEND_API_KEY);
+
+    try {
+      await sendMail({
+        to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+      subject: `🔔 New LinkedIn Verification Request — ${user.name as string}`,
       html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
-          <div style="background:#0077b5;padding:20px 24px;">
-            <h2 style="color:#fff;margin:0;font-size:20px;">🔔 New LinkedIn Verification Request</h2>
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:0;background:#ffffff;">
+
+          <!-- Header -->
+          <div style="background:#1565c0;padding:28px 32px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700;letter-spacing:0.3px;">
+              🔔 New LinkedIn Verification Request
+            </h1>
           </div>
-          <div style="padding:24px;background:#fff;">
+
+          <!-- Body table -->
+          <div style="background:#ffffff;border:1px solid #e5e7eb;border-top:none;padding:0 0 24px;">
             <table style="width:100%;border-collapse:collapse;font-size:15px;">
               <tr>
-                <td style="padding:10px 0;color:#555;width:120px;">👤 <strong>Name</strong></td>
-                <td style="padding:10px 0;color:#222;">${user.name}</td>
+                <td style="padding:14px 24px;width:140px;color:#374151;font-weight:600;border-bottom:1px solid #f3f4f6;">
+                  👤 Name
+                </td>
+                <td style="padding:14px 24px;color:#111827;border-bottom:1px solid #f3f4f6;">
+                  ${user.name as string}
+                </td>
               </tr>
-              <tr style="background:#f5f5f5;">
-                <td style="padding:10px 8px;color:#555;">📧 <strong>Email</strong></td>
-                <td style="padding:10px 8px;color:#222;">${user.email}</td>
+              <tr style="background:#f9fafb;">
+                <td style="padding:14px 24px;color:#374151;font-weight:600;border-bottom:1px solid #f3f4f6;">
+                  📧 Email
+                </td>
+                <td style="padding:14px 24px;border-bottom:1px solid #f3f4f6;">
+                  <a href="mailto:${user.email as string}" style="color:#1565c0;text-decoration:none;">
+                    ${user.email as string}
+                  </a>
+                </td>
               </tr>
               <tr>
-                <td style="padding:10px 0;color:#555;">🔗 <strong>LinkedIn URL</strong></td>
-                <td style="padding:10px 0;"><a href="${url.trim()}" style="color:#0077b5;word-break:break-all;">${url.trim()}</a></td>
+                <td style="padding:14px 24px;color:#374151;font-weight:600;border-bottom:1px solid #f3f4f6;">
+                  🔗 LinkedIn URL
+                </td>
+                <td style="padding:14px 24px;border-bottom:1px solid #f3f4f6;">
+                  <a href="${url.trim()}" style="color:#1565c0;word-break:break-all;text-decoration:none;">
+                    ${url.trim()}
+                  </a>
+                </td>
               </tr>
-              <tr style="background:#f5f5f5;">
-                <td style="padding:10px 8px;color:#555;">🕐 <strong>Time</strong></td>
-                <td style="padding:10px 8px;color:#222;">${istTime} IST</td>
+              <tr style="background:#f9fafb;">
+                <td style="padding:14px 24px;color:#374151;font-weight:600;">
+                  🕐 Time
+                </td>
+                <td style="padding:14px 24px;color:#111827;">
+                  ${istTime} IST
+                </td>
               </tr>
             </table>
-            <div style="margin-top:24px;padding:12px 16px;background:#e8f4fd;border-left:4px solid #0077b5;border-radius:4px;font-size:14px;color:#333;">
+
+            <!-- Note -->
+            <div style="margin:24px 24px 0;padding:14px 18px;background:#e3f2fd;border-left:4px solid #1565c0;border-radius:6px;font-size:14px;color:#1e3a5f;line-height:1.6;">
               Please review and approve/reject this request in the <strong>admin panel</strong>.
             </div>
-            <div style="margin-top:16px;text-align:center;">
-              <a href="https://Skillinf-backend.onrender.com/admin/linkedin-verify"
-                 style="display:inline-block;background:#0077b5;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+
+            <!-- CTA button -->
+            <div style="text-align:center;margin-top:24px;">
+              <a href="https://www.skillinf.in/admin-panel"
+                 style="display:inline-block;background:#1565c0;color:#ffffff;text-decoration:none;padding:14px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:0.3px;">
                 Verify in Admin Panel →
               </a>
             </div>
           </div>
-          <div style="padding:12px 24px;background:#f0f0f0;font-size:12px;color:#888;text-align:center;">
-            Skillinf — Automated Notification System
+
+          <!-- Footer -->
+          <div style="padding:16px 32px;background:#f9fafb;border:1px solid #e5e7eb;border-top:none;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#9ca3af;">
+              Skillinf — Automated Notification System
+            </p>
           </div>
+
         </div>
       `,
-    }).catch(err => console.error('[LinkedIn Notify Email] FAILED to send admin notification:', err?.message ?? err));
+      type: 'linkedin_verification_request',
+      });
+      mailSent = true;
+      console.log('[LinkedIn] Admin notification email sent successfully.');
+    } catch (mailErr) {
+      // Log but do NOT fail the user's submission — email is non-critical
+      mailError = (mailErr as Error)?.message ?? String(mailErr);
+      console.error('[LinkedIn Notify Email] FAILED:', mailError);
+    }
 
     return NextResponse.json({
       success: true,
+      mailSent,
+      ...(mailError ? { mailError } : {}),
       message: 'Submitted! Your post is under admin review. Verification done within 3–4 hours.',
     });
   } catch (e) {

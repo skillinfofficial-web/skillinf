@@ -3,9 +3,6 @@ import { getDatabase } from '@/lib/mongodb';
 import { sendMail } from '@/lib/mailer';
 import { toISTMidnight, addCalendarDays, fmtISTLong } from '@/lib/ist';
 
-
-const CRON_SECRET = process.env.CRON_SECRET ?? '';
-
 const istNow = () => new Date().toLocaleString('en-IN', {
   timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short',
   year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true,
@@ -13,6 +10,25 @@ const istNow = () => new Date().toLocaleString('en-IN', {
 
 function fmtIST(d: Date): string {
   return fmtISTLong(d);
+}
+
+/**
+ * Resolve the student's internship base date (IST midnight-aligned) matching
+ * the dashboard's dueDate calculation (`user.startDate` first, then UTC
+ * `registeredAt` / `createdAt`). Never parses timezone-less `registeredAtIST`
+ * strings in UTC runtime, which previously shifted evening registrations by +1 day.
+ */
+function resolveUserStartIST(user: Record<string, unknown>): Date {
+  const startDate = user.startDate;
+  if (typeof startDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(startDate.trim())) {
+    const [y, m, d] = startDate.trim().slice(0, 10).split('-').map(Number);
+    if (y && m && d) {
+      return new Date(Date.UTC(y, m - 1, d));
+    }
+  }
+  const rawReg = user.registeredAt ?? user.createdAt ?? new Date();
+  const parsed = new Date(rawReg as string | Date);
+  return toISTMidnight(isNaN(parsed.getTime()) ? new Date() : parsed);
 }
 /* ─────────────────────────────────────────────────────────────────────────────
    Email: normal reminder — this step is due tomorrow, previous step done
@@ -176,9 +192,10 @@ function buildOverdueWarningEmail(
 }
 
 export async function GET(req: NextRequest) {
-  // Verify cron secret — Vercel sends it as Authorization: Bearer <secret>
+  // Verify cron secret at request time so Cloudflare Worker secrets are available
+  const cronSecret = process.env.CRON_SECRET ?? '';
   const authHeader = req.headers.get('authorization');
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ success: false, message: 'Unauthorized.' }, { status: 401 });
   }
 
@@ -217,23 +234,14 @@ export async function GET(req: NextRequest) {
       const weeks  = courseMap.get(domain);
       if (!weeks || weeks.length < 4) continue;
 
-      // Parse registration date → IST midnight
-      const rawReg = user.registeredAt ?? user.createdAt ?? new Date();
-      let registeredIST: Date;
-      if (user.registeredAtIST) {
-        const parsed = new Date(user.registeredAtIST as string);
-        registeredIST = isNaN(parsed.getTime())
-          ? toISTMidnight(new Date(rawReg as string))
-          : toISTMidnight(parsed);
-      } else {
-        registeredIST = toISTMidnight(new Date(rawReg as string));
-      }
+      // Resolve internship start date → IST midnight (matches dashboard dueDates)
+      const startIST = resolveUserStartIST(user as Record<string, unknown>);
 
       // Cumulative due dates (IST midnight of each step's deadline)
       let cumulativeDays = 0;
       const dueDates: Date[] = weeks.map(w => {
         cumulativeDays += w.deadlineDays;
-        return addCalendarDays(registeredIST, cumulativeDays);
+        return addCalendarDays(startIST, cumulativeDays);
       });
 
       for (let i = 0; i < 4; i++) {

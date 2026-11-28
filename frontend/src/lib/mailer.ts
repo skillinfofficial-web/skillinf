@@ -1,8 +1,6 @@
 import { Resend } from 'resend';
 import { getDatabase } from '@/lib/mongodb';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Resend free plan: 3,000 emails/month, 100/day
 // Update this if you upgrade your Resend plan
 const RESEND_DAILY_QUOTA  = 100;
@@ -15,20 +13,35 @@ export interface MailOptions {
   type?: string; // e.g. 'approval', 'rejection_reminder', 'due_reminder', 'welcome', etc.
 }
 
+/**
+ * Create the Resend client at request time (not module top-level) so
+ * Cloudflare Workers runtime secrets in process.env are always available.
+ */
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured in Worker secrets.');
+  }
+  return new Resend(apiKey);
+}
+
 export async function sendMail({ to, subject, html, type = 'general' }: MailOptions) {
+  const resend = getResendClient();
+  const recipients = (Array.isArray(to) ? to : [to]).map(r => r.trim()).filter(Boolean);
+
   const { data, error } = await resend.emails.send({
     from: 'Skillinf Notifications <notifications@skillinf.in>',
-    to: Array.isArray(to) ? to : [to],
+    to: recipients,
     subject,
     html,
   });
 
   if (error) {
-    console.error('[Mailer] Send FAILED — to:', to, '| error:', error.message);
+    console.error('[Mailer] Send FAILED — to:', recipients, '| error:', error.message);
     throw new Error(error.message);
   }
 
-  console.log('[Mailer] Email sent:', data?.id, '→', to);
+  console.log('[Mailer] Email sent:', data?.id, '→', recipients);
 
   // ── Log to MongoDB (fire-and-forget, never throws) ──────────────────────
   const nowIST = new Date().toLocaleString('en-IN', {

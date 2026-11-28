@@ -3,8 +3,6 @@ import { getDatabase } from "@/lib/mongodb";
 import { sendMail } from "@/lib/mailer";
 import { toISTMidnight, addCalendarDays, fmtISTLong } from "@/lib/ist";
 
-const CRON_SECRET = process.env.CRON_SECRET ?? "";
-
 const istNow = () =>
   new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -70,8 +68,9 @@ function buildCertUnlockEmail(name: string, domain: string, endDateFmt: string):
 }
 
 export async function GET(req: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET ?? "";
   const authHeader = req.headers.get("authorization");
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ success: false, message: "Unauthorized." }, { status: 401 });
   }
 

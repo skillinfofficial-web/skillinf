@@ -65,16 +65,17 @@ export async function POST(req: Request) {
       },
     );
 
-    /* Send admin notification email (fire-and-forget) */
+    /* Send admin notification email (awaited so Cloudflare Workers does not cancel it) */
     const istTime = registeredAtIST;
 
     const userName  = (user?.name  as string) || 'Unknown';
     const userEmail = (user?.email as string) || 'Unknown';
 
-    void sendMail({
-      to: ['arunkumar.s202006@gmail.com', 'Skillinfofficial@gmail.com'],
-      subject: `📦 New Physical Certificate Request — ${userName}`,
-      html: `
+    try {
+      await sendMail({
+        to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+        subject: `📦 New Physical Certificate Request — ${userName}`,
+        html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9f9f9;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;">
           <div style="background:#f59e0b;padding:20px 24px;">
             <h2 style="color:#fff;margin:0;font-size:20px;">📦 New Physical Certificate Request</h2>
@@ -130,7 +131,11 @@ export async function POST(req: Request) {
           </div>
         </div>
       `,
-    }).catch(err => console.error('[PhysicalCert Notify Email]', err));
+        type: 'physical_certificate_request',
+      });
+    } catch (err) {
+      console.error('[PhysicalCert Notify Email]', err);
+    }
 
     return NextResponse.json({ success: true, message: 'Physical certificate registered! It will be delivered to your address within 2–3 days.' });
   } catch (e) {
