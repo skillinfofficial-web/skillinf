@@ -77,7 +77,7 @@ export async function POST(req: Request) {
 
     try {
       await sendMail({
-        to: ['arunkumar.s202006@gmail.com', 'skillinfofficial@gmail.com'],
+        to: 'skillinfofficial@gmail.com',
       subject: `🔔 New LinkedIn Verification Request — ${user.name as string}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:0;background:#ffffff;">
