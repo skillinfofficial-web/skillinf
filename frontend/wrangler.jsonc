@@ -1,12 +1,15 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "skillinf",
-  "main": ".open-next/worker.js",
+  "main": "worker.ts",
   "compatibility_date": "2026-11-15",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "preview_urls": false,
   "keep_vars": true,
+  "triggers": {
+    "crons": ["30 2 * * *", "30 3 * * *"]
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
