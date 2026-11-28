@@ -4,6 +4,7 @@
   "main": "cf-cron-worker.ts",
   "compatibility_date": "2026-11-15",
   "workers_dev": false,
+  "keep_vars": true,
 
   "observability": {
     "enabled": true,
