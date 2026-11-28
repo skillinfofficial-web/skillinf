@@ -12,8 +12,13 @@
  * See wrangler.jsonc for trigger configuration.
  */
 
-export interface Env {
+// Inline Cloudflare Workers type stubs — no package install needed
+interface ScheduledEvent  { cron: string; scheduledTime: number; type: string; }
+interface ExecutionContext { waitUntil(promise: Promise<unknown>): void; passThroughOnException(): void; }
+
+interface Env {
   CRON_SECRET: string;
+  FRONTEND_ORIGIN?: string;
 }
 
 export default {
