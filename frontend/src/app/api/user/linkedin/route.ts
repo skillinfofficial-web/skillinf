@@ -68,7 +68,7 @@ export async function POST(req: Request) {
       }
     );
 
-    // Send email notification to admins (fire-and-forget, non-blocking)
+    // Send email notification to admins (non-blocking but logs errors)
     const istTime = nowIST;
 
     void sendMail({
@@ -113,7 +113,7 @@ export async function POST(req: Request) {
           </div>
         </div>
       `,
-    }).catch(err => console.error('[LinkedIn Notify Email]', err));
+    }).catch(err => console.error('[LinkedIn Notify Email] FAILED to send admin notification:', err?.message ?? err));
 
     return NextResponse.json({
       success: true,

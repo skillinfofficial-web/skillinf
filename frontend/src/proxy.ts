@@ -19,7 +19,7 @@ const ALLOWED_PATHS = [
 // which connects to the same MongoDB database.
 const BACKEND_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://skillinf-backend.onrender.com';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Always allow admin, maintenance page itself, and internal Next.js/API paths
