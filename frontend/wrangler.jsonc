@@ -18,7 +18,22 @@
   "vars": {
     "CASHFREE_APP_ID": "14095521255f4a5112a7d862ae02559041",
     "CASHFREE_ENV": "production",
+    "NEXT_PUBLIC_CASHFREE_ENV": "production",
     "MONGODB_DATABASE": "skillinf_course_data",
     "NEXT_PUBLIC_BASE_URL": "https://skillinf-backend.onrender.com"
   }
+  // ─────────────────────────────────────────────────────────────────────
+  // REQUIRED SECRETS — add via Cloudflare Dashboard:
+  //   Workers → skillinf → Settings → Variables and Secrets → Add secret
+  //
+  //   RESEND_API_KEY      (email sending — ALL emails will fail without this)
+  //   MONGODB_URI         (database connection)
+  //   JWT_SECRET          (user authentication)
+  //   CRON_SECRET         (cron job authorization)
+  //   CASHFREE_SECRET_KEY (payment verification)
+  // ─────────────────────────────────────────────────────────────────────
+  // Cron emails (due-reminder + cert-unlock-notify) are handled by the
+  // separate "skillinf-cron" worker — see wrangler.cron.jsonc
+  // Deploy it once: npx wrangler deploy --config wrangler.cron.jsonc
+  // ─────────────────────────────────────────────────────────────────────
 }
